@@ -13,7 +13,10 @@
 #define ShiftRegisterDelay 1
 #define DACDelay 1
 #define WBDelay  1000
+#define DISCHARGE_DELAY 50
+#define REFERENCE_V 3000.0
 #define NUM_OF_LED 45
+#define NUM_OF_ETALON 3
 #define MAX_PULSE_WIDTH 100
 #define MAX_CURRENT 1000
 
@@ -32,6 +35,7 @@
 #define SR_CLK PD6
 
 //define sample and hold pins
+#define SH_PORT PORTD
 #define SH_SET PD0
 #define SH_RESET PD1
 
