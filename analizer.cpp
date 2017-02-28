@@ -58,6 +58,7 @@ void factoryCalibr();
 void preAmpCalibr();
 void doMeasurementsSH(uint8_t numOfEtalon=0, bool calcNorm=false);
 void doMeasurements(uint8_t numOfEtalon=0, bool calcNorm=false);
+inline void readADCOneTime(uint16_t& value);
 void readADC(float& value);
 void writeConfigToUart();
 void shiftRegisterReset();
@@ -119,10 +120,10 @@ void setup() {
 	PORTD &= ~((1 << SH_SET) | (1 << SH_SET));
 
 	//shift registr init
-	PORTB |= (1 << SR_ENABLE);      //OE HIGH - disable
-	PORTD &= ~((1 << SR_CLR) | (1 << SR_CLK) | (1 << SR_DATA));   //set  SRCLR / RCLK / SER -LOW
 	DDRB |= (1<< SR_ENABLE);
 	DDRD |= (1 << SR_CLR) | (1 << SR_CLK) | (1 << SR_DATA);
+	PORTB |= (1 << SR_ENABLE);      //OE HIGH - disable
+	PORTD &= ~((1 << SR_CLR) | (1 << SR_CLK) | (1 << SR_DATA));   //set  SRCLR / RCLK / SER -LOW
 
 	//initialize SPI
 	SPI.setBitOrder(MSBFIRST);
@@ -135,6 +136,11 @@ void setup() {
 	eeprom_read_block((void *)&coeffs, (const void *) &_coefficients, NUM_OF_LED*sizeof(float));
 	Serial.print(F("Done!\n\n"));
 	writeConfigToUart();
+
+	shiftRegisterReset();
+//	shiftRegisterFirst();
+	PORTB &= (~(1 << SR_ENABLE));  //OE HIGH - enble shiftreg
+	Serial.print(F("First led is on!\n"));
 }
 
 void loop()
@@ -542,14 +548,18 @@ void doMeasurements(uint8_t numOfEtalon, bool calcNorm)
 		readADC(background);
 		setCurrent(1, cur4AllLed[i].curr1);
 		setCurrent(2, cur4AllLed[i].curr2);
-//		doOnePulse();
-		oneTimes = false;
-		pulseEnd = false;
-		GEN1=pulseWidth;
-		TCNT1 = 0;
-		_delay_ms(300);
-		while(!pulseEnd) {_delay_us(1);}
-		readADC(value); //convert to mV
+		doOnePulse();
+		uint32_t adcAvgData=0 ;
+		uint16_t adcOneTimeData;
+		uint8_t counter=0;
+		while(!pulseEnd)
+		{
+			readADCOneTime(adcOneTimeData);
+			adcAvgData += adcOneTimeData;
+			counter++;
+		}
+		adcAvgData /=counter;
+		value = adcAvgData * (REFERENCE_V/32767.0); //convert to mv
 		measuredU[i] = value-background;
 		disableLED();
 	}
@@ -667,6 +677,15 @@ void doMeasurementsSH(uint8_t numOfEtalon, bool calcNorm)
 	}
 }
 
+void readADCOneTime(uint16_t& value)
+{
+	ADC_PORT |= (1 << SS_ADC); //start conversion
+	_delay_us(3);
+	ADC_PORT &= ~(1<< SS_ADC); // set to low for start acquisition
+	value = SPI.transfer16(0x0);
+//	value = val*(REFERENCE_V/32767); //convert to mV
+}
+
 void readADC(float& value)
 {
 	uint32_t val=0;
@@ -680,7 +699,7 @@ void readADC(float& value)
 		val+=temp;
 	}
 	val = val>>3; // devide by 4
-	value = val*(REFERENCE_V/32767); //convert to mV
+	value = val * REFERENCE_V / 32767.0; //convert to mV
 }
 
 //write to usb(uart) all data saved to eeprom in CSV format
