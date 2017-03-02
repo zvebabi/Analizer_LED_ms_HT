@@ -57,6 +57,7 @@ void disableLED();
 void factoryCalibr();
 void preAmpCalibr();
 void doMeasurementsSH(uint8_t numOfEtalon=0, bool calcNorm=false);
+void doMeasurementsSH_Avg(bool calcNorm=false);
 void doMeasurements(uint8_t numOfEtalon=0, bool calcNorm=false);
 inline void readADCOneTime(uint16_t& value);
 void readADC(float& value);
@@ -175,6 +176,12 @@ void loop()
 				doMeasurements();
 				break;
 			}
+			case 'a': // start measurements in sample and hold mode for all
+			{
+				doMeasurementsSH_Avg();
+				break;
+			}
+
 			default:
 			{
 				SerialClean();
@@ -261,14 +268,24 @@ void factoryCalibr()
 				case 'n':  //next led choose
 				{
 					disableLED();
-					++numLed;
-					if(numLed == 21 )
-						numLed = 24;
-					if (numLed%4 == 0)     //light up next group of led
-						shiftRegisterNext();  //
-					Serial.print("LED ");
-					Serial.print(numLed+1); //actually, numeration starts from zero
-					Serial.print(" is on!\n");  //here we will see the classic numeration from 1
+					if (numLed == NUM_OF_LED-1)
+					{ //TODO: do correct exit, return to first led or just end.
+						Serial.print("LED ");
+						Serial.print(numLed+1); //actually, numeration starts from zero
+						Serial.print(" still is on!\n");  //here we will see the classic numeration from 1
+						Serial.print(F("This is end of calibration\n"));
+					}
+					else
+					{
+						++numLed;
+						if(numLed == 21 )
+							numLed = 24;
+						if (numLed%4 == 0)     //light up next group of led
+							shiftRegisterNext();  //
+						Serial.print("LED ");
+						Serial.print(numLed+1); //actually, numeration starts from zero
+						Serial.print(" is on!\n");  //here we will see the classic numeration from 1
+					}
 					break;
 				}
 				case 'o':  //take infinite series of pulse to LED
@@ -455,11 +472,37 @@ void preAmpCalibr()
 					Serial.println(curVal);
 					break;
 				}
-				case 'n':
+				case 'n':  //calc Ai
 				{
 					float coeff_temp[NUM_OF_LED];
 					eeprom_read_block((void *)coeff_temp, (const void *)_coefficients, NUM_OF_LED*sizeof(float));
 					doMeasurementsSH(numEtalon, true);
+					Serial.print(F("Ai#, Previous , Current, Diff(%)\n"));
+					for (uint8_t i=0; i< NUM_OF_LED; i++)
+					{
+						if(i==21) i=24;
+						Serial.print(i);
+						Serial.print(F(", "));
+						Serial.print(coeff_temp[i]); 	//previous
+						Serial.print(F(", "));
+						Serial.print(coeffs[i]); 			//current
+						Serial.print(F(", "));
+						Serial.print( (coeffs[i] - coeff_temp[i] ) / coeffs[i] * 100.0); //diff
+						Serial.print(F("\n"));
+					}
+					Serial.print(F("If params is ok - press \"y\".\nFor reset press any key.\n"));
+					while(Serial.available()==0){_delay_ms(1);} //wait for command
+					if (Serial.read() == 'y')
+						eeprom_write_block((const void *)coeffs, (void *)_coefficients, NUM_OF_LED*sizeof(float)); //save params from last measurement
+					else
+						eeprom_read_block((void *)coeffs, (const void *)_coefficients, NUM_OF_LED*sizeof(float)); //reset params in coeffs
+					break;
+				}
+				case 'a': //calc Ai avg method
+				{
+					float coeff_temp[NUM_OF_LED];
+					eeprom_read_block((void *)coeff_temp, (const void *)_coefficients, NUM_OF_LED*sizeof(float));
+					doMeasurementsSH_Avg(true);
 					Serial.print(F("Ai#, Previous , Current, Diff(%)\n"));
 					for (uint8_t i=0; i< NUM_OF_LED; i++)
 					{
@@ -626,7 +669,6 @@ void doMeasurementsSH(uint8_t numOfEtalon, bool calcNorm)
 	shiftRegisterReset();
 	disableLED();
 	shiftRegisterFirst(); //select first led pair
-	unsigned long a,b,c; // millis
 	for (uint8_t i = 0; i< NUM_OF_LED; i++)
 	{
 		if( i == 21 ) i = 24;//skip 6-7 leds combinations
@@ -638,15 +680,10 @@ void doMeasurementsSH(uint8_t numOfEtalon, bool calcNorm)
 		setCurrent(1, cur4AllLed[i].curr1);
 		setCurrent(2, cur4AllLed[i].curr2);
 		doOnePulse();
-		a = micros();
 		while(!pulseEnd) {_delay_us(1);}
-		b = micros();
 		readADC(value); //convert to mV
-		c = micros();
 		measuredU[i] = value-background;
 		disableLED();
-		Serial.println(b-a);
-		Serial.println(c-b);
 	}
 	//calc k
 	if (calcNorm) // part of express calibration
@@ -677,6 +714,93 @@ void doMeasurementsSH(uint8_t numOfEtalon, bool calcNorm)
 	}
 }
 
+/*
+ * Sample and hold version
+ */
+void doMeasurementsSH_Avg(bool calcNorm)
+{
+	Serial.print(F("You are in measurements mode!\n"));
+
+	float kAvg[NUM_OF_LED] = {0.0};
+	float c_R = eeprom_read_float(&_c_R); //input resistanse of g2
+
+	for(uint8_t index = 0; index < NUM_OF_ETALON; index++)
+	{
+		float k=0; // norm coeefs or result
+		float measuredU[NUM_OF_LED] ;
+		float value = 0;
+		float background=0;
+		//read config
+		etalon_t etalonForCalc;
+		eeprom_read_block((void *)&etalonForCalc, (const void *)&_etalons[index], sizeof(etalon_t));
+		float constant = etalonForCalc.g1 * etalonForCalc.g2mid / c_R ;
+		setPreAmp(etalonForCalc.g1, etalonForCalc.g2mid);
+		//reset led and light up first one
+		shiftRegisterReset();
+		disableLED();
+		shiftRegisterFirst();
+		//one measurement
+		for (uint8_t i = 0; i< NUM_OF_LED; i++)
+		{
+			if( i == 21 ) i = 24;//skip 6-7 leds combinations
+			if( i != 0 && i % 4 == 0) // !=0 for first led exception
+				shiftRegisterNext();
+			dischargeSampleHold(); //reset Sample and hold
+			//read background value
+			readADC(background);
+			setCurrent(1, cur4AllLed[i].curr1);
+			setCurrent(2, cur4AllLed[i].curr2);
+			doOnePulse();
+			while(!pulseEnd) {_delay_us(1);}
+			readADC(value); //convert to mV
+			measuredU[i] = value-background;
+			disableLED();
+		}
+		if (calcNorm) // part of express calibration
+			Serial.print(F("LED#,Ai,Uamp(mV)\n"));
+		else
+			Serial.print(F("LED#,k,Uamp(mV)\n"));
+//calc k
+		for (uint8_t i = 0; i< NUM_OF_LED; i++)
+		{
+			if(i == 21 ) //skip 6-7 leds combinations
+				i = 24;
+			if(calcNorm)
+			{
+				k = measuredU[i] / ( etalonForCalc.k[i] * constant);
+			}
+			else
+			{
+				k = measuredU[i] / ( coeffs[i] * constant);
+			}
+//print result
+			Serial.print(i);
+			Serial.print(F(","));
+			Serial.print(k);
+			Serial.print(F(","));
+			Serial.println(measuredU[i]);
+//calc avg
+			kAvg[i]+=k;
+		}
+	}
+
+	Serial.print(F("\nAverage values.\n"));
+	if (calcNorm) // part of express calibration
+		Serial.print(F("LED#,Ai,\n"));
+	else
+		Serial.print(F("LED#,k\n"));
+//calc and print average value
+	for(uint8_t i = 0; i< NUM_OF_LED; i++)
+	{
+		kAvg[i] /=NUM_OF_ETALON;
+		Serial.print(i);
+		Serial.print(F(","));
+		Serial.println(kAvg[i]);
+		if(calcNorm)  // part of express calibration
+			coeffs[i] = kAvg[i];
+	}
+}
+
 void readADCOneTime(uint16_t& value)
 {
 	ADC_PORT |= (1 << SS_ADC); //start conversion
@@ -698,7 +822,7 @@ void readADC(float& value)
 		temp = SPI.transfer16(0x0);
 		val+=temp;
 	}
-	val = val>>3; // devide by 4
+	val = val>>4; // devide by 16
 	value = val * REFERENCE_V / 32767.0; //convert to mV
 }
 
