@@ -1,8 +1,9 @@
-QT += qml quick
+QT += qml quick serialport quickcontrols2
 
-CONFIG += c++11
+CONFIG += c++17
 
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    analizerCDC.cpp
 
 RESOURCES += qml.qrc
 
@@ -27,3 +28,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+HEADERS += \
+    analizerCDC.h

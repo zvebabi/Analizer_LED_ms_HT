@@ -1,37 +1,48 @@
 import QtQuick 2.7
-import QtQuick.Controls 2.0
-import QtQuick.Layouts 1.0
+import QtQuick.Controls 2.1
+import QtQuick.Layouts 1.3
+
+import QtQuick.Controls.Material 2.1
 
 ApplicationWindow {
+
     visible: true
     width: 640
     height: 480
-    title: qsTr("Hello World")
+    title: qsTr("Сложение двух чисел")
+
+    Material.theme: Material.Light
+    Material.primary: Material.BlueGray
+    Material.accent: Material.Teal
+
+    signal qmlSignal(string msg)
+    signal getPorts()
+    signal initDevice(string portName);
 
     SwipeView {
-        id: swipeView
-        anchors.fill: parent
-        currentIndex: tabBar.currentIndex
+       id: view
 
-        Page1 {
+       currentIndex: bar.currentIndex
+       anchors.fill: parent
+       Settings {
+       }
+       ChartView {
+       }
+       Item{
+       }
+    }
+    TabBar {
+        id: bar
+        width: parent.width
+        TabButton {
+           text: qsTr("Settings")
         }
-
-        Page {
-            Label {
-                text: qsTr("Second page")
-                anchors.centerIn: parent
-            }
+        TabButton {
+           text: qsTr("Charts")
+        }
+        TabButton {
+           text: qsTr("N/A")
         }
     }
 
-    footer: TabBar {
-        id: tabBar
-        currentIndex: swipeView.currentIndex
-        TabButton {
-            text: qsTr("First")
-        }
-        TabButton {
-            text: qsTr("Second")
-        }
-    }
 }
