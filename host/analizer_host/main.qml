@@ -7,26 +7,26 @@ import QtQuick.Controls.Material 2.1
 ApplicationWindow {
 
     visible: true
-    width: 640
-    height: 480
-    title: qsTr("Сложение двух чисел")
+    width: 960
+    height: 540
+    minimumHeight: 270
+    minimumWidth: 480
+
+
+    title: qsTr("Analizer v0.1")
 
     Material.theme: Material.Light
     Material.primary: Material.BlueGray
     Material.accent: Material.Teal
-
-    signal qmlSignal(string msg)
-    signal getPorts()
-    signal initDevice(string portName);
 
     SwipeView {
        id: view
 
        currentIndex: bar.currentIndex
        anchors.fill: parent
-       Settings {
-       }
        ChartView {
+       }
+       Settings {
        }
        Item{
        }
@@ -34,15 +34,17 @@ ApplicationWindow {
     TabBar {
         id: bar
         width: parent.width
-        TabButton {
-           text: qsTr("Settings")
-        }
+        currentIndex: view.currentIndex
         TabButton {
            text: qsTr("Charts")
         }
         TabButton {
+           text: qsTr("Settings")
+        }
+        TabButton {
            text: qsTr("N/A")
         }
+//        position: parent.footer()
     }
 
 }

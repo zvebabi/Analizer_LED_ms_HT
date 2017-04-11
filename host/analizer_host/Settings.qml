@@ -10,6 +10,7 @@ Item {
             console.log("Received in QML from C++: " + port)
         }
     }
+
     Column {
         spacing: 10
         anchors.centerIn: parent
@@ -18,7 +19,9 @@ Item {
             id: listDeviceBTN
             text: qsTr("ListDevice")
             width: 250
-            onClicked: getPorts()
+            onClicked: {//getPorts()
+                reciever.getListOfPort()
+            }
         }
 
         ComboBox{
@@ -34,15 +37,16 @@ Item {
         ComboBox {
             id: baudRateComboList
             objectName: "baudRate"
-            placeholderText: "choose baudRate"
             width: 250
+            model: ["115200", "57600"]
         }
 
         Button {
             id: connectBTN
             text: qsTr("Connect")
             width: 250
-            onClicked: initDevice(portsComboList.currentText)
+            onClicked: reciever.initDevice(portsComboList.currentText,
+                                  baudRateComboList.currentText)
         }
 
 //        Text {

@@ -3,5 +3,6 @@
         <file>main.qml</file>
         <file>Settings.qml</file>
         <file>ChartView.qml</file>
+        <file>QMLs/ButtonLabel.qml</file>
     </qresource>
 </RCC>
