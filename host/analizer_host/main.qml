@@ -37,7 +37,7 @@ ApplicationWindow {
 
             property color currentHighlightItem: "#dcdcdc"
     }
-
+    property alias currentPage: loader.source
     property int menuWidth : 300*app.dp// width/4
     property int widthOfSeizure: 15*app.dp
     property real menuProgressOpening
@@ -99,7 +99,7 @@ ApplicationWindow {
         }
         x: -menuWidth
 
-        color: Material.color(Material.Grey)
+//        color: Material.color(Material.Grey)
         Behavior on x {
             NumberAnimation { duration: 500; easing.type: Easing.OutQuad } }
         onXChanged: {
@@ -169,7 +169,7 @@ ApplicationWindow {
 
     Component.onCompleted: {
         currentPage = "Settings.qml"
-        mainMenu.currentItem = 0
+        mainMenu.currentItem = 1
     }
 
 
