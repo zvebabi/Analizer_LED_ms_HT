@@ -1,9 +1,15 @@
+TEMPLATE = app
 QT += qml quick serialport quickcontrols2 widgets charts
 QMAKE_CXXFLAGS += -O3 -g3
 CONFIG += c++17 force_debug_info
 
+android: {
+QT += androidextras
+}
+
 SOURCES += main.cpp \
-    analizerCDC.cpp
+    analizerCDC.cpp \
+    mydevice.cpp
 
 RESOURCES += qml.qrc
 
@@ -30,4 +36,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    analizerCDC.h
+    analizerCDC.h \
+    mydevice.h

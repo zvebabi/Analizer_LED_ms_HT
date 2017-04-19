@@ -2,15 +2,14 @@ import QtQuick 2.7
 import QtQuick.Controls 2.1
 import QtQuick.Layouts 1.3
 import QtCharts 2.2
+import QtQuick.Dialogs 1.2
 import "QMLs"
 
 Item {
     RowLayout {
-        spacing: 10
+        spacing: 1
         anchors.fill: parent
-        anchors.margins: 30
-
-
+        anchors.margins: 10
         ChartView {
             id: graphs
             title: "Result"
@@ -32,7 +31,6 @@ Item {
             Layout.minimumWidth: 320
             Layout.minimumHeight: 240
         }
-
         Column {
             spacing: 10
             TextField {
@@ -69,11 +67,57 @@ Item {
             Button {
                 width: 100
                 contentItem: ButtonLabel {text: qsTr("Save data")}
+                FileDialog {
+                    id: dataSaveDialog
+                    title: "Please choose a file"
+                    selectExisting: false
+                    nameFilters: [
+                        "Data files (*.csv *.dat *.txt)", "All files (*)" ]
+                    folder: shortcuts.documents
+                    onAccepted: {
+                        var path = dataSaveDialog.fileUrl.toString();
+                        path = path.replace(
+                                   /^(file:\/{2})|(qrc:\/{2})|(http:\/{2})/,"");
+                        // unescape html codes like '%23' for '#'
+                        var cleanPath = decodeURIComponent(path);
+                        console.log("You chose: " + cleanPath);
+                        reciever.saveDataToCSV(cleanPath);
+                    }
+                    onRejected: {
+                        console.log("Canceled")
+                    }
+                }
+                onClicked: { dataSaveDialog.open(); }
+            }
+            Button {
+                width: 100
+                contentItem: ButtonLabel {text: qsTr("Save graph")}
+                FileDialog {
+                    id: imgSaveDialog
+                    title: "Please choose a file"
+                    selectExisting: false
+                    nameFilters: [
+                        "Image files (*.bmp *.jpg *.png)", "All files (*)" ]
+                    folder: shortcuts.documents
+                    onAccepted: {
+                        var path = imgSaveDialog.fileUrl.toString();
+                        path= path.replace(
+                                   /^(file:\/{2})|(qrc:\/{2})|(http:\/{2})/,"");
+                        // unescape html codes like '%23' for '#'
+                        var cleanPath = decodeURIComponent(path);
+                        console.log("image saved to " + cleanPath)
+                        graphs.grabToImage(function(result) {
+                            result.saveToFile(cleanPath);
+                        });
+                    }
+                    onRejected: { console.log("Canceled") }
+                }
                 onClicked: {
-                    reciever.saveDataToCSV("data.csv");
+                    imgSaveDialog.open();
                 }
             }
         }
     }
+
 }
 

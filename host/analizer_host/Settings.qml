@@ -53,13 +53,23 @@ Item {
 //            text: "Ответ:"
 //            font.pixelSize: textArea.font.pixelSize
 //        }
+//TODO: save path to directory with data&graphs
+//        Rectangle {
+//            TextField {
+//                id: textArea
+//                objectName: "textArea"
+//                wrapMode: TextArea.Wrap
+//                readOnly: true
+//                width: 250
+//            }
+//            MouseArea
+//            {
+//               id: mouseArea
+//               anchors.fill: parent
+//               onClicked: {
 
-//        TextArea {
-//            id: textArea
-//            objectName: "textArea"
-//            wrapMode: TextArea.Wrap
-//            readOnly: true
-//            width: 250
+//               }
+//            }
 //        }
     }
 }

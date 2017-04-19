@@ -43,7 +43,7 @@ void analizerCDC::initDevice(QString port, QString baudR)
 //    QObject::connect(serial, SIGNAL(readyRead()), this, SLOT(readData()));
     if(!(device->isOpen()))
         device->open(QIODevice::ReadWrite);
-    device->setBaudRate(QSerialPort::Baud57600);
+    device->setBaudRate(QSerialPort::Baud115200);
     device->setDataBits(QSerialPort::Data8);
     device->setParity(QSerialPort::NoParity);
     device->setStopBits(QSerialPort::OneStop);
@@ -55,7 +55,6 @@ void analizerCDC::getListOfPort()
 {
     foreach(const QSerialPortInfo &info, QSerialPortInfo::availablePorts()){
         ports.push_back(info.portName());
-
 //        emit sendPortName(info.portName());
         qDebug() << info.portName();
     }
@@ -68,10 +67,6 @@ void analizerCDC::getListOfPort()
 void analizerCDC::doMeasurements(QtCharts::QAbstractSeries *series)
 {
     qDebug() << "doMeasurements";
-    // Remove previous data
-//    foreach (QVector<QPointF> row, m_data)
-//        row.clear();
-//    m_data.clear();
     auto colCount =100;
     // Append the new data depending on the type
     QVector<QPointF> points;
@@ -92,16 +87,16 @@ void analizerCDC::doMeasurements(QtCharts::QAbstractSeries *series)
 void analizerCDC::saveDataToCSV(QString filename="data.csv")
 {
     qDebug() << "save to csv..";
+    qDebug() <<filename;
     std::fstream f(filename.toStdString(), std::fstream::out);
+    if (!f.is_open())
+        qDebug() << "can't open file\n";
     int i = 1;
     for (auto series : lines.keys())
     {
-//        f << "sample N " << i << "\n";
         f << "Sample: " << series->name().toStdString() << "\n";
         for ( auto& p : lines.value(series))
-        {
             f << p.x() << ", " << p.y() << "\n";
-        }
         ++i;
     }
     f.close();
@@ -116,15 +111,11 @@ void analizerCDC::deleteSeries(QtCharts::QAbstractSeries *series)
 
 void analizerCDC::update(QtCharts::QAbstractSeries *series)
 {
-    if (series) {
+    if (series && lines.contains(series)) {
         QtCharts::QXYSeries *xySeries = static_cast<QtCharts::QXYSeries *>(series);
-        m_index++;
-        if (m_index > m_data.count() - 1)
-            m_index = 0;
-
-        QVector<QPointF> points = m_data.at(m_index);
+//        QVector<QPointF> points = lines.value(series);
         // Use replace instead of clear + append, it's optimized for performance
-        xySeries->replace(points);
+        xySeries->replace(lines.value(series));
     }
 }
 

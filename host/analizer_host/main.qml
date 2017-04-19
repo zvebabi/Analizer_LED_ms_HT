@@ -3,48 +3,203 @@ import QtQuick.Controls 2.1
 import QtQuick.Layouts 1.3
 
 import QtQuick.Controls.Material 2.1
+import "QMLs"
+import mydevice 1.0
 
 ApplicationWindow {
+    id:app
 
     visible: true
     width: 960
     height: 540
     minimumHeight: 270
     minimumWidth: 480
-
-
     title: qsTr("Analizer v0.1")
-
+    property string appTitle: "Analizer v0.1"
     Material.theme: Material.Light
-    Material.primary: Material.BlueGray
+    Material.primary: Material.BlueGrey
     Material.accent: Material.Teal
 
-    SwipeView {
-       id: view
+    property alias dp: device.dp
+    MyDevice { id: device }
 
-       currentIndex: bar.currentIndex
-       anchors.fill: parent
-       ChartView {
-       }
-       Settings {
-       }
-       Item{
-       }
+    QtObject {
+            id: palette
+            //http://www.materialpalette.com/indigo/yellow
+            property color darkPrimary: "#303F9F"
+            property color primary: "#3F51B5"
+            property color lightPrimary: "#C5CAE9"
+            property color text: "#FFFFFF"
+            property color accent: "#FFEB3B"
+            property color primaryText: "#212121"
+            property color secondaryText: "#727272"
+            property color divider: "#B6B6B6"
+
+            property color currentHighlightItem: "#dcdcdc"
     }
-    TabBar {
-        id: bar
-        width: parent.width
-        currentIndex: view.currentIndex
-        TabButton {
-           text: qsTr("Charts")
+
+    property int menuWidth : 300*app.dp// width/4
+    property int widthOfSeizure: 15*app.dp
+    property real menuProgressOpening
+    property bool menuIsShown:
+        Math.abs(menuView.x) < (menuWidth*0.5) ? true : false
+
+    Rectangle {
+      id: menuBar
+      z: 5
+      anchors.top: parent.top
+      anchors.topMargin: 0
+      width: parent.width
+      height: 30
+      color:palette.darkPrimary // Material.color(Material.BlueGrey)
+      Rectangle {
+        id: menuButton
+        anchors.left: parent.left
+        anchors.verticalCenter: parent.verticalCenter
+        width: 1.2*height
+        height: parent.height
+        scale: maMenuBar.pressed ? 1.2 : 1
+        color: "transparent"
+        MenuIconLive {
+          id: menuBackIcon
+          scale: (parent.height/height)*0.65
+          anchors.centerIn: parent
+          value: menuProgressOpening
         }
-        TabButton {
-           text: qsTr("Settings")
+        MouseArea {
+          id: maMenuBar
+          anchors.fill: parent
+          onClicked: onMenu()
         }
-        TabButton {
-           text: qsTr("N/A")
+        clip: true
+      }
+      Label {
+        id: titleText
+        anchors.left: menuButton.right
+        anchors.verticalCenter: parent.verticalCenter
+        text: app.title
+        font.pixelSize: 0.35*parent.height
+        color: "#FFFFFF"
+      }
+    } //menuBar
+
+    Rectangle {
+        id: menuView
+        anchors.top: menuBar.bottom
+        height: parent.height - menuBar.height
+        width: menuWidth
+        z: 3
+        MainMenu {
+            id: mainMenu
+            anchors.fill: parent
+            onMenuItemClicked: {
+                onMenu()
+                loader.source = page
+            }
         }
-//        position: parent.footer()
+        x: -menuWidth
+
+        color: Material.color(Material.Grey)
+        Behavior on x {
+            NumberAnimation { duration: 500; easing.type: Easing.OutQuad } }
+        onXChanged: {
+            menuProgressOpening = (1-Math.abs(menuView.x/menuWidth))
+        }
+
+        MouseArea {
+            anchors.right: parent.right
+            anchors.rightMargin: app.menuIsShown ?
+                                     (menuWidth - app.width) : -widthOfSeizure
+            anchors.top: parent.top
+            width: app.menuIsShown ? (app.width - menuWidth) : widthOfSeizure
+            height: parent.height
+            drag {
+                target: menuView
+                axis: Drag.XAxis
+                minimumX: -menuView.width
+                maximumX: 0
+            }
+            onClicked: {
+                if(app.menuIsShown) app.onMenu()
+            }
+            onReleased: {
+                if( Math.abs(menuView.x) > 0.5*menuWidth ) {
+                    menuView.x = -menuWidth //close the menu
+                } else {
+                    menuView.x = 0 //fully opened
+                }
+            }
+        }
     }
+    Loader {
+        id: loader
+        anchors.top: menuBar.bottom;
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+
+        //asynchronous: true
+        onStatusChanged: {
+            if( status == Loader.Loading ) {
+                curtainLoading.visible = true
+                titleText.text = appTitle
+            } else if( status == Loader.Ready ) {
+                curtainLoading.visible = false
+            } else if( status == Loader.Error ) {
+                curtainLoading.visible = false
+            }
+        }
+        onLoaded: {
+            titleText.text = item.title
+        }
+        Rectangle {
+            id: curtainLoading
+            anchors.fill: parent
+            visible: false
+            color: "white"
+            opacity: 0.8
+            BusyIndicator {
+                anchors.centerIn: parent
+            }
+        }
+    }
+    function onMenu() {
+        menuView.x = app.menuIsShown ? -menuWidth : 0
+    }
+
+    Component.onCompleted: {
+        currentPage = "Settings.qml"
+        mainMenu.currentItem = 0
+    }
+
+
+//    SwipeView {
+//       id: view
+
+////       currentIndex: bar.currentIndex
+//       anchors.fill: parent
+//       anchors.top: menuBar.Bottom
+//       ChartView {
+//       }
+//       Settings {
+//       }
+//       Item{
+//       }
+//    }
+//    TabBar {
+//        id: bar
+//        width: parent.width
+//        currentIndex: view.currentIndex
+//        TabButton {
+//           text: qsTr("Charts")
+//        }
+//        TabButton {
+//           text: qsTr("Settings")
+//        }
+//        TabButton {
+//           text: qsTr("N/A")
+//        }
+////        position: parent.footer()
+//    }
 
 }

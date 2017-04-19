@@ -12,6 +12,7 @@
 #include <vector>
 #include <fstream>
 #include <typeinfo>
+#include <iostream>
 
 class analizerCDC : public QObject
 {

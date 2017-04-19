@@ -4,5 +4,7 @@
         <file>Settings.qml</file>
         <file>ChartView.qml</file>
         <file>QMLs/ButtonLabel.qml</file>
+        <file>QMLs/MenuIconLive.qml</file>
+        <file>QMLs/MainMenu.qml</file>
     </qresource>
 </RCC>
