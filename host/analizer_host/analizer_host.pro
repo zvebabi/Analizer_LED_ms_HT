@@ -1,6 +1,7 @@
 QT += qml quick serialport quickcontrols2 widgets charts
-QMAKE_CXXFLAGS += -O3 -g3
-CONFIG += c++17 force_debug_info
+#QMAKE_CXXFLAGS += -O3 -g3
+CONFIG += c++17 #force_debug_info
+TARGET = Analizer
 
 SOURCES += main.cpp \
     analizerCDC.cpp
