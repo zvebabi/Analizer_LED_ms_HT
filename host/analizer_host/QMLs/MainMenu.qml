@@ -98,7 +98,7 @@ Item {
 
         Rectangle {
             id: wrapperItem
-            height: 60*app.dp
+            height: 30*app.dp
             width: parent.width
             color: wrapperItem.ListView.isCurrentItem || ma.pressed ? palette.currentHighlightItem : "transparent"
 //            Image {

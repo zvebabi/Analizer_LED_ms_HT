@@ -32,15 +32,19 @@ Item {
             Layout.minimumHeight: 240
         }
         Column {
-            spacing: 10
+            id :ctrlPane
+            anchors.top: menuBar.bottom
+            spacing: 5
+            property int itemWidth: 80
             TextField {
                 id: lineLabel
                 selectByMouse: true
-                width: 100
+                width: ctrlPane.itemWidth
             }
             Button {
                 contentItem: ButtonLabel {text: qsTr("Analize")}
-                width: 100
+                width: ctrlPane.itemWidth
+                height :width/2.5
                 onClicked: {
                     graphs.numSeries++;
                     graphs.createSeries(ChartView.SeriesTypeLine,
@@ -53,10 +57,12 @@ Item {
             TextField {
                 id: name4Del
                 selectByMouse: true
-                width: 100
+                width: ctrlPane.itemWidth
+                height :width/2.5
             }
             Button {
-                width: 100
+                width: ctrlPane.itemWidth
+                height :width/2.5
                 contentItem: ButtonLabel {text: qsTr("Delete")}
                 onClicked: {
                     console.log(name4Del.text)
@@ -65,7 +71,8 @@ Item {
                 }
             }
             Button {
-                width: 100
+                width: ctrlPane.itemWidth
+                height :width/2.5
                 contentItem: ButtonLabel {text: qsTr("Save data")}
                 FileDialog {
                     id: dataSaveDialog
@@ -90,7 +97,8 @@ Item {
                 onClicked: { dataSaveDialog.open(); }
             }
             Button {
-                width: 100
+                width: ctrlPane.itemWidth
+                height :width/2.5
                 contentItem: ButtonLabel {text: qsTr("Save graph")}
                 FileDialog {
                     id: imgSaveDialog

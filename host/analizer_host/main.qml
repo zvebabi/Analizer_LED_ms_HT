@@ -38,7 +38,7 @@ ApplicationWindow {
             property color currentHighlightItem: "#dcdcdc"
     }
     property alias currentPage: loader.source
-    property int menuWidth : 300*app.dp// width/4
+    property int menuWidth : 150*app.dp// width/4
     property int widthOfSeizure: 15*app.dp
     property real menuProgressOpening
     property bool menuIsShown:
@@ -94,7 +94,7 @@ ApplicationWindow {
             anchors.fill: parent
             onMenuItemClicked: {
                 onMenu()
-                loader.source = page
+//                loader.source = page
             }
         }
         x: -menuWidth
@@ -168,24 +168,24 @@ ApplicationWindow {
     }
 
     Component.onCompleted: {
-        currentPage = "Settings.qml"
+//        currentPage = "Settings.qml"
         mainMenu.currentItem = 1
     }
 
 
-//    SwipeView {
-//       id: view
+    SwipeView {
+       id: view
 
-////       currentIndex: bar.currentIndex
-//       anchors.fill: parent
-//       anchors.top: menuBar.Bottom
-//       ChartView {
-//       }
-//       Settings {
-//       }
-//       Item{
-//       }
-//    }
+       currentIndex: mainMenu.currentItem //bar.currentIndex
+       anchors.fill: parent
+       anchors.top: menuBar.Bottom
+       ChartView {
+       }
+       Settings {
+       }
+       Item{
+       }
+    }
 //    TabBar {
 //        id: bar
 //        width: parent.width
