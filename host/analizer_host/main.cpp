@@ -4,6 +4,7 @@
 #include <QQmlContext>
 
 #include "analizerCDC.h"
+#include "mydevice.h"
 
 int main(int argc, char *argv[])
 {
@@ -11,6 +12,7 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
 
     QQuickStyle::setStyle("Material");
+    qmlRegisterType<MyDevice>("mydevice", 1, 0, "MyDevice");
 
     QQmlApplicationEngine engine;
     engine.load(QUrl(QLatin1String("qrc:/main.qml")));
