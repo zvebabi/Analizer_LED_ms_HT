@@ -4,6 +4,8 @@ analizerCDC::analizerCDC(QObject *parent) : QObject(parent)
 {
     qRegisterMetaType<QtCharts::QAbstractSeries*>();
     qRegisterMetaType<QtCharts::QAbstractAxis*>();
+    documentsPath = QDir::currentPath()+QString("/data/");
+
 }
 
 void analizerCDC::cppSlot(const QString &msg)
@@ -88,7 +90,13 @@ void analizerCDC::saveDataToCSV(QString filename="data.csv")
 {
     qDebug() << "save to csv..";
     qDebug() <<filename;
-    std::fstream f(filename.toStdString(), std::fstream::out);
+    qDebug() << documentsPath;
+
+    QDir dataDir(documentsPath);
+    if (!dataDir.exists())
+        dataDir.mkpath(".");
+
+    std::fstream f(QString(documentsPath+"/"+filename+".csv").toStdString(), std::fstream::out);
     if (!f.is_open())
         qDebug() << "can't open file\n";
     int i = 1;

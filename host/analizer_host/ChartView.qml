@@ -94,7 +94,9 @@ Item {
                         console.log("Canceled")
                     }
                 }
-                onClicked: { dataSaveDialog.open(); }
+                onClicked: {
+//                    dataSaveDialog.open();
+                    reciever.saveDataToCSV(lineLabel.text);}
             }
             Button {
                 width: ctrlPane.itemWidth

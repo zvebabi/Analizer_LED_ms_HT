@@ -9,6 +9,7 @@
 #include <QtCharts/QAbstractSeries>
 #include <QtCharts/QXYSeries>
 #include <QDebug>
+#include <QDir>
 #include <vector>
 #include <fstream>
 #include <typeinfo>
@@ -41,6 +42,7 @@ private:
     QSerialPort::BaudRate baudRate;
     QList<QVector<QPointF> > m_data;
     QMap< QtCharts::QAbstractSeries*, QVector<QPointF> > lines;
+    QString documentsPath;
 //    QVector<QtCharts::QAbstractSeries *series> saved_graphs;
 //    int baudRate;
   int m_index;
