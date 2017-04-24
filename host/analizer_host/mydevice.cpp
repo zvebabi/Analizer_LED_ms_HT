@@ -37,7 +37,7 @@ MyDevice::MyDevice(QObject *parent) : QObject(parent)
     m_dp = m_dpi / 160.f;
     emit dpChanged(m_dp);
     emit isMobileChanged(m_isMobile);
-    //qDebug() << "*** dp:"<<m_dp<<" dpi:"<<m_dpi;
+    qDebug() << "*** dp:"<<m_dp<<" dpi:"<<m_dpi;
 }
 
 MyDevice::~MyDevice()

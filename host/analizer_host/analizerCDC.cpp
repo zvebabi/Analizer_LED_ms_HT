@@ -5,7 +5,8 @@ analizerCDC::analizerCDC(QObject *parent) : QObject(parent)
     qRegisterMetaType<QtCharts::QAbstractSeries*>();
     qRegisterMetaType<QtCharts::QAbstractAxis*>();
     documentsPath = QDir::currentPath()+QString("/data/");
-
+    rangeVal.append(QPointF(0,0));
+    rangeVal.append(QPointF(0,0));
 }
 
 void analizerCDC::cppSlot(const QString &msg)
@@ -77,12 +78,23 @@ void analizerCDC::doMeasurements(QtCharts::QAbstractSeries *series)
         qreal x(0);
         qreal y(0);
       // data with sin + random component
-        y = qSin(3.14159265358979 / 50 * j) + 0.5 + (qreal) rand() / (qreal) RAND_MAX;
+        y = qSin(3.14159265358979 / 30 * j) + 0.5 + (qreal) rand() / (qreal) RAND_MAX;
         x = j;
+        //find borders
+        if ( rangeVal[0].x() > x )
+            rangeVal[0].setX(x);
+        if ( rangeVal[1].x() < x )
+            rangeVal[1].setX(x);
+        if ( rangeVal[0].y() > y )
+            rangeVal[0].setY(y);
+        if ( rangeVal[1].y() < y )
+            rangeVal[1].setY(y);
+        //add data to graph
         points.append(QPointF(x, y));
     }
     m_data.append(points);
     lines.insert(series, m_data.back()); //save series and data pointers for future
+    emit adjustAxis(rangeVal[0], rangeVal[1]);
     update(series);
 }
 

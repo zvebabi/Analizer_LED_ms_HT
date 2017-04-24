@@ -1,6 +1,7 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.1
 import QtQuick.Layouts 1.3
+import "QMLs"
 
 Item {
     Connections {
@@ -17,7 +18,7 @@ Item {
 
         Button {
             id: listDeviceBTN
-            text: qsTr("ListDevice")
+            contentItem: ButtonLabel {text: qsTr("ListDevice")}
             width: 250
             onClicked: {//getPorts()
                 reciever.getListOfPort()
@@ -43,7 +44,7 @@ Item {
 
         Button {
             id: connectBTN
-            text: qsTr("Connect")
+            contentItem: ButtonLabel {text: qsTr("Connect")}
             width: 250
             onClicked: reciever.initDevice(portsComboList.currentText,
                                   baudRateComboList.currentText)

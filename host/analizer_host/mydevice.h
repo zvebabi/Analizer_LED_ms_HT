@@ -5,6 +5,7 @@
 #include <QScreen>
 #include <QtGui/QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <QDebug>
 #ifdef Q_OS_ANDROID
 #include <QtAndroidExtras>
 #endif

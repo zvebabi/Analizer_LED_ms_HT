@@ -58,20 +58,20 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         width: parent.width
-        height: width*0.2
-        color: palette.primary //"#3078fe" //this color is equal to the background of imgLogo
+        height: width*0.445
+        color: "white"//palette.primary //"#3078fe" //this color is equal to the background of imgLogo
         clip: true
-//        Image {
-//            id: imgLogo
-//            source: "qrc:/images/background.jpg"
-//            height: parent.height
-//            width: parent.width
-//            antialiasing: true
-//            smooth: true
-//            anchors.top: parent.top
-//            anchors.left: parent.left
-//            opacity: 0.5
-//        }
+        Image {
+            id: imgLogo
+            source: "qrc:/images/logo.png"
+            height: parent.height
+            width: parent.width
+            antialiasing: true
+            smooth: true
+            anchors.top: parent.top
+            anchors.left: parent.left
+            opacity: 0.9
+        }
     }
 //    Image {
 //        id: imgShadow
@@ -98,7 +98,7 @@ Item {
 
         Rectangle {
             id: wrapperItem
-            height: 30*app.dp
+            height: 40*app.dp
             width: parent.width
             color: wrapperItem.ListView.isCurrentItem || ma.pressed ? palette.currentHighlightItem : "transparent"
 //            Image {
@@ -121,7 +121,7 @@ Item {
                 x: 10
                 anchors.leftMargin: 0.7*parent.height*0.5
                 text: textItemMenu( item )
-                font.pixelSize: parent.height*0.3
+                font.pixelSize: parent.height*0.4
                 color: wrapperItem.ListView.isCurrentItem ? palette.darkPrimary : palette.primaryText
             }
 

@@ -31,8 +31,10 @@ public slots:
 //    void doCalibration();
     void saveDataToCSV(QString filename);
     void deleteSeries(QtCharts::QAbstractSeries *series);
+
 signals:
     void sendPortName(QString port);
+    void adjustAxis(QPointF minRng, QPointF maxRng);
 private:
     void update(QtCharts::QAbstractSeries *series);
 
@@ -43,6 +45,7 @@ private:
     QList<QVector<QPointF> > m_data;
     QMap< QtCharts::QAbstractSeries*, QVector<QPointF> > lines;
     QString documentsPath;
+    QVector<QPointF> rangeVal; //min[0] max[1]
 //    QVector<QtCharts::QAbstractSeries *series> saved_graphs;
 //    int baudRate;
   int m_index;

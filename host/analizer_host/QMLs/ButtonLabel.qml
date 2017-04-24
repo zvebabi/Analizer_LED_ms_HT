@@ -4,9 +4,9 @@ Text {
     anchors.fill: parent
     horizontalAlignment: Text.AlignHCenter
     verticalAlignment: Text.AlignVCenter
-    font.bold: true
-    font.pixelSize: parent.height * .34
+//    font.bold: true
+//    font.pixelSize: parent.height * .34
     font.family: "DejaVu Sans Mono"
-    color: "white"
-    // text: "Тест"
+//    color: "white"
+     text: "Тест"
 }

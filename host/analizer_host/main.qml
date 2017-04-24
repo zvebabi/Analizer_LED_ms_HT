@@ -1,8 +1,9 @@
-import QtQuick 2.7
+import QtQuick 2.8
 import QtQuick.Controls 2.1
 import QtQuick.Layouts 1.3
-
-import QtQuick.Controls.Material 2.1
+import QtQuick.Controls.Material 2.2
+import QtQuick.Window 2.0
+import Qt.labs.platform 1.0
 import "QMLs"
 import mydevice 1.0
 
@@ -37,14 +38,14 @@ ApplicationWindow {
 
             property color currentHighlightItem: "#dcdcdc"
     }
-    property alias currentPage: loader.source
-    property int menuWidth : 150*app.dp// width/4
+//    property alias currentPage: loader.source
+    property int menuWidth : 250*app.dp// width/4
     property int widthOfSeizure: 15*app.dp
     property real menuProgressOpening
     property bool menuIsShown:
         Math.abs(menuView.x) < (menuWidth*0.5) ? true : false
 
-    Rectangle {
+      Rectangle {
       id: menuBar
       z: 5
       anchors.top: parent.top
@@ -169,37 +170,19 @@ ApplicationWindow {
 
     Component.onCompleted: {
 //        currentPage = "Settings.qml"
-        mainMenu.currentItem = 1
+        mainMenu.currentItem = 0
     }
-
-
     SwipeView {
-       id: view
-
-       currentIndex: mainMenu.currentItem //bar.currentIndex
-       anchors.fill: parent
-       anchors.top: menuBar.Bottom
-       ChartView {
-       }
-       Settings {
-       }
-       Item{
-       }
+        id: view
+        currentIndex: mainMenu.currentItem
+        anchors.fill: parent
+        anchors.top: menuBar.Bottom
+        ChartView {
+        }
+        Settings {
+        }
+        Item {
+        }
     }
-//    TabBar {
-//        id: bar
-//        width: parent.width
-//        currentIndex: view.currentIndex
-//        TabButton {
-//           text: qsTr("Charts")
-//        }
-//        TabButton {
-//           text: qsTr("Settings")
-//        }
-//        TabButton {
-//           text: qsTr("N/A")
-//        }
-////        position: parent.footer()
-//    }
 
 }
