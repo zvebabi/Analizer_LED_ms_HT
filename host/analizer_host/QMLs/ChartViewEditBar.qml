@@ -7,7 +7,6 @@ import QtGraphicalEffects 1.0
 
 Column {
     id: ctrlPane
-//            anchors.alignWhenCentered: parent.top
     spacing: 3
     property int itemWidth: 200*app.dp
     Label { text: qsTr("Sample name.")}
@@ -171,7 +170,7 @@ Column {
     }
 
     Rectangle {
-        width: itemWidth; height: 200
+        width: itemWidth; height: 400*app.dp
         anchors.topMargin: 50
 
 //        Component {
@@ -217,15 +216,15 @@ Column {
             }
         }
     }
-    Button {
-        text: "check"
-        onClicked: {
-            for(var i = 0; i< tableOfSeries.count; i++) {
-                tableOfSeries.currentIndex = i;
-               console.log( tableOfSeries.currentItem.text)
-            }
-        }
-    }
+//    Button {
+//        text: "check"
+//        onClicked: {
+//            for(var i = 0; i< tableOfSeries.count; i++) {
+//                tableOfSeries.currentIndex = i;
+//               console.log( tableOfSeries.currentItem.text)
+//            }
+//        }
+//    }
 
   /*
     Button {

@@ -45,6 +45,26 @@ Item {
                 max:100
                 tickCount: (max-min)/120
             }
+            MouseArea {
+                anchors.fill: parent
+                property int lastX: 0
+                property int lastY: 0
+                onPressed: {
+                    lastX = mouse.x
+                    lastY = mouse.y
+                }
+
+                onPositionChanged: {
+                    if (lastX !== mouse.x) {
+                        graphs.scrollRight(lastX - mouse.x)
+                        lastX = mouse.x
+                    }
+                    if (lastY !== mouse.y) {
+                        graphs.scrollDown(lastY - mouse.y)
+                        lastY = mouse.y
+                    }
+                }
+            }
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.minimumWidth: 320
