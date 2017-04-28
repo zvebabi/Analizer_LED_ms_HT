@@ -28,7 +28,7 @@ Item {
         ListElement {
             item: "dataDialog"
 //            icon: "qrc:/images/icon_info.png"
-            page: "dataDialog"
+            page: "DataDialog.qml"
         }
     }
 
@@ -45,8 +45,8 @@ Item {
         case "about":
             textReturn = qsTr("About")
             break;
-        case "log":
-            textReturn = "Log"
+        case "dataDialog":
+            textReturn = "dataDialog"
             break;
         }
         return textReturn

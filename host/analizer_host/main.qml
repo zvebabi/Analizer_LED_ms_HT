@@ -174,6 +174,7 @@ ApplicationWindow {
     }
     SwipeView {
         id: view
+        interactive: false
         currentIndex: mainMenu.currentItem
         anchors.fill: parent
         anchors.top: menuBar.Bottom

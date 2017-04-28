@@ -20,7 +20,7 @@ class analizerCDC : public QObject
     Q_OBJECT
 public:
     explicit analizerCDC(QObject *parent = 0);
-
+    ~analizerCDC();
 public slots:
     void cppSlot(const QString &msg);
 
@@ -40,7 +40,7 @@ private:
 
 
     std::vector<QString> ports;
-    QSerialPort* device;
+    QSerialPort* device = NULL;
     QSerialPort::BaudRate baudRate;
     QList<QVector<QPointF> > m_data;
     QMap< QtCharts::QAbstractSeries*, QVector<QPointF> > lines;

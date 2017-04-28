@@ -8,7 +8,7 @@ Item {
         target: reciever
         onSendPortName: {
             availablePorts.append({"text": port});
-            console.log("Received in QML from C++: " + port)
+            console.log(port)
         }
     }
 
@@ -21,6 +21,7 @@ Item {
             contentItem: ButtonLabel {text: qsTr("ListDevice")}
             width: 250
             onClicked: {//getPorts()
+                availablePorts.clear()
                 reciever.getListOfPort()
             }
         }

@@ -1,11 +1,13 @@
 TEMPLATE = app
 QT += qml quick serialport quickcontrols2 widgets charts
-#QMAKE_CXXFLAGS += -O3 -g3
 CONFIG += c++17 #force_debug_info
 TARGET = Analizer
 
 android: {
 QT += androidextras
+}
+linux: {
+QMAKE_CXXFLAGS += -O3 -g3
 }
 
 SOURCES += main.cpp \

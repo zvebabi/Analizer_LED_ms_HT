@@ -31,19 +31,27 @@ Item {
             title: "Result"
             antialiasing: true
             property int numSeries : 0 //current number of graphs
+//            BarCategoryAxis {
+//                id: axisX
+//                objectName: "axisX"
+//                categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun" ]
+
+//            }
             ValueAxis {
                 id: axisX
                 objectName: "axisX"
                 min: 0
                 max: 100
-                tickCount: 20
+                tickCount: 10
+                minorTickCount: 4
             }
             ValueAxis {
                 id: axisY
                 objectName: "axisY"
                 min: 0
                 max:100
-                tickCount: (max-min)/120
+                tickCount: 5
+                minorTickCount: 4
             }
             MouseArea {
                 anchors.fill: parent
@@ -52,6 +60,9 @@ Item {
                 onPressed: {
                     lastX = mouse.x
                     lastY = mouse.y
+                }
+                onReleased: {
+//                    view.interactive : true
                 }
 
                 onPositionChanged: {

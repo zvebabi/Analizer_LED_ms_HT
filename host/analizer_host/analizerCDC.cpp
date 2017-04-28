@@ -9,6 +9,15 @@ analizerCDC::analizerCDC(QObject *parent) : QObject(parent)
     rangeVal.append(QPointF(0,0));
 }
 
+analizerCDC::~analizerCDC()
+{
+    if (device != NULL)
+    {
+        device->disconnect();
+        delete device;
+    }
+}
+
 void analizerCDC::cppSlot(const QString &msg)
 {
     //Найдем строки ввода
@@ -34,7 +43,7 @@ void analizerCDC::cppSlot(const QString &msg)
 
 void analizerCDC::initDevice(QString port, QString baudR)
 {
-#if 1
+#if 0
     qDebug() << port << "\n" << baudR;
 #else
     foreach(const QSerialPortInfo &info, QSerialPortInfo::availablePorts()){
@@ -51,6 +60,7 @@ void analizerCDC::initDevice(QString port, QString baudR)
     device->setParity(QSerialPort::NoParity);
     device->setStopBits(QSerialPort::OneStop);
     device->setFlowControl(QSerialPort::NoFlowControl);
+    qDebug() << "Connected to: " << device->portName();
 #endif
 }
 
@@ -58,11 +68,10 @@ void analizerCDC::getListOfPort()
 {
     foreach(const QSerialPortInfo &info, QSerialPortInfo::availablePorts()){
         ports.push_back(info.portName());
-//        emit sendPortName(info.portName());
+        emit sendPortName(info.portName());
         qDebug() << info.portName();
     }
-    qDebug() << "dfd";
-    emit sendPortName(QString("teststr"));
+//    emit sendPortName(QString("teststr"));
 //    QObject* comboBox = this->parent()->findChild<QObject*>("availablePorts");
     //    comboBox->setProperty("append", info.portName());
 }
