@@ -14,8 +14,8 @@ ApplicationWindow {
 //    visibility: "FullScreen"
     width: 960
     height: 540
-    minimumHeight: 270
-    minimumWidth: 480
+    minimumHeight: 540
+    minimumWidth: 960
     title: appTitle
 
     Material.theme: Material.Light

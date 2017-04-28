@@ -8,7 +8,7 @@ import QtGraphicalEffects 1.0
 Column {
     id: ctrlPane
     spacing: 3
-    property int itemWidth: 200*app.dp
+    property int itemWidth: 300*app.dp
     TextField {
         id: lineLabel
 //        text: qsTr("sample")
@@ -19,11 +19,11 @@ Column {
             ToolTip.text: qsTr("Enter sample name")
     }
     Row {
-
         Rectangle {
-            width: itemWidth; height: 400*app.dp
+            width: ctrlPane.itemWidth - chartEditMenu.width
+            height: 400*app.dp
             anchors.topMargin: 50
-
+            color: "transparent"
     //        Component {
     //            id: seriesDelegate
     //            Item {
@@ -49,12 +49,12 @@ Column {
             ListView {
                 anchors.fill: parent
                 id: tableOfSeries
-                width: itemWidth*0.9
                 model: ListModel { id: tableModel }
                 delegate: CheckDelegate {
                     text: name
                     checked: isChecked
                     background: Rectangle {color: seriesColor}
+                    width: ctrlPane.itemWidth - runAnalizer.width
                 }//seriesDelegate
     //            highlight: Rectangle { color: "lightsteelblue"; radius: 5 }
                 focus: true

@@ -41,6 +41,7 @@ Item {
             ValueAxis {
                 id: axisX
                 objectName: "axisX"
+                titleText: qsTr("Wavelength(nm)")
                 min: 0
                 max: 100
                 tickCount: 10
@@ -49,6 +50,7 @@ Item {
             ValueAxis {
                 id: axisY
                 objectName: "axisY"
+                titleText: qsTr("Absorbance")
                 min: 0
                 max:100
                 tickCount: 5
