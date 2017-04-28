@@ -28,8 +28,9 @@ Item {
 
         ChartView {
             id: graphs
-            title: "Result"
+//            title: "Result"
             antialiasing: true
+            legend.visible: false
             property int numSeries : 0 //current number of graphs
 //            BarCategoryAxis {
 //                id: axisX
@@ -80,6 +81,7 @@ Item {
             Layout.fillHeight: true
             Layout.minimumWidth: 320
             Layout.minimumHeight: 240
+
         }
         ChartViewEditBar {
 

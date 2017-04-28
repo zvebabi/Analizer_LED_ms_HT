@@ -9,14 +9,15 @@ import mydevice 1.0
 
 ApplicationWindow {
     id:app
-
+    property string appTitle: "Led Minispectrometer"
     visible: true
+//    visibility: "FullScreen"
     width: 960
     height: 540
     minimumHeight: 270
     minimumWidth: 480
-    title: qsTr("Analizer v0.1")
-    property string appTitle: "Analizer v0.1"
+    title: appTitle
+
     Material.theme: Material.Light
     Material.primary: Material.BlueGrey
     Material.accent: Material.Teal

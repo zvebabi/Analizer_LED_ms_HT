@@ -25,11 +25,11 @@ Item {
 //            icon: "qrc:/images/icon_info.png"
             page: "PageAbout.qml"
         }
-        ListElement {
-            item: "dataDialog"
-//            icon: "qrc:/images/icon_info.png"
-            page: "DataDialog.qml"
-        }
+//        ListElement {
+//            item: "dataDialog"
+////            icon: "qrc:/images/icon_info.png"
+//            page: "DataDialog.qml"
+//        }
     }
 
     function textItemMenu( item )
@@ -87,18 +87,18 @@ Item {
         anchors.top: logoWtapper.bottom
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.bottom: parent.bottom
+        anchors.bottom: quitButton.top
+//        height:wrapperItem.height * modelMenu.count
         clip: true
         model: modelMenu
         delegate: componentDelegate
     }
-
     Component {
         id: componentDelegate
 
         Rectangle {
             id: wrapperItem
-            height: 40*app.dp
+            height: 50*app.dp
             width: parent.width
             color: wrapperItem.ListView.isCurrentItem || ma.pressed ? palette.currentHighlightItem : "transparent"
 //            Image {
@@ -113,7 +113,6 @@ Item {
 //                smooth: true
 //                antialiasing: true
 //            }
-
             Label {
                 id: textItem
                 anchors.verticalCenter: parent.verticalCenter
@@ -124,8 +123,6 @@ Item {
                 font.pixelSize: parent.height*0.4
                 color: wrapperItem.ListView.isCurrentItem ? palette.darkPrimary : palette.primaryText
             }
-
-
             MouseArea {
                 id: ma
                 anchors.fill: parent
@@ -137,6 +134,35 @@ Item {
             }
         }
 
+    }
+    Rectangle {
+        id:quitButton
+//        anchors.top: listViewMenu.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        width: parent.width
+        height: 50*app.dp
+        color: "transparent"
+        Label {
+            id: quitBtnLbl
+            anchors.verticalCenter: parent.verticalCenter
+//            anchors.left: imgItem.right
+            x: 10
+            anchors.leftMargin: 0.7*parent.height*0.5
+            text: qsTr("Quit")
+            font.pixelSize: parent.height*0.4
+            color: palette.primaryText
+        }
+        MouseArea {
+            id: ma1
+            anchors.fill: parent
+            enabled: app.menuIsShown
+            onClicked: {
+                //TODO: dialog "are you sure?
+                Qt.quit()
+            }
+        }
     }
 }
 
