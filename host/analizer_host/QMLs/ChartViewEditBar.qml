@@ -115,17 +115,22 @@ Column {
                 }
                 Dialog {
                     id: fileNameDlg
-                    title: qsTr("Enter new name")
+                    title: qsTr("Enter file name")
                     visible: false
     //                width: newName.width
                     TextField {
                         id:fileNameTF
-                        placeholderText: qsTr("Image name")
+                        placeholderText: qsTr("File name")
                     }
                     standardButtons: StandardButton.OK
                     onAccepted: {
                         reciever.saveDataToCSV(fileNameTF.text + ".csv");
+                        var path = reciever.getDataPath() +
+                                fileNameTF.text + ".csv"
                         fileNameTF.text = ""
+                        tipsWithPath.showedText = qsTr("Data saved to: \n" +
+                                                       path)
+                        tipsWithPath.open()
                     }
                 }
                 onClicked: fileNameDlg.open()
@@ -144,7 +149,7 @@ Column {
                 }
                 Dialog {
                     id: imgNameDlg
-                    title: qsTr("Enter new name")
+                    title: qsTr("Enter image name")
                     visible: false
     //                width: newName.width
                     TextField {
@@ -160,6 +165,9 @@ Column {
                         });
                         console.log(path)
                         imgNameTF.text = ""
+                        tipsWithPath.showedText = qsTr("Image saved to: \n" +
+                                                       path)
+                        tipsWithPath.open()
                     }
                 }
                 onClicked: imgNameDlg.open()

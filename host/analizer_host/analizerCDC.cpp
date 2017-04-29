@@ -117,7 +117,7 @@ void analizerCDC::saveDataToCSV(QString filename="data.csv")
     if (!dataDir.exists())
         dataDir.mkpath(".");
 
-    std::fstream f(QString(documentsPath+"/"+filename+".csv").toStdString(), std::fstream::out);
+    std::fstream f(QString(documentsPath+"/"+filename).toStdString(), std::fstream::out);
     if (!f.is_open())
         qDebug() << "can't open file\n";
     int i = 1;

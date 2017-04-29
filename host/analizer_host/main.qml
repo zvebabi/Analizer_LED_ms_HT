@@ -186,5 +186,21 @@ ApplicationWindow {
         Item {
         }
     }
+    Popup {
+        id: tipsWithPath
+        x: app.width/2 - width/2
+        y: app.height/2 - height/2
+//        width: 200
+//        height: 300
+//        modal: true
+        focus: true
+        property string showedText: qsTr("text in popup")
+        Text {
+            id: textInPopup
+            anchors.centerIn: tipsWithPath.Center
+            text: tipsWithPath.showedText
+        }
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+    }
 
 }
