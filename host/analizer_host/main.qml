@@ -9,7 +9,7 @@ import mydevice 1.0
 
 ApplicationWindow {
     id:app
-    property string appTitle: "Led Minispectrometer"
+    property string appTitle: "LED Minispectrometer"
     visible: true
 //    visibility: "FullScreen"
     width: 960

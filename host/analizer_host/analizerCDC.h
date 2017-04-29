@@ -26,7 +26,7 @@ public slots:
 
     void initDevice(QString port, QString baudR);
     void getListOfPort();
-
+    QString getDataPath() {return documentsPath;}
     void doMeasurements(QtCharts::QAbstractSeries *series);
 //    void doCalibration();
     void saveDataToCSV(QString filename);

@@ -24,39 +24,21 @@ Column {
             height: 400*app.dp
             anchors.topMargin: 50
             color: "transparent"
-    //        Component {
-    //            id: seriesDelegate
-    //            Item {
-    //                width: itemWidth; height: 50*app.dp
-    //                Rectangle {
-    //                    CheckBox {
-    //                        id: checkBox
-    ////                        height: 40
-    ////                        width: height
-    //                        onCheckStateChanged: {
-    //                             tableModel.setProperty(index, "isChecked", !tableModel.get(index).isChecked)
-    //                            console.log(tableModel.get(index).isChecked)
-    //                        }
-    //                    }
-    //                    Text {
-    //                        anchors.left: checkBox.right
-    //                        anchors.verticalCenter: checkBox.verticalCenter
-    //                        text: name }
-    //                }
-    //            }
-    //        }
-
             ListView {
-                anchors.fill: parent
                 id: tableOfSeries
+                anchors.fill: parent
                 model: ListModel { id: tableModel }
                 delegate: CheckDelegate {
                     text: name
                     checked: isChecked
                     background: Rectangle {color: seriesColor}
                     width: ctrlPane.itemWidth - runAnalizer.width
-                }//seriesDelegate
-    //            highlight: Rectangle { color: "lightsteelblue"; radius: 5 }
+                    height: 45*app.dp
+                    onDoubleClicked: {//rename sample
+                        tableOfSeries.currentIndex = index
+                        renameDlg.visible = true;
+                    }
+                }
                 focus: true
                 keyNavigationEnabled: true
                 ScrollIndicator.vertical: ScrollIndicator { }
@@ -65,6 +47,23 @@ Column {
                         NumberAnimation { property: "opacity"; to: 0; duration: 1000 }
                         NumberAnimation { properties: "x,y"; to: 100; duration: 1000 }
                     }
+                }
+            }
+            Dialog {
+                id: renameDlg
+                title: qsTr("Enter new name")
+                visible: false
+//                width: newName.width
+                TextField {
+                    id:newName
+                    placeholderText: qsTr("Enter new name")
+                }
+                standardButtons: StandardButton.OK
+                onAccepted: {
+                    console.log(newName.text)
+                    graphs.series(tableOfSeries.currentItem.text).name = newName.text
+                    tableOfSeries.currentItem.text = newName.text
+                    newName.text = ""
                 }
             }
         }
@@ -77,7 +76,7 @@ Column {
                 height: 48*app.dp
                 width: height
                 ToolTip.visible: hovered
-                    ToolTip.text: qsTr("Run LED Minispectrometer")
+                    ToolTip.text: qsTr("Run " +app.appTitle)
                 Image {
                     anchors.centerIn: parent
                     width: parent.width
@@ -96,7 +95,7 @@ Column {
                     reciever.doMeasurements(graphs.series(seriesName));
                     tableModel.append({
                        "name": seriesName,
-                       "isChecked": false,
+                       "isChecked": true,
                        "seriesColor": graphs.series(seriesName).color.toString() })
                 }
             }
@@ -114,7 +113,22 @@ Column {
                     antialiasing: true
                     smooth: true
                 }
-                onClicked: reciever.saveDataToCSV(lineLabel.text);
+                Dialog {
+                    id: fileNameDlg
+                    title: qsTr("Enter new name")
+                    visible: false
+    //                width: newName.width
+                    TextField {
+                        id:fileNameTF
+                        placeholderText: qsTr("Image name")
+                    }
+                    standardButtons: StandardButton.OK
+                    onAccepted: {
+                        reciever.saveDataToCSV(fileNameTF.text + ".csv");
+                        fileNameTF.text = ""
+                    }
+                }
+                onClicked: fileNameDlg.open()
             }
             ToolButton {
                 id: saveImage
@@ -128,29 +142,27 @@ Column {
                     antialiasing: true
                     smooth: true
                 }
-                FileDialog {
-                    id: imgSaveDialog
-                    title: "Please choose a file"
-                    selectExisting: false
-                    nameFilters: [
-                        "Image files (*.bmp *.jpg *.png)", "All files (*)" ]
-                    folder: shortcuts.documents
-                    onAccepted: {
-                        var path = imgSaveDialog.fileUrl.toString();
-                        path= path.replace(
-                                   /^(file:\/{2})|(qrc:\/{2})|(http:\/{2})/,"");
-                        // unescape html codes like '%23' for '#'
-                        var cleanPath = decodeURIComponent(path);
-                        console.log("image saved to " + cleanPath)
-                        graphs.grabToImage(function(result) {
-                            result.saveToFile(cleanPath);
-                        });
+                Dialog {
+                    id: imgNameDlg
+                    title: qsTr("Enter new name")
+                    visible: false
+    //                width: newName.width
+                    TextField {
+                        id:imgNameTF
+                        placeholderText: qsTr("Image name")
                     }
-                    onRejected: { console.log("Canceled") }
+                    standardButtons: StandardButton.OK
+                    onAccepted: {
+                        var path = reciever.getDataPath() +
+                                imgNameTF.text + ".png"
+                        graphs.grabToImage(function(result) {
+                            result.saveToFile(path);
+                        });
+                        console.log(path)
+                        imgNameTF.text = ""
+                    }
                 }
-                onClicked: {
-                    imgSaveDialog.open();
-                }
+                onClicked: imgNameDlg.open()
             }
             ToolButton {
                 id: zoomIn
@@ -186,6 +198,34 @@ Column {
                 }
             }
             ToolButton {
+                id: setSeriesVisible
+                height: 48*app.dp
+                width: height
+                ToolTip.visible: hovered
+                    ToolTip.text: qsTr("Zoom Out")
+                Image {
+                    anchors.fill: parent
+                    source: "qrc:/images/setVisible.png"
+                    antialiasing: true
+                    smooth: true
+                }
+                onClicked: {//if checked vis=true, else false
+                    for(var i = tableOfSeries.count-1; i>=0 ; i--) {
+                        tableOfSeries.currentIndex = i;
+                        if (tableOfSeries.currentItem.checked) {
+                            graphs.series(tableOfSeries.currentItem.text
+                                          ).visible = true;
+                            console.log("Series: " +
+                                        tableOfSeries.currentItem.text +
+                                        " is off.");
+                        } else {
+                            graphs.series(tableOfSeries.currentItem.text
+                                          ).visible = false;
+                        }
+                    }
+                }
+            }
+            ToolButton {
                 id: deleteSeries
                 height: 48*app.dp
                 width: height
@@ -208,95 +248,22 @@ Column {
                         for(var i = tableOfSeries.count-1; i>=0 ; i--) {
                             tableOfSeries.currentIndex = i;
                             if (tableOfSeries.currentItem.checked) {
-                                reciever.deleteSeries(graphs.series(tableOfSeries.currentItem.text));
-                                graphs.removeSeries(graphs.series(tableOfSeries.currentItem.text));
+                                reciever.deleteSeries(
+                                            graphs.series(
+                                               tableOfSeries.currentItem.text));
+                                graphs.removeSeries(
+                                            graphs.series(
+                                               tableOfSeries.currentItem.text));
                                 tableModel.remove(i);
-                                console.log("Series: " + tableOfSeries.currentItem.text+ " deleted.");
+                                console.log("Series: " +
+                                            tableOfSeries.currentItem.text +
+                                            " deleted.");
                             }
                         }
                     }
                 }
-                onClicked: {
-                    messageDialog.setVisible(true)
-                }
+                onClicked: { messageDialog.setVisible(true) }
             }
         }
     }
-
-//    Button {
-//        text: "check"
-//        onClicked: {
-//            for(var i = 0; i< tableOfSeries.count; i++) {
-//                tableOfSeries.currentIndex = i;
-//               console.log( tableOfSeries.currentItem.text)
-//            }
-//        }
-//    }
-
-  /*
-    Button {
-        contentItem: ButtonLabel {text: qsTr("Analize")}
-        width: ctrlPane.itemWidth
-//                height :width/2.5
-        onClicked: {
-            graphs.numSeries++;
-            var seriesName = qsTr(lineLabel.text + "_"
-                                  + graphs.numSeries)
-            graphs.createSeries(ChartView.SeriesTypeLine,
-                                seriesName,
-                                axisX, axisY);
-            reciever.doMeasurements(graphs.series(seriesName));
-            name4Del.text = seriesName
-            allSeriesName.append(seriesName)
-        }
-    }
-    TextField {
-        id: name4Del
-        selectByMouse: true
-        width: ctrlPane.itemWidth
-    }
-    Button {
-        width: ctrlPane.itemWidth
-        contentItem: ButtonLabel {text: qsTr("Delete")}
-        onClicked: {
-            console.log(name4Del.text)
-            reciever.deleteSeries(graphs.series(name4Del.text));
-            graphs.removeSeries(graphs.series(name4Del.text));
-        }
-    }
-    Button {
-        width: ctrlPane.itemWidth
-//                height :width/2.5
-        contentItem: ButtonLabel {text: qsTr("Save data")}
-        FileDialog {
-            id: dataSaveDialog
-            title: "Please choose a file"
-            selectExisting: false
-            nameFilters: [
-                "Data files (*.csv *.dat *.txt)", "All files (*)" ]
-            folder: shortcuts.documents
-            onAccepted: {
-                var path = dataSaveDialog.fileUrl.toString();
-                path = path.replace(
-                           /^(file:\/{2})|(qrc:\/{2})|(http:\/{2})/,"");
-                // unescape html codes like '%23' for '#'
-                var cleanPath = decodeURIComponent(path);
-                console.log("You chose: " + cleanPath);
-                reciever.saveDataToCSV(cleanPath);
-            }
-            onRejected: {
-                console.log("Canceled")
-            }
-        }
-        onClicked: {
-//                    dataSaveDialog.open();
-            reciever.saveDataToCSV(lineLabel.text);}
-    }
-    Button {
-        width: ctrlPane.itemWidth
-//                height :width/2.5
-        contentItem: ButtonLabel {text: qsTr("Save graph")}
-
-    }
-*/
 }
