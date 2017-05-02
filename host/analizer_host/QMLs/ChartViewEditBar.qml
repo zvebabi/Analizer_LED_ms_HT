@@ -210,7 +210,7 @@ Column {
                 height: 48*app.dp
                 width: height
                 ToolTip.visible: hovered
-                    ToolTip.text: qsTr("Zoom Out")
+                    ToolTip.text: qsTr("Show only selected series")
                 Image {
                     anchors.fill: parent
                     source: "qrc:/images/setVisible.png"

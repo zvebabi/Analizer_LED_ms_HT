@@ -1,5 +1,6 @@
 import QtQuick 2.5
 import QtQuick.Controls 1.4
+import QtQuick.Dialogs 1.2
 
 
 Item {
@@ -154,13 +155,31 @@ Item {
             font.pixelSize: parent.height*0.4
             color: palette.primaryText
         }
+        MessageDialog {
+            id: exitDialog
+            title: "Quit"
+            text: "Save dataset before exit?"
+            standardButtons: StandardButton.Ok | StandardButton.Cancel
+            icon: StandardIcon.Question
+            onAccepted: {
+                var path = reciever.getDataPath() + "dataset.csv"
+                tipsWithPath.showedText = qsTr("Data saved to:\n" + path)
+                tipsWithPath.open()
+                reciever.saveDataToCSV("dataset.csv")
+                waiter.running = true
+            }
+        }
+        Timer {
+            id:waiter
+            interval: 1000; running: false; repeat: false
+            onTriggered: Qt.quit()
+        }
         MouseArea {
             id: ma1
             anchors.fill: parent
             enabled: app.menuIsShown
             onClicked: {
-                //TODO: dialog "are you sure?
-                Qt.quit()
+                exitDialog.setVisible(true)
             }
         }
     }
