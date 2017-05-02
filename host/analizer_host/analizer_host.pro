@@ -1,7 +1,7 @@
 TEMPLATE = app
 QT += qml quick serialport quickcontrols2 widgets charts
 CONFIG += c++17 #force_debug_info
-TARGET = Analizer
+TARGET = LEDMinispectrometer
 
 android: {
 QT += androidextras
