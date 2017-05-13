@@ -8,6 +8,7 @@
 
 #include "Arduino.h"
 #include <stdio.h>
+#include <stdint.h>
 #include <util/delay.h>
 #include <avr/eeprom.h>
 #include <SPI.h>

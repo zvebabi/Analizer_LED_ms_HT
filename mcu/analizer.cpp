@@ -110,7 +110,7 @@ void loop()
 				/// One mode of measurements with option of coeffs calibration \n
 				/// Manually choosing preamps parameters \n
 				/// Sample&Holde mode
-				doMeasurementsSH();
+				doMeasurementsSH(0, false);
 				break;
 			}
 			case 'm':
@@ -119,7 +119,7 @@ void loop()
 				/// One mode of measurements with option of coeffs calibration \n
 				/// Manually choosing preamps parameters \n
 				/// Inpulse measurements mode
-				doMeasurements();
+				doMeasurements(0, false);
 				break;
 			}
 			case 'a':
