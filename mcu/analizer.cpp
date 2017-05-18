@@ -52,9 +52,9 @@ void setup() {
 	PORTD &= ~((1 << SH_SET) | (1 << SH_SET));
 
 	//shift registr init
-	DDRB |= (1<< SR_ENABLE);
-	DDRD |= (1 << SR_CLR) | (1 << SR_CLK) | (1 << SR_DATA);
-	PORTB |= (1 << SR_ENABLE);      //OE HIGH - disable
+//	DDRB |= ;
+	DDRD |= (1 << SR_CLR) | (1 << SR_CLK) | (1 << SR_DATA) | (1<< SR_ENABLE);
+	PORTD |= (1 << SR_ENABLE);      //OE HIGH - disable
 	PORTD &= ~((1 << SR_CLR) | (1 << SR_CLK) | (1 << SR_DATA));   //set  SRCLR / RCLK / SER -LOW
 
 	//initialize SPI
@@ -71,7 +71,7 @@ void setup() {
 
 	shiftRegisterReset();
 //	shiftRegisterFirst();
-	PORTB &= (~(1 << SR_ENABLE));  //OE HIGH - enble shiftreg
+	PORTD &= (~(1 << SR_ENABLE));  //OE HIGH - enble shiftreg
 }
 
 /**
@@ -328,7 +328,7 @@ void factoryCalibr()
 				case 'd': //random init
 				{
 					etalon_t etalons[NUM_OF_ETALON];
-					setPulseWidth(120);
+					setPulseWidth(40);
 					setC_R(3.9);
 					for (uint8_t i=0;i< NUM_OF_LED; i++)
 					{
@@ -982,9 +982,9 @@ void shiftRegisterFirst() {
 
 void disableLED()
 {
+	GEN1=0;
 	setCurrent(1, 0);		//disable led
 	setCurrent(2, 0);		//
-	GEN1=0;
 }
 
 //Функция очистки serial monitor
@@ -1012,14 +1012,17 @@ void setPreAmp(float RWB1, float RWB2) {
 	uint8_t RWB2_code = 0;
 	RWB1_code = (RWB1 * 255.0)/100;
 	RWB2_code = (RWB2 * 255.0)/100;
+	cli();
 
 	PREAMP_PORT &= (~(1 << SS_PREAMP));  //SS_AD5141 LOW
 	_delay_us(WBDelay);
-	cli();
 	SPI.transfer(B00010000);    //Write to RDAC
 	SPI.transfer(RWB2_code);
 	SPI.transfer(B00010000);    //Write to RDAC
 	SPI.transfer(RWB1_code);
+
+	_delay_us(WBDelay);
+
 	//read data from resistance
 	SPI.transfer(B00110000);    //Read from RDAC
 	RWB2_code = SPI.transfer(B00000011); //second

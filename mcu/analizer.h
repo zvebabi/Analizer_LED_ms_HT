@@ -16,28 +16,36 @@
 #define GeneratorPin 9
 #define ShiftRegisterDelay 1
 #define DACDelay 1
-#define WBDelay  1000
+#define WBDelay  1
 #define DISCHARGE_DELAY 50
 #define PULSE_DELAY 25
 #define REFERENCE_V 3000.0
 #define NUM_OF_LED 45
 #define NUM_OF_ETALON 3
-#define MAX_PULSE_WIDTH 150
+#define MAX_PULSE_WIDTH 60
 #define MAX_CURRENT 1000
 
 //define SPI pins
-#define ADC_PORT PORTE
+#define ADC_PORT PORTF
 #define DAC_PORT PORTF
-#define PREAMP_PORT PORTB
-#define SS_ADC PE6
-#define SS_PREAMP PB4
-#define SS_DAC PF1
+#define PREAMP_PORT PORTF
+#define EEPROM_PORT PORTF
+#define SS_ADC PF6
+#define SS_PREAMP PF7
+#define SS_DAC PF5
+#define SS_EEPROM PF4
 
 //define Shift reg pins
-#define SR_ENABLE PB7
-#define SR_CLR PD4
-#define SR_DATA PD7
-#define SR_CLK PD6
+#define SR_ENABLE PD0 //PB7
+#define SR_CLR PD3 //PD4
+#define SR_DATA PD2 //PD7
+#define SR_CLK PD1 //PD6
+
+//define indicator pins
+#define SR_IND_ENABLE PB6
+#define SR_IND_CLR PD7
+#define SR_IND_DATA PD6
+#define SR_IND_CLK PD5
 
 //define sample and hold pins
 #define SH_PORT PORTD
@@ -45,8 +53,9 @@
 #define SH_RESET PD1
 
 //pulse pin
-#define GEN1 OCR1A
-#define GEN2 OCR1B
+#define GEN1 OCR1A //ir led
+#define GEN2 OCR1B //indicator
+#define GEN3 OCR1C //single indicator
 
 /**
  *
