@@ -46,6 +46,7 @@
 #define SR_IND_CLR PD7
 #define SR_IND_DATA PD6
 #define SR_IND_CLK PD5
+#define WHITE_LED PB7
 
 //define sample and hold pins
 #define SH_PORT PORTD
@@ -57,16 +58,17 @@
 #define GEN2 OCR1B //indicator
 #define GEN3 OCR1C //single indicator
 
+#define BTN PE6
 /**
  *
  */
 typedef struct
 {
-	float k[NUM_OF_LED];
 	float g1;
 	float g2mid;
 	float g2min;
 	float g2max;
+	float k[NUM_OF_LED];
 }  etalon_t ;
 
 /**
@@ -82,11 +84,73 @@ typedef struct
  * allocate eeprom variable
  */
 uint8_t EEMEM _empty[20] = {0xF};
-uint16_t EEMEM _pulseWidth = 80;
+uint16_t EEMEM _pulseWidth = 120;
 float EEMEM _c_R = 3.9;
-current_t EEMEM _pairsOfCurrent[NUM_OF_LED];
-etalon_t EEMEM _etalons[NUM_OF_ETALON];
-float EEMEM _coefficients[NUM_OF_LED];
+current_t EEMEM _pairsOfCurrent[NUM_OF_LED] = {
+		500, 0,  //1-2
+		300, 200,
+		250, 250,
+		200, 300,
+
+		500, 0,  //2-3
+		300, 200,
+		250, 250,
+		200, 300,
+
+		500, 0,  //3-4
+		300, 200,
+		250, 250,
+		200, 300,
+
+		500, 0,  //4-5
+		300, 200,
+		250, 250,
+		200, 300,
+
+		500, 0,  //5-6
+		300, 200,
+		250, 250,
+		200, 300,
+
+		500, 0, //6
+		0, 0, //21 ski
+		0, 0, //22
+		0, 0, //23
+
+		50, 0, //24 // 7-8
+		30, 20,
+		25, 25,
+		20, 30,
+
+		50, 0, //24 // 7-8
+		30, 20,
+		25, 25,
+		20, 30,
+
+		50, 0, //24 // 7-8
+		30, 20,
+		25, 25,
+		20, 30,
+
+		50, 0, //24 // 7-8
+		30, 20,
+		25, 25,
+		20, 30,
+
+		50, 0, //24 // 7-8
+		30, 20,
+		25, 25,
+		20, 30,
+
+		50, 0 //12
+};
+															     //  g1 g2mid, g2min g2max
+etalon_t EEMEM _etalons[NUM_OF_ETALON] = {30,    10,       10,      100,
+		1,1,1,1,1,1,1,1,1,1,	1,1,1,1,1,1,1,1,1,1,	1,1,1,1,1,1,1,1,1,1,
+				1,1,1,1,1,1,1,1,1,1,	1,1,1,1,1};
+float EEMEM _coefficients[NUM_OF_LED] = {1,1,1,1,1,1,1,1,1,1,
+		1,1,1,1,1,1,1,1,1,1,	1,1,1,1,1,1,1,1,1,1,
+		1,1,1,1,1,1,1,1,1,1,	1,1,1,1,1};
 
 //define sram variable
 //volatile uint16_t pulseWidth;
@@ -216,10 +280,44 @@ void shiftRegisterNext();
 void shiftRegisterFirst();
 
 /**
+ *  Utility function for work with shift register
+ *  Set all outputs to High level
+ */
+void indicatorRegisterReset();
+
+/**
+ *  Utility function for work with shift register
+ *  Select next led to ON
+ */
+void indicatorRegisterNext();
+
+/**
+ *  Utility function for work with shift register
+ *  Select first pair of led
+ */
+void indicatorRegisterFirst();
+
+void indicatorBlinc();
+void singleLEDBlinc();
+
+/**
  * Utility function for cleanserial port buffer
  */
 void SerialClean();
 
+
+/*--------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------
+Функция задания величины регистра OCR3A в [us]
+----------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------
+PulseWidth            :   Длительность импульса [us]: 0.0625 - 4000, кратно 0.0625 us.
+---------------------------------------------------------------------------------------------------------------------------*/
+void Set_OCR3A(float PulseWidth) {
+	PulseWidth = (PulseWidth > 125) ? 125 : PulseWidth;
+	PulseWidth = (PulseWidth < 1) ? 1 : PulseWidth;
+	OCR0A = (unsigned int) (PulseWidth*2);
+}
 /**
  * Main initialization of MCU
  */

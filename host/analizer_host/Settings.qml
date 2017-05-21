@@ -10,6 +10,10 @@ Item {
             availablePorts.append({"text": port});
             console.log(port)
         }
+        onSendDebugIngo: {
+            tipsWithPath.showedText = qsTr("data is: " + data)
+            tipsWithPath.open()
+        }
     }
 
     Column {

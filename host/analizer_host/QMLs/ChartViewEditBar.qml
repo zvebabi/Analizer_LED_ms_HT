@@ -9,6 +9,23 @@ Column {
     id: ctrlPane
     spacing: 3
     property int itemWidth: 300*app.dp
+    Connections {
+        target: reciever
+        onMakeSeries: {
+            graphs.numSeries++;
+            var seriesName = qsTr(lineLabel.text + "_"
+                                  + graphs.numSeries)
+            graphs.createSeries(ChartView.SeriesTypeLine,
+                                seriesName,
+                                axisX, axisY);
+            reciever.doMeasurements(graphs.series(seriesName));
+            tableModel.append({
+               "name": seriesName,
+               "isChecked": true,
+               "seriesColor": graphs.series(seriesName).color.toString() })
+        }
+    }
+
     TextField {
         id: lineLabel
 //        text: qsTr("sample")

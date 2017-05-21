@@ -7,6 +7,8 @@ analizerCDC::analizerCDC(QObject *parent) : QObject(parent)
     documentsPath = QDir::currentPath()+QString("/data/");
     rangeVal.append(QPointF(0,0));
     rangeVal.append(QPointF(0,0));
+    device = new QSerialPort(this);
+    connect(device, &QSerialPort::readyRead, this, &analizerCDC::readData);
 }
 
 analizerCDC::~analizerCDC()
@@ -46,21 +48,20 @@ void analizerCDC::initDevice(QString port, QString baudR)
 #if 0
     qDebug() << port << "\n" << baudR;
 #else
-    foreach(const QSerialPortInfo &info, QSerialPortInfo::availablePorts()){
-        if (info.portName() == port) {
-            device = new QSerialPort(info);
-            break;
-        }
-    }
-//    QObject::connect(serial, SIGNAL(readyRead()), this, SLOT(readData()));
-    if(!(device->isOpen()))
-        device->open(QIODevice::ReadWrite);
+    device->setPortName(port);
     device->setBaudRate(QSerialPort::Baud115200);
     device->setDataBits(QSerialPort::Data8);
     device->setParity(QSerialPort::NoParity);
     device->setStopBits(QSerialPort::OneStop);
     device->setFlowControl(QSerialPort::NoFlowControl);
-    qDebug() << "Connected to: " << device->portName();
+    if(device->open(QIODevice::ReadWrite)){
+        qDebug() << "Connected to: " << device->portName();
+        emit sendDebugInfo("Connected to: " + device->portName());
+    }
+    else {
+        qDebug() << "Can't open port" << port;
+        emit sendDebugInfo("Can't open port" + port);
+    }
 #endif
 }
 
@@ -76,9 +77,19 @@ void analizerCDC::getListOfPort()
     //    comboBox->setProperty("append", info.portName());
 }
 
+void analizerCDC::readData()
+{
+    while (device->canReadLine()) processLine(device->readLine());
+}
+
 void analizerCDC::doMeasurements(QtCharts::QAbstractSeries *series)
 {
     qDebug() << "doMeasurements";
+#if 1
+    device->write("m");
+    currentPoints = new QVector<QPointF> ;
+    currentSeries = series;
+#else
     auto colCount =100;
     // Append the new data depending on the type
     QVector<QPointF> points;
@@ -103,8 +114,9 @@ void analizerCDC::doMeasurements(QtCharts::QAbstractSeries *series)
     }
     m_data.append(points);
     lines.insert(series, m_data.back()); //save series and data pointers for future
-    emit adjustAxis(rangeVal[0], rangeVal[1]);
-    update(series);
+#endif
+//    emit adjustAxis(rangeVal[0], rangeVal[1]);
+//    update(series);
 }
 
 void analizerCDC::saveDataToCSV(QString filename="data.csv")
@@ -117,7 +129,8 @@ void analizerCDC::saveDataToCSV(QString filename="data.csv")
     if (!dataDir.exists())
         dataDir.mkpath(".");
 
-    std::fstream f(QString(documentsPath+"/"+filename).toStdString(), std::fstream::out);
+    std::fstream f(QString(documentsPath+"/"+filename).toStdString(),
+                   std::fstream::out);
     if (!f.is_open())
         qDebug() << "can't open file\n";
     int i = 1;
@@ -145,6 +158,52 @@ void analizerCDC::update(QtCharts::QAbstractSeries *series)
 //        QVector<QPointF> points = lines.value(series);
         // Use replace instead of clear + append, it's optimized for performance
         xySeries->replace(lines.value(series));
+    }
+}
+
+void analizerCDC::processLine(const QByteArray &_line)
+{
+//    QByteArray line = device->readAll();
+
+    QStringList line;//(_line);
+    for (auto w : _line.split(','))
+    {
+        line.append(QString(w));
+    }
+//    line.append(_line.split(','));
+
+
+//    qDebug()  << _line;
+//    qDebug() << line;
+    if( line.first().compare("x=m\n") == 0)
+    {
+        emit makeSeries();
+        qDebug() << "signal from button";
+    }
+    if( line.first().compare("x=d") ==0)
+    {
+//        qDebug() << "data " << line.at(1).toFloat() <<" "
+//                 <<line.at(3).toFloat();
+        auto x = line.at(1).toFloat();
+        auto y = line.at(3).toFloat();
+        currentPoints->append(QPointF(x, y));
+        if ( rangeVal[0].x() > x )
+            rangeVal[0].setX(x);
+        if ( rangeVal[1].x() < x )
+            rangeVal[1].setX(x);
+        if ( rangeVal[0].y() > y )
+            rangeVal[0].setY(y);
+        if ( rangeVal[1].y() < y )
+            rangeVal[1].setY(y);
+    }
+    if( line.first().compare("x=e\n") ==0)
+    {
+        //save series and data for future
+        m_data.append(*currentPoints);
+        lines.insert(currentSeries, m_data.back());
+        emit adjustAxis(rangeVal[0], rangeVal[1]);
+        update(currentSeries);
+        qDebug() << "end";// << *currentPoints;
     }
 }
 

@@ -5,11 +5,85 @@
 
 #include "analizer.h"
 
+//ISR(TIMER1_COMPA_vect)
+//{
+//	if (oneTimes)
+//		GEN1 = 0;
+//	pulseEnd= true;
+//}
+volatile boolean RegVal = 0;
+volatile uint16_t pulseW = 816;
+volatile boolean StageValMeasure = 0;
+volatile uint8_t adcStop =0;
+int32_t Data_ADC = 0;
+int32_t Data_ADC_bgnd = 0;
+
 ISR(TIMER1_COMPA_vect)
 {
-	if (oneTimes)
-		GEN1 = 0;
-	pulseEnd= true;
+	switch(RegVal)
+	{
+		case 1:    /* PulseWidthMinus */
+			OCR1A = 10000;                           // Change level to T-t
+			TCCR1A = (1 << COM1A1) | (1 << COM1A0);  // Set mode of pins: SET (CTC-mode);
+
+			TCCR1B = (1 << WGM12) | (0 << CS12) | (0 << CS11) | (0 << CS10); // set CTC-mode, scale to clock = *Timer STOPPED
+
+			RegVal = 0;
+		break;
+
+		case 0:    /* PulseWidthPlus */
+
+			//---Timer 3----------------------------------------------------------------------------------------------------
+//			StageValMeasure = 0;
+//			Set_OCR3A(MeasureCycle_0_Delay);
+			OCR1A = pulseW;
+			adcStop =0;
+			TCCR0B = (0 << WGM02) | (0 << CS02) | (1 << CS01) | (0 << CS00);   // set CTC-mode, prescaling =*1, timer START
+			//---------------------------------------------------------------------------------------------------------------
+
+//			OCR1A = pulseW;                     // Change level to t
+			TCCR1A = (1 << COM1A1) | (0 << COM1A0);    // Set mode of pins: CLEAR (CTC-mode).
+
+			RegVal = 1;
+		break;
+	}
+}
+//-------------------------------------------------------------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------------------------------------------------------------
+ISR(TIMER0_COMPA_vect)
+{
+	switch(StageValMeasure)
+	{
+		case 0: /* STAGE CONVERTION */
+		ADC_PORT |= (1 << SS_ADC);        // (OK) SS_AD7687 HIGH - Conversion start
+		Set_OCR3A(5);
+		TCNT0 = 0;
+		StageValMeasure = 1;
+		break;
+
+		case 1: /* STAGE ACQUISITION */
+		ADC_PORT = (~(1 << SS_ADC));    // (OK) SS_AD7687 LOW - Acquisition start
+		if(adcStop==3) //two times measurement
+			TCCR0B = (0 << WGM02) | (0 << CS02) | (0 << CS01) | (0 << CS00); // set CTC-mode, scale to clock = *Timer STOPPED
+		  // Timer clear
+		adcStop > 0 ? (adcStop ==1 ? Set_OCR3A(100): Set_OCR3A(8)) : Set_OCR3A(15) ;
+
+		TCNT0 = 0;
+		if(adcStop <2) {
+		Data_ADC += SPI.transfer16(0x0);
+		}
+		else {
+			Data_ADC_bgnd += SPI.transfer16(0x0);
+		}
+//		Serial.println(-((Data_ADC-32767)*3000/32767));
+
+		adcStop+=1;
+		StageValMeasure = 0;
+
+		break;
+	}
 }
 
 int main(void)
@@ -26,37 +100,61 @@ int main(void)
 
 void setup() {
 	//---setup Timer 1------
-	DDRB |=  (1 << PB5) | (1 << PB6); //Gen_1 Gen_2
-	PORTB &= ~((1 << PB5)|(1 << PB6));
+	DDRB |=  (1 << PB5) | (1 << PB6)| (1<<WHITE_LED); //Gen_1 Gen_2 led
+	PORTB &= ~((1 << PB5) | (1 << PB6) | (1 << WHITE_LED));
 
-	TCCR1A = (2 << COM1A0)| (3<< WGM10);  // Clear on compare match. prescaler 8,  fastpwm 10bit
-	TCCR1B = (1 << WGM12) | (2 << CS10); // T=512us=1024indixies
+//	TCCR1A = (2 << COM1A0)| (3<< WGM10);  // Clear on compare match. prescaler 8,  fastpwm 10bit
+//	TCCR1B = (1 << WGM12) | (2 << CS10); // T=512us=1024indixies
+	TCCR1A = (0 << COM1A1) | (0 << COM1A0);  // Set mode of pins: DISCONNECTED, set CTC-mode.
+	TCCR1B = (1 << WGM12) | (0 << CS12) | (0 << CS11) | (0 << CS10); // set CTC-mode, scale to clock = *Timer STOPPED
+
+//	TCCR3A =  (0 << COM1A1) | (0 << COM1A0);
+
 	TCNT1 = 0; // Timer Clear
-	GEN1 =  0;  // PreSet pulse width // 1index ==0.5us Max width is 100us=200 indicies
+	GEN1 =  10;  // PreSet pulse width // 1index ==0.5us Max width is 100us=200 indicies
 	TIMSK1 = (1 << OCIE1A) ; // Set interrupt on Compare A Match and Timer Overflow interrupt
+	TCCR1B = (1 << WGM12) | (0 << CS12) | (0 << CS11) | (1 << CS10);
+	while (TCCR1B == ((1 << WGM12) | (0 << CS12) | (0 << CS11) | (1 << CS10))) { ;}
+
+	// ---Setup Timer2-----------------------------------------------------------------------------------------------------
+		TCCR0A = (0 << COM0A1) | (0 << COM0A0) | (1<<WGM01);  // Set mode of pins: DISCONNECTED, set CTC-mode.
+		TCCR0B = (0 << WGM02) | (0 << CS02) | (0 << CS01) | (0 << CS00); // set CTC-mode, scale to clock = *Timer STOPPED
+		TCNT0 = 0; // Timer Clear
+		TIMSK0 = (1 << OCIE0A); // Set interrupt on Compare A Match
+		Set_OCR3A(10);
+//		TCCR0B = (0 << WGM02) | (0 << CS02) | (1 << CS01) | (0 << CS00);   // set CTC-mode, prescaling =*1, timer START
+//		while (TCCR0B == ((0 << WGM02) | (0 << CS02) | (1 << CS01) | (0 << CS00) )) { ;}
+		//---------------
 
 	//init serial port
 	Serial.begin(115200);
 	_delay_ms(1500);
 
 	//-------SS Pins ----------
-	DDRF |=  (1 << SS_DAC);
-	DDRB |=  (1 << SS_PREAMP);
-	DDRE |=  (1 << SS_ADC);
-	PORTF |= (1 << SS_DAC);
-	PORTB |= (1 << SS_PREAMP);
-	PORTE |= (1 << SS_ADC);
+	DDRF |=  (1 << SS_DAC) | (1 << SS_PREAMP) | (1 << SS_ADC);
+//	DDRF |=  ;
+//	DDRF |=  (1 << SS_ADC);
+	PORTF |= (1 << SS_DAC) | (1 << SS_PREAMP);// | (1 << SS_ADC);
+	PORTF &= ~(1<<SS_ADC);
+//	PORTF |= (1 << SS_PREAMP);
+//	PORTF |= (1 << SS_ADC);
 
 	//Sample-and-Holdl-Pins
 	DDRD |=  (1 << SH_SET)|(1 << SH_RESET);
 	PORTD &= ~((1 << SH_SET) | (1 << SH_SET));
 
 	//shift registr init
-//	DDRB |= ;
+	DDRB |= (1<<SR_IND_ENABLE);
+	DDRD |= (1 << SR_IND_CLR) | (1 << SR_IND_CLK) | (1 << SR_IND_DATA) ;
 	DDRD |= (1 << SR_CLR) | (1 << SR_CLK) | (1 << SR_DATA) | (1<< SR_ENABLE);
 	PORTD |= (1 << SR_ENABLE);      //OE HIGH - disable
+	PORTB |= (1 << SR_IND_ENABLE);      //OE HIGH - disable
 	PORTD &= ~((1 << SR_CLR) | (1 << SR_CLK) | (1 << SR_DATA));   //set  SRCLR / RCLK / SER -LOW
+	PORTD &= ~((1 << SR_IND_CLR) | (1 << SR_IND_CLK) | (1 << SR_IND_DATA));   //set  SRCLR / RCLK / SER -LOW
 
+	//btn init
+	DDRE &= ~(1<< BTN);
+	PORTE |= (1<<BTN);
 	//initialize SPI
 	SPI.setBitOrder(MSBFIRST);
 	SPI.setDataMode(SPI_MODE2);
@@ -66,12 +164,17 @@ void setup() {
 //	pulseWidth =	eeprom_read_word(&_pulseWidth);
 	eeprom_read_block((void *)&cur4AllLed, (const void *) &_pairsOfCurrent, NUM_OF_LED*sizeof(current_t));
 	eeprom_read_block((void *)&coeffs, (const void *) &_coefficients, NUM_OF_LED*sizeof(float));
-	Serial.print(F("Done!\n\n"));
+	Serial.print(F("Done!\r\n\n"));
 	writeConfigToUart();
 
 	shiftRegisterReset();
 //	shiftRegisterFirst();
+	PORTB &= (~(1 << SR_IND_ENABLE));
+	indicatorBlinc();
+
+	PORTB |= (1<<WHITE_LED);
 	PORTD &= (~(1 << SR_ENABLE));  //OE HIGH - enble shiftreg
+	doOnePulse(10);
 }
 
 /**
@@ -81,15 +184,73 @@ void setup() {
 void loop()
 {
 	Serial.flush();
-	_delay_ms(5);			//debug
+//	_delay_ms(200);			//debug
+//	singleLEDBlinc();
+///Button way
+	if ( (PINE & ( 1 << BTN )) == 0 )
+	{
+		_delay_ms(150); //filtering
+		if ( (PINE & ( 1 << BTN )) == 0 )
+		{
+			Serial.print(F("x=m\n")); //send command
+			while( (PINE & ( 1 << BTN )) == 0 ) { _delay_us(1);} //wait unpressed
+		}
+	}
+
 
 	/// Available in main menu commands:
 	if (Serial.available() > 0)
 	{
 		char OperationCode;
+
 		OperationCode = Serial.read();
 		switch (OperationCode)
 		{
+			case 'z':
+					{
+						Serial.print(F("reset\r\n"));
+						shiftRegisterReset();
+						break;
+					}
+			case 'x':
+					{
+						Serial.print(F("next\r\n"));
+						shiftRegisterNext();
+						break;
+					}
+			case 'c':
+					{
+						Serial.print(F("first\r\n"));
+						shiftRegisterFirst();
+						break;
+					}
+			case 'v':
+					{
+						Serial.print(F("pulse\r\nfirst\r\n"));
+						setPreAmp(20,100);
+//						shiftRegisterReset();
+//						shiftRegisterFirst();
+//						_delay_ms(150);
+//						for(uint8_t i=0;i<6;i++){
+//							shiftRegisterNext();
+//						}
+						for(uint8_t j=0; j<5; j++)
+						{
+							setCurrent(1, 50);
+							setCurrent(2, 0);
+							_delay_us(PULSE_DELAY);
+							doOnePulse(120);
+							_delay_ms(200);
+						}
+						disableLED();
+							break;
+					}
+			case 'b':
+					{
+						Serial.print(F("blinctest\r\n"));
+						indicatorBlinc();
+						break;
+					}
 			case 'q':
 			{
 				/// - 	\b q \n
@@ -133,6 +294,7 @@ void loop()
 			}
 			default:
 			{
+				Serial.print(OperationCode);
 				SerialClean();
 				break;
 			}
@@ -151,8 +313,8 @@ void factoryCalibr()
 	bool calibrEnd = false;
 	uint8_t numLed=0;
 	SerialClean();
-	Serial.print(F("You are in calibration mode!\n"));
-	Serial.print(F("Firstly recalibrate LEDs' current.\n"));
+	Serial.print(F("You are in calibration mode!\r\n"));
+	Serial.print(F("Firstly recalibrate LEDs' current.\r\n"));
 	shiftRegisterReset();
 
 	//infinite loop for calibrating
@@ -217,7 +379,7 @@ void factoryCalibr()
 					disableLED();
 					numLed=0;
 					shiftRegisterReset();
-					Serial.print(F("All LEDs is off.\nNow you can restart calibration.\n"));
+					Serial.print(F("All LEDs is off.\r\nNow you can restart calibration.\r\n"));
 					break;
 				}
 				case 'f':
@@ -227,7 +389,7 @@ void factoryCalibr()
 					disableLED();
 					numLed=0;
 					shiftRegisterFirst();
-					Serial.print(F("First led is on!\n"));
+					Serial.print(F("First led is on!\r\n"));
 					break;
 				}
 				case 'n':
@@ -239,8 +401,8 @@ void factoryCalibr()
 					{ //TODO: do correct exit, return to first led or just end.
 						Serial.print("LED ");
 						Serial.print(numLed+1); //actually, numeration starts from zero
-						Serial.print(" still is on!\n");  //here we will see the classic numeration from 1
-						Serial.print(F("This is end of calibration\n"));
+						Serial.print(" still is on!\r\n");  //here we will see the classic numeration from 1
+						Serial.print(F("This is end of calibration\r\n"));
 					}
 					else
 					{
@@ -251,7 +413,7 @@ void factoryCalibr()
 							shiftRegisterNext();  //
 						Serial.print("LED ");
 						Serial.print(numLed+1); //actually, numeration starts from zero
-						Serial.print(" is on!\n");  //here we will see the classic numeration from 1
+						Serial.print(" is on!\r\n");  //here we will see the classic numeration from 1
 					}
 					break;
 				}
@@ -376,7 +538,7 @@ void preAmpCalibr()
 	bool calibrEnd = false;
 	uint8_t numEtalon=0;
 	etalon_t etalons[NUM_OF_ETALON];
-	Serial.print(F("You are in PreAmplifier calibration mode!\n"));
+	Serial.print(F("You are in PreAmplifier calibration mode!\r\n"));
 	shiftRegisterReset();
 	//infinite loop for calibrating
 	while (!calibrEnd)
@@ -514,7 +676,7 @@ void preAmpCalibr()
 					float coeff_temp[NUM_OF_LED];
 					eeprom_read_block((void *)coeff_temp, (const void *)_coefficients, NUM_OF_LED*sizeof(float));
 					doMeasurementsSH_Avg(true);
-					Serial.print(F("Ai#, Previous , Current, Diff(%)\n"));
+					Serial.print(F("Ai#, Previous , Current, Diff(%)\r\n"));
 					for (uint8_t i=0; i< NUM_OF_LED; i++)
 					{
 						if(i==21) i=24;
@@ -525,9 +687,9 @@ void preAmpCalibr()
 						Serial.print(coeffs[i]); 			//current
 						Serial.print(F(", "));
 						Serial.print( (coeffs[i] - coeff_temp[i] ) / coeffs[i] * 100.0); //diff
-						Serial.print(F("\n"));
+						Serial.print(F("\r\n"));
 					}
-					Serial.print(F("If params is ok - press \"y\".\nFor reset press any key.\n"));
+					Serial.print(F("If params is ok - press \"y\".\nFor reset press any key.\r\n"));
 					while(Serial.available()==0){_delay_ms(1);} //wait for command
 					if (Serial.read() == 'y')
 						eeprom_write_block((const void *)coeffs, (void *)_coefficients, NUM_OF_LED*sizeof(float)); //save params from last measurement
@@ -568,20 +730,19 @@ void preAmpCalibr()
 void doMeasurements(uint8_t numOfEtalon, bool calcNorm)
 {
 	float measuredU[NUM_OF_LED];
-	float value = 0;
-	float background=0;
 	float k=0; // norm coeefs or result
 	uint8_t index;
-	Serial.print(F("You are in measurements mode!\n"));
+//	Serial.print(F("You are in measurements mode!\r\n"));
 	if (!calcNorm)
 	{
-		do {
-			Serial.print(F("Set etalon # \n"));
-			while (Serial.available() == 0) {_delay_ms(1);}
-			index = Serial.parseInt(SKIP_WHITESPACE);
-		}
-		while (index > NUM_OF_ETALON && index < 1);
-		--index; //convert to programmers numering
+//		do {
+//			Serial.print(F("Set etalon # \n"));
+//			while (Serial.available() == 0) {_delay_ms(1);}
+//			index = Serial.parseInt(SKIP_WHITESPACE);
+//		}
+//		while (index > NUM_OF_ETALON && index < 1);
+//		--index; //convert to programmers numering
+		index = 0;
 	}
 	else
 		index = numOfEtalon;
@@ -590,30 +751,47 @@ void doMeasurements(uint8_t numOfEtalon, bool calcNorm)
 	uint16_t pulseWidth =	eeprom_read_word(&_pulseWidth);
 	eeprom_read_block((void *)&etalonForCalc, (const void *)&_etalons[index], sizeof(etalon_t));
 	float constant = calcNorm ? (etalonForCalc.g1 * etalonForCalc.g2mid / c_R) :(etalonForCalc.g1 * etalonForCalc.g2mid/c_R) ;
-
-	setPreAmp(etalonForCalc.g1, etalonForCalc.g2mid);
 	//measurements
 	shiftRegisterReset();
-	disableLED();
+//	disableLED();
 	shiftRegisterFirst(); //select first led pair
+
+	PORTB &= ~(1<<WHITE_LED);
+	indicatorBlinc(); //some waiting before measurements
+
+	setPreAmp(etalonForCalc.g1, etalonForCalc.g2mid);
+	//TODO:
 	for (uint8_t i = 0; i< NUM_OF_LED; i++)
 	{
 		if( i == 21 ) i = 24;//skip 6-7 leds combinations
 		if( i != 0 && i % 4 == 0) // !=0 for first led exception
-			shiftRegisterNext();
-		//read background value
-		_delay_us(PULSE_DELAY);
-		readADC(background);
+			{
+				setPreAmp(0,0);
+				shiftRegisterNext();
+				_delay_ms(10);
+				setPreAmp(etalonForCalc.g1, etalonForCalc.g2mid);
+			}
+
 		setCurrent(1, cur4AllLed[i].curr1);
 		setCurrent(2, cur4AllLed[i].curr2);
-		_delay_us(PULSE_DELAY);
+
 		doOnePulse(pulseWidth);
-		_delay_us(PULSE_DELAY); //wait for raise front
-		readADC(value);
-		measuredU[i] = value-background;
-		while(!pulseEnd) {_delay_us(1);}
+//		_delay_ms(50);
+
+//		Serial.print(F("v: "));
+//		Serial.println(((Data_ADC>>1)));
+//		Serial.print(F("b: "));
+//		Serial.println(Data_ADC_bgnd>>1);
+
+		measuredU[i] = ( ( Data_ADC >> 1) + ( 0xFFFF - ( Data_ADC_bgnd >> 1 ) ) ) * 3300.0 / 32767.0;
+
+		Data_ADC=0;
+		Data_ADC_bgnd =0;
+
+//		while(!pulseEnd) {_delay_us(1);}
 		disableLED();
 	}
+
 	//calc k
 	if (calcNorm) // part of express calibration
 	{
@@ -624,15 +802,16 @@ void doMeasurements(uint8_t numOfEtalon, bool calcNorm)
 			k = measuredU[i] / ( etalonForCalc.k[i] * constant);
 			coeffs[i] = k;
 		}
-		Serial.print(F("Coefficients are ready to save.\n"));
+//		Serial.print(F("Coefficients are ready to save.\r\n"));
 	}
 	else //calc k of sample
 	{
-		Serial.print(F("LED#,k,Uamp(mV)\n"));
+//		Serial.print(F("LED#,k,Uamp(mV)\r\n"));
 		for (uint8_t i = 0; i< NUM_OF_LED; i++)
 		{
 			if(i == 21 ) //skip 6-7 leds combinations
 				i = 24;
+			Serial.print(F("x=d,"));
 			Serial.print(i);
 			Serial.print(F(","));
 			k = measuredU[i] / ( coeffs[i] * constant);
@@ -640,7 +819,10 @@ void doMeasurements(uint8_t numOfEtalon, bool calcNorm)
 			Serial.print(F(","));
 			Serial.println(measuredU[i]);
 		}
+		Serial.print(F("x=e\n")); //end transmit
 	}
+	indicatorBlinc();
+	PORTB |= (1<<WHITE_LED);
 }
 /*
  * Sample and hold version
@@ -652,11 +834,11 @@ void doMeasurementsSH(uint8_t numOfEtalon, bool calcNorm)
 	float background=0;
 	float k=0; // norm coeefs or result
 	uint8_t index;
-	Serial.print(F("You are in measurements mode!\n"));
+	Serial.print(F("You are in measurements mode!\r\n"));
 	if (!calcNorm)
 	{
 		do {
-			Serial.print(F("Set etalon # \n"));
+			Serial.print(F("Set etalon # \r\n"));
 			while (Serial.available() == 0) {_delay_ms(1);}
 			index = Serial.parseInt(SKIP_WHITESPACE);
 		}
@@ -703,7 +885,7 @@ void doMeasurementsSH(uint8_t numOfEtalon, bool calcNorm)
 			k = measuredU[i] / ( etalonForCalc.k[i] * constant);
 			coeffs[i] = k;
 		}
-		Serial.print(F("Coefficients are ready to save.\n"));
+		Serial.print(F("Coefficients are ready to save.\r\n"));
 	}
 	else //calc k of sample
 	{
@@ -727,7 +909,7 @@ void doMeasurementsSH(uint8_t numOfEtalon, bool calcNorm)
  */
 void doMeasurementsSH_Avg(bool calcNorm)
 {
-	Serial.print(F("You are in measurements mode!\n"));
+	Serial.print(F("You are in measurements mode!\r\n"));
 
 	float kAvg[NUM_OF_LED] = {0.0};
 	float c_R = eeprom_read_float(&_c_R); //input resistanse of g2
@@ -766,9 +948,9 @@ void doMeasurementsSH_Avg(bool calcNorm)
 			disableLED();
 		}
 		if (calcNorm) // part of express calibration
-			Serial.print(F("LED#,Ai,Uamp(mV)\n"));
+			Serial.print(F("LED#,Ai,Uamp(mV)\r\n"));
 		else
-			Serial.print(F("LED#,k,Uamp(mV)\n"));
+			Serial.print(F("LED#,k,Uamp(mV)\r\n"));
 //calc k
 		for (uint8_t i = 0; i< NUM_OF_LED; i++)
 		{
@@ -793,11 +975,11 @@ void doMeasurementsSH_Avg(bool calcNorm)
 		}
 	}
 
-	Serial.print(F("\nAverage values.\n"));
+	Serial.print(F("\r\nAverage values.\r\n"));
 	if (calcNorm) // part of express calibration
-		Serial.print(F("LED#,Ai,\n"));
+		Serial.print(F("LED#,Ai,\r\n"));
 	else
-		Serial.print(F("LED#,k\n"));
+		Serial.print(F("LED#,k\r\n"));
 //calc and print average value
 	for(uint8_t i = 0; i< NUM_OF_LED; i++)
 	{
@@ -819,22 +1001,22 @@ void readADCOneTime(uint16_t& value)
 	value = SPI.transfer16(0x0);
 //	value = val*(REFERENCE_V/32767); //convert to mV
 }
-
+//TODO:
 void readADC(float& value)
 {
 	int val=0;
-	for (uint8_t i=0;i<4;i++)
+	for (uint8_t i=0;i<1;i++)
 	{
 		int temp=0;
 		ADC_PORT |= (1 << SS_ADC); //start conversion
-		_delay_us(5);
+		_delay_us(3);
 		ADC_PORT &= ~(1<< SS_ADC); // set to low for start acquisition
 		_delay_us(1);
 		temp = SPI.transfer16(0x0);
-		val+=temp;
+		val += temp;
 	}
-	val = val>>2; // devide by 4
-	value = val * REFERENCE_V / 32767.0; //convert to mV
+//	val = val>>1; // devide by 2
+	value = val;//* REFERENCE_V / 32767.0; //convert to mV
 }
 
 //write to usb(uart) all data saved to eeprom in CSV format
@@ -842,20 +1024,20 @@ void readADC(float& value)
 //Open in excel and you will see a ordinary table
 void writeConfigToUart()
 {
-	Serial.print(F("This data loaded from EEPROM.\n"));
+	Serial.print(F("This data loaded from EEPROM.\r\n"));
 	//pulse
 	uint16_t pulse_temp = eeprom_read_word(&_pulseWidth);
-	Serial.print(F("\nPulse Width is: "));
+	Serial.print(F("\r\nPulse Width is: "));
 	Serial.println(pulse_temp/2); //because PW in memory in ticks, not in us
 	//resistance
 	float res_temp = eeprom_read_float(&_c_R);
-	Serial.print(F("\nInput resistance is: "));
+	Serial.print(F("\r\nInput resistance is: "));
 	Serial.println(res_temp, 3);
 	//current
 	current_t cur4AllLed_temp[NUM_OF_LED];
 	eeprom_read_block((void *)&cur4AllLed_temp, (const void *) &_pairsOfCurrent, NUM_OF_LED*sizeof(current_t));
-	Serial.print(F("\nCurrents:\n"));
-	Serial.print(F("LED#, I1(mA), I2(mA)\n"));
+	Serial.print(F("\r\nCurrents:\r\n"));
+	Serial.print(F("LED#, I1(mA), I2(mA)\r\n"));
 	for (uint8_t i=0;i< NUM_OF_LED; i++)
 	{
 		if(i==21) {i=24;}
@@ -864,13 +1046,13 @@ void writeConfigToUart()
 		Serial.print(cur4AllLed_temp[i].curr1);
 		Serial.print(F(","));
 		Serial.print(cur4AllLed_temp[i].curr2);
-		Serial.print(F("\n"));
+		Serial.print(F("\r\n"));
 	}
 	//preamp and etalon
 	etalon_t etalons_temp[NUM_OF_ETALON];
 	eeprom_read_block((void *)&etalons_temp, (const void *) &_etalons, NUM_OF_ETALON*sizeof(etalon_t));
-	Serial.print(F("\nPreamp Data:\n"));
-	Serial.print(F("Etalon#, g1, g2mid, g2min, g2max, k\n"));
+	Serial.print(F("\r\nPreamp Data:\r\n"));
+	Serial.print(F("Etalon#, g1, g2mid, g2min, g2max, k\r\n"));
 	for (uint8_t i=0;i< NUM_OF_ETALON; i++)
 	{
 		Serial.print(i+1);
@@ -888,13 +1070,13 @@ void writeConfigToUart()
 			Serial.print(F(","));
 			Serial.print(etalons_temp[i].k[k]);
 		}
-		Serial.print(F("\n"));
+		Serial.print(F("\r\n"));
 	}
 	//coeffs
 	float coeffs_temp[NUM_OF_LED];
 	eeprom_read_block((void *)&coeffs_temp, (const void *) &_coefficients, NUM_OF_LED*sizeof(float));
-	Serial.print(F("\nCoeefs Ai:\n"));
-	Serial.print(F("LED#, Ai\n"));
+	Serial.print(F("\r\nCoeefs Ai:\r\n"));
+	Serial.print(F("LED#, Ai\r\n"));
 
 	for (uint8_t i=0;i< NUM_OF_LED; i++)
 	{
@@ -902,9 +1084,9 @@ void writeConfigToUart()
 		Serial.print(i+1);
 		Serial.print(F(","));
 		Serial.print(coeffs_temp[i]);
-		Serial.print(F("\n"));
+		Serial.print(F("\r\n"));
 	}
-	Serial.print(F("This data loaded from EEPROM.\n"));
+	Serial.print(F("This data loaded from EEPROM.\r\n"));
 }
 
 void setC_R(float val)
@@ -914,10 +1096,25 @@ void setC_R(float val)
 
 void doOnePulse(uint16_t pulseWidth)
 {
-	oneTimes = true;
-	pulseEnd = false;
-	GEN1=pulseWidth;
-	TCNT1 = 0;
+//	oneTimes = true;
+//	pulseEnd = false;
+//	TCNT1 = 0;
+	GEN1=pulseW;
+	TCNT1 = 65530;
+//	float value;
+//	readADC(value);
+	TCCR1A = (1 << COM1A1) | (1 << COM1A0);
+	TCCR1B = (1 << WGM12) | (0 << CS12) | (0 << CS11) | (1 << CS10);
+	while (TCCR1B == ((1 << WGM12) | (0 << CS12) | (0 << CS11) | (1 << CS10)))  {}
+	while (TCCR0B == ((0<< WGM02) | (0 << CS02) | (1 << CS01) | (0 << CS00))) {}
+//
+//	Serial.print(F("v: "));
+//	Serial.println(((Data_ADC>>1))&0x0FFF);
+//	Serial.print(F("b: "));
+//	Serial.println(0xFFFF-(( Data_ADC_bgnd>>1)));
+
+//	Data_ADC=0;
+//	Data_ADC_bgnd =0;
 }
 
 void dischargeSampleHold()
@@ -980,9 +1177,82 @@ void shiftRegisterFirst() {
 	shiftRegisterNext();
 }
 
+
+//Включение управляющих сдвиговых регистров
+//set register to 0xFFFF
+void indicatorRegisterReset() {
+	//reset register
+	PORTD &= (~(1 << SR_IND_CLR));   //SRCLR-CLEAR-LOW
+	_delay_us(ShiftRegisterDelay);
+	PORTD |= (1 << SR_IND_CLK);      //RCLK-HIGH
+	_delay_us(ShiftRegisterDelay);
+	PORTD &= (~(1 << SR_IND_CLK));   //RCLK-LOW
+	_delay_us(ShiftRegisterDelay);
+	PORTD |= (1 << SR_IND_CLR);      //SRCLR-CLEAR-HIGH;
+
+	PORTD |= (1 << SR_IND_DATA);      //SER-HIGH
+	for (uint8_t i = 0; i < 14; i++)
+	{
+		PORTD |= (1 << SR_IND_CLK);      //RCLK-HIGH
+		_delay_us(ShiftRegisterDelay);
+		PORTD &= (~(1 << SR_IND_CLK));   //RCLK-LOW
+		_delay_us(ShiftRegisterDelay);
+	}
+	PORTD &= (~(1 << SR_IND_DATA));   //SER-LOW
+	_delay_us(ShiftRegisterDelay);
+}
+
+/*
+ * Выбор следующей пары светодиодов
+ */
+void indicatorRegisterNext() {
+	PORTD |= (1 << SR_IND_DATA);      //SER-HIGH
+	_delay_us(ShiftRegisterDelay);
+	PORTD |= (1 << SR_IND_CLK);      //RCLK-HIGH
+	_delay_us(ShiftRegisterDelay);
+	PORTD &= (~(1 << SR_IND_CLK));   //RCLK-LOW
+	_delay_us(ShiftRegisterDelay);
+	PORTD &= (~(1 << SR_IND_DATA));   //SER-LOW
+}
+
+//Выбор первой пары светодиодов
+void indicatorRegisterFirst() {
+	PORTD &= (~(1 << SR_IND_DATA));   //SER-LOW
+	_delay_us(ShiftRegisterDelay);
+	for (uint8_t i = 0; i < 2; i++)
+	{
+		PORTD |= (1 << SR_IND_CLK);      //RCLK-HIGH
+		_delay_us(ShiftRegisterDelay);
+		PORTD &= (~(1 << SR_IND_CLK));   //RCLK-LOW
+		_delay_us(ShiftRegisterDelay);
+	}
+}
+
+void indicatorBlinc()
+{
+	indicatorRegisterReset();
+	indicatorRegisterFirst();
+	for (uint8_t i=0;i<17;i++)
+	{
+		_delay_ms(30);
+		indicatorRegisterNext();
+	}
+}
+
+void singleLEDBlinc()
+{
+	for (uint8_t i =0;i<2;i++)
+	{
+		PORTB |= (1<<WHITE_LED);
+		_delay_ms(50);
+		PORTB &= ~(1<<WHITE_LED);
+		_delay_ms(100);
+	}
+}
+
 void disableLED()
 {
-	GEN1=0;
+//	GEN1=0;
 	setCurrent(1, 0);		//disable led
 	setCurrent(2, 0);		//
 }
@@ -1031,7 +1301,7 @@ void setPreAmp(float RWB1, float RWB2) {
 	_delay_us(WBDelay);
 	PREAMP_PORT |= (1 << SS_PREAMP);     //SS_AD5141 HIGH
 	_delay_us(WBDelay);
-	Serial.print(F("Set resistanse to: \n"));
+	Serial.print(F("Set resistanse to: \r\n"));
 	Serial.println((RWB1_code*100/255.0),4);
 	Serial.println((RWB2_code*100/255.0),4);
 
@@ -1066,23 +1336,23 @@ void setCurrent(uint8_t channelN, uint16_t curValue) {
 		SPI.transfer16(index);
 	}
 	DAC_PORT |= (1 << SS_DAC);      //SS_AD5689 HIGH
-	DAC_PORT &= (~(1 << SS_DAC));   //SS_AD5689 LOW
+//	DAC_PORT &= (~(1 << SS_DAC));   //SS_AD5689 LOW
 
 	//readback data
-	uint8_t address = (channelN == 2) ? 0b10011000 : 0b10010001;
-	SPI.transfer(address);			//enable readback
-	SPI.transfer16(0x0);
-
-	DAC_PORT |= (1 << SS_DAC);      //SS_AD5689 HIGH
-	DAC_PORT &= (~(1 << SS_DAC));   //SS_AD5689 LOW
-
-	uint16_t savedValue=0;
-	SPI.transfer(0x00);
-	savedValue = SPI.transfer16(0x00);	//read
-	Serial.print(F("Set current of channel "));
-	Serial.print(channelN);
-	Serial.print(F(" to: "));
-	Serial.println(savedValue*2500.0/65536, 3);
+//	uint8_t address = (channelN == 2) ? 0b10011000 : 0b10010001;
+//	SPI.transfer(address);			//enable readback
+//	SPI.transfer16(0x0);
+//
+//	DAC_PORT |= (1 << SS_DAC);      //SS_AD5689 HIGH
+//	DAC_PORT &= (~(1 << SS_DAC));   //SS_AD5689 LOW
+//
+//	uint16_t savedValue=0;
+//	SPI.transfer(0x00);
+//	savedValue = SPI.transfer16(0x00);	//read
+//	Serial.print(F("Set current of channel "));
+//	Serial.print(channelN);
+//	Serial.print(F(" to: "));
+//	Serial.println(savedValue*2500.0/65536, 3);
 
 	DAC_PORT |= (1 << SS_DAC);      //SS_AD5689 HIGH
 }

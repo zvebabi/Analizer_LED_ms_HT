@@ -91,8 +91,11 @@ Item {
 
     }
     function createAxis(min, max) {
-        // The following creates a ValueAxis object that can be then set as a x or y axis for a series
-        return Qt.createQmlObject("import QtQuick 2.7; import QtCharts 2.7; ValueAxis { min: "
+        // The following creates a ValueAxis object that can be then
+        //set as a x or y axis for a series
+        return Qt.createQmlObject("import QtQuick 2.7;
+                                   import QtCharts 2.7;
+                                   ValueAxis { min: "
                                   + min + "; max: " + max + " }", graphs);
     }
 }
