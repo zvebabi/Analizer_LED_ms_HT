@@ -54,6 +54,13 @@ Item {
             onClicked: reciever.initDevice(portsComboList.currentText,
                                   baudRateComboList.currentText)
         }
+        CheckBox {
+            id:drawSeries
+            text: qsTr("Draw etalon data")
+            onClicked: {
+                reciever.drawSeries(checked)
+            }
+        }
 
 //        Text {
 //            text: "Ответ:"

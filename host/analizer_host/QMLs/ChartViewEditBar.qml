@@ -117,6 +117,41 @@ Column {
                 }
             }
             ToolButton {
+                id: runAnalizerExpress
+                height: 48*app.dp
+                width: height
+                ToolTip.visible: hovered
+                    ToolTip.text: qsTr("Calibration")
+                Image {
+                    id: rAe
+                    anchors.centerIn: parent
+                    width: parent.width
+                    height: width
+                    source: "qrc:/images/runAnalizer.png"
+                    antialiasing: true
+                    smooth: true
+                }
+
+                ColorOverlay {
+                    anchors.fill: rAe
+                    source: rAe
+                    color: "#80ff0000"
+                }
+                onClicked: {
+                    graphs.numSeries++;
+                    var seriesName = qsTr("calibration_"
+                                          + graphs.numSeries)
+                    graphs.createSeries(ChartView.SeriesTypeLine,
+                                        seriesName,
+                                        axisX, axisY);
+                    reciever.doMeasurements(graphs.series(seriesName), true);
+                    tableModel.append({
+                       "name": seriesName,
+                       "isChecked": true,
+                       "seriesColor": graphs.series(seriesName).color.toString() })
+                }
+            }
+            ToolButton {
                 id: saveData
                 height: 48*app.dp
                 width: height

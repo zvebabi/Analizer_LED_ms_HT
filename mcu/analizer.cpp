@@ -314,9 +314,9 @@ void factoryCalibr()
 	uint8_t numLed=0;
 	SerialClean();
 	Serial.print(F("You are in calibration mode!\r\n"));
-	Serial.print(F("Firstly recalibrate LEDs' current.\r\n"));
 	shiftRegisterReset();
-
+	uint8_t numEtalon=0;
+	etalon_t etalons[NUM_OF_ETALON];
 	//infinite loop for calibrating
 	while (!calibrEnd)
 	{
@@ -421,18 +421,24 @@ void factoryCalibr()
 				{
 					/// - 	\b o \n
 					/// Start infinite series of pulse to LED\n
-					oneTimes = false;
-					uint16_t pulseWidth =	eeprom_read_word(&_pulseWidth);
-					GEN1=pulseWidth;
-					TCNT1 = 0;
+					for(uint8_t i=0; i<10; ++i)
+					{
+						doOnePulse(pulseW);
+						Serial.println(( ( Data_ADC >> 1) + ( 0xFFFF - ( Data_ADC_bgnd >> 1 ) ) ) * 3300.0 / 32767.0);
+						Data_ADC=0;
+						Data_ADC_bgnd =0;
+						_delay_ms(150);
+					}
 					break;
 				}
 				case 'p':
 				{
 					/// - 	\b p \n
 					/// Make one pulse to LED\n
-					uint16_t pulseWidth =	eeprom_read_word(&_pulseWidth);
-					doOnePulse(pulseWidth);
+					doOnePulse(pulseW);
+					Serial.println(( ( Data_ADC >> 1) + ( 0xFFFF - ( Data_ADC_bgnd >> 1 ) ) ) * 3300.0 / 32767.0);
+					Data_ADC=0;
+					Data_ADC_bgnd =0;
 					break;
 				}
 				case 'i':
@@ -461,6 +467,10 @@ void factoryCalibr()
 					resVal1 = Serial.parseFloat(SKIP_WHITESPACE);
 					resVal2 = Serial.parseFloat(SKIP_WHITESPACE);
 					setPreAmp(resVal1,resVal2);
+					resVal1 = (resVal1 > 100.0) ? 100.0 : ((resVal1 < 0) ? 0 : resVal1);
+					resVal2 = (resVal2 > 100.0) ? 100.0 : ((resVal2 < 0.0) ? 0.0 : resVal2);
+					etalons[numEtalon].g1 = resVal1;
+					etalons[numEtalon].g2mid = resVal2;
 					break;
 				}
 				case 'r':
@@ -475,6 +485,7 @@ void factoryCalibr()
 					/// - 	\b s \n
 					/// Save parameters for all LED to EEPROM\n
 					eeprom_write_block((const void *)&cur4AllLed, (void *) &_pairsOfCurrent, NUM_OF_LED*sizeof(current_t));
+					eeprom_write_block((const void *)&etalons, (void *) &_etalons, NUM_OF_ETALON*sizeof(etalon_t));
 					writeConfigToUart();
 					break;
 				}

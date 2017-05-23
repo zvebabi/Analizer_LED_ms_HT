@@ -9,6 +9,8 @@ analizerCDC::analizerCDC(QObject *parent) : QObject(parent)
     rangeVal.append(QPointF(0,0));
     device = new QSerialPort(this);
     connect(device, &QSerialPort::readyRead, this, &analizerCDC::readData);
+    etalonPoints = new QVector<QPointF>(43,QPointF(1,1));
+    drawLines = false;
 }
 
 analizerCDC::~analizerCDC()
@@ -82,23 +84,25 @@ void analizerCDC::readData()
     while (device->canReadLine()) processLine(device->readLine());
 }
 
-void analizerCDC::doMeasurements(QtCharts::QAbstractSeries *series)
+void analizerCDC::doMeasurements(QtCharts::QAbstractSeries *series, bool _etalon)
 {
     qDebug() << "doMeasurements";
+    currentPoints = new QVector<QPointF> ;
+    etalon = _etalon;
+    qDebug() << etalon;
 #if 1
     device->write("m");
-    currentPoints = new QVector<QPointF> ;
     currentSeries = series;
 #else
-    auto colCount =100;
+    auto colCount =43;
     // Append the new data depending on the type
-    QVector<QPointF> points;
-    points.reserve(colCount);
+    currentPoints->reserve(colCount);
     for (int j(0); j < colCount; j++) {
         qreal x(0);
-        qreal y(0);
+        qreal y(0), _y(0);
       // data with sin + random component
-        y = qSin(3.14159265358979 / 30 * j) + 0.5 + (qreal) rand() / (qreal) RAND_MAX;
+        _y = qSin(3.14159265358979 / 30 * j) + 0.5 + (qreal) rand() / (qreal) RAND_MAX;
+        y = _y < 1.5 ? _y : 0;
         x = j;
         //find borders
         if ( rangeVal[0].x() > x )
@@ -110,13 +114,57 @@ void analizerCDC::doMeasurements(QtCharts::QAbstractSeries *series)
         if ( rangeVal[1].y() < y )
             rangeVal[1].setY(y);
         //add data to graph
-        points.append(QPointF(x, y));
+        currentPoints->append(QPointF(x, y));
     }
-    m_data.append(points);
-    lines.insert(series, m_data.back()); //save series and data pointers for future
+
+    if (etalon)
+    {
+        etalonPoints = new QVector<QPointF>(*currentPoints);
+    }
+    else
+    {
+        QVector<QPointF> calibratedSeries;
+        for (int i=0; i < currentPoints->size(); i++)
+        {
+            calibratedSeries.append(
+                        QPointF(currentPoints->at(i).x(),
+                      currentPoints->at(i).y() / etalonPoints->at(i).y()*100.0));
+        }
+//        delete currentPoints;
+        qDebug() << *currentPoints;
+        *currentPoints = calibratedSeries;
+        qDebug() << *currentPoints;
+        qreal xMin = std::numeric_limits<qreal>::max(); // everything is <= this
+        qreal xMax = std::numeric_limits<qreal>::min(); // everything is >= this
+        qreal yMin = std::numeric_limits<qreal>::max();
+        qreal yMax = std::numeric_limits<qreal>::min();
+        foreach (QPointF p,  *currentPoints) {
+            xMin = qMin(xMin, p.x());
+            xMax = qMax(xMax, p.x());
+            yMin = qMin(yMin, p.y());
+            yMax = qMax(yMax, p.y());
+        }
+        //find borders
+        if ( rangeVal[0].x() > xMin )
+            rangeVal[0].setX(xMin);
+        if ( rangeVal[1].x() < xMax )
+            rangeVal[1].setX(xMax);
+        if ( rangeVal[0].y() > yMin )
+            rangeVal[0].setY(yMin);
+        if ( rangeVal[1].y() < yMax )
+            rangeVal[1].setY(yMax);
+
+    }
+    if (!etalon || (etalon && drawLines))
+    {
+        m_data.append(*currentPoints);
+        lines.insert(series, m_data.back()); //save series and data pointers for future
+        emit adjustAxis(rangeVal[0], rangeVal[1]);
+        update(series);
+    }
+
 #endif
-//    emit adjustAxis(rangeVal[0], rangeVal[1]);
-//    update(series);
+
 }
 
 void analizerCDC::saveDataToCSV(QString filename="data.csv")
@@ -185,7 +233,7 @@ void analizerCDC::processLine(const QByteArray &_line)
 //        qDebug() << "data " << line.at(1).toFloat() <<" "
 //                 <<line.at(3).toFloat();
         auto x = line.at(1).toFloat();
-        auto y = line.at(3).toFloat();
+        auto y = line.at(3).toFloat() < 3600 ? line.at(3).toFloat() : 0;
         currentPoints->append(QPointF(x, y));
         if ( rangeVal[0].x() > x )
             rangeVal[0].setX(x);
@@ -199,11 +247,56 @@ void analizerCDC::processLine(const QByteArray &_line)
     if( line.first().compare("x=e\n") ==0)
     {
         //save series and data for future
-        m_data.append(*currentPoints);
-        lines.insert(currentSeries, m_data.back());
-        emit adjustAxis(rangeVal[0], rangeVal[1]);
-        update(currentSeries);
-        qDebug() << "end";// << *currentPoints;
+        if (etalon)
+        {
+            etalonPoints = new QVector<QPointF>(*currentPoints);
+            qDebug() << "set etalon";
+        }
+        else
+        {
+            QVector<QPointF> calibratedSeries;
+            for (int i=0; i < currentPoints->size(); i++)
+            {
+                calibratedSeries.append(
+                            QPointF(currentPoints->at(i).x(),
+                          currentPoints->at(i).y() / etalonPoints->at(i).y()*100.0));
+            }
+            delete currentPoints;
+            *currentPoints = calibratedSeries;
+            //adjust borders
+            qreal xMin = std::numeric_limits<qreal>::max(); // everything is <= this
+            qreal xMax = std::numeric_limits<qreal>::min(); // everything is >= this
+            qreal yMin = std::numeric_limits<qreal>::max();
+            qreal yMax = std::numeric_limits<qreal>::min();
+            foreach (QPointF p,  *currentPoints) {
+                xMin = qMin(xMin, p.x());
+                xMax = qMax(xMax, p.x());
+                yMin = qMin(yMin, p.y());
+                yMax = qMax(yMax, p.y());
+            }
+            //find borders
+            if ( rangeVal[0].x() > xMin )
+                rangeVal[0].setX(xMin);
+            if ( rangeVal[1].x() < xMax )
+                rangeVal[1].setX(xMax);
+            if ( rangeVal[0].y() > yMin )
+                rangeVal[0].setY(yMin);
+            if ( rangeVal[1].y() < yMax )
+                rangeVal[1].setY(yMax);
+        }
+//        m_data.append(*currentPoints);
+//        lines.insert(currentSeries, m_data.back());
+//        emit adjustAxis(rangeVal[0], rangeVal[1]);
+//        update(currentSeries);
+//        qDebug() << "end";// << *currentPoints;
+
+        if (!etalon || (etalon && drawLines))
+        {
+            m_data.append(*currentPoints);
+            lines.insert(currentSeries, m_data.back()); //save series and data pointers for future
+            emit adjustAxis(rangeVal[0], rangeVal[1]);
+            update(currentSeries);
+        }
     }
 }
 

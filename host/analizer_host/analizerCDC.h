@@ -7,6 +7,7 @@
 #include <QSerialPortInfo>
 #include <QStringList>
 #include <QByteArray>
+#include <QPointF>
 #include <QAbstractSeries>
 #include <QtCharts/QAbstractSeries>
 #include <QtCharts/QXYSeries>
@@ -30,8 +31,9 @@ public slots:
     void getListOfPort();
     QString getDataPath() {return documentsPath;}
     void readData();
+    void drawSeries(bool _draw) {drawLines = _draw;}
 
-    void doMeasurements(QtCharts::QAbstractSeries *series);
+    void doMeasurements(QtCharts::QAbstractSeries *series, bool _etalon=false);
 //    void doCalibration();
     void saveDataToCSV(QString filename);
     void deleteSeries(QtCharts::QAbstractSeries *series);
@@ -49,8 +51,11 @@ private:
     QSerialPort* device = NULL;
     QSerialPort::BaudRate baudRate;
     QVector<QVector<QPointF> > m_data;
+    bool etalon, drawLines;
     QVector<QPointF> *currentPoints;
+    QVector<QPointF> *etalonPoints;
     QtCharts::QAbstractSeries* currentSeries;
+    QtCharts::QAbstractSeries* etalonSeries;
     QMap< QtCharts::QAbstractSeries*, QVector<QPointF> > lines;
     QString documentsPath;
     QVector<QPointF> rangeVal; //min[0] max[1]
