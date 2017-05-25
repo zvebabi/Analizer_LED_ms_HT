@@ -43,7 +43,7 @@ Item {
                 objectName: "axisX"
                 titleText: qsTr("Wavelength(nm)")
                 min: 0
-                max: 100
+                max: 42
                 tickCount: 10
                 minorTickCount: 4
             }
@@ -51,8 +51,8 @@ Item {
                 id: axisY
                 objectName: "axisY"
                 titleText: qsTr("Absorbance")
-                min: 0
-                max:100
+                min: -10
+                max:110
                 tickCount: 5
                 minorTickCount: 4
             }

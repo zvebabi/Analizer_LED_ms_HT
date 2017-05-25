@@ -57,8 +57,10 @@ Item {
         CheckBox {
             id:drawSeries
             text: qsTr("Draw etalon data")
+            checked: app.drawEt
             onClicked: {
                 reciever.drawSeries(checked)
+                app.drawEt = checked
             }
         }
 

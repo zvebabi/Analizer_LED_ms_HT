@@ -1312,9 +1312,10 @@ void setPreAmp(float RWB1, float RWB2) {
 	_delay_us(WBDelay);
 	PREAMP_PORT |= (1 << SS_PREAMP);     //SS_AD5141 HIGH
 	_delay_us(WBDelay);
-	Serial.print(F("Set resistanse to: \r\n"));
-	Serial.println((RWB1_code*100/255.0),4);
-	Serial.println((RWB2_code*100/255.0),4);
+	Serial.print(F("r1: "));
+	Serial.print((RWB1_code*100/255.0),1);
+	Serial.print(F(", r2: "));
+	Serial.println((RWB2_code*100/255.0),1);
 
 	sei();
 }
@@ -1347,23 +1348,23 @@ void setCurrent(uint8_t channelN, uint16_t curValue) {
 		SPI.transfer16(index);
 	}
 	DAC_PORT |= (1 << SS_DAC);      //SS_AD5689 HIGH
-//	DAC_PORT &= (~(1 << SS_DAC));   //SS_AD5689 LOW
+	DAC_PORT &= (~(1 << SS_DAC));   //SS_AD5689 LOW
 
 	//readback data
-//	uint8_t address = (channelN == 2) ? 0b10011000 : 0b10010001;
-//	SPI.transfer(address);			//enable readback
-//	SPI.transfer16(0x0);
-//
-//	DAC_PORT |= (1 << SS_DAC);      //SS_AD5689 HIGH
-//	DAC_PORT &= (~(1 << SS_DAC));   //SS_AD5689 LOW
-//
-//	uint16_t savedValue=0;
-//	SPI.transfer(0x00);
-//	savedValue = SPI.transfer16(0x00);	//read
-//	Serial.print(F("Set current of channel "));
-//	Serial.print(channelN);
-//	Serial.print(F(" to: "));
-//	Serial.println(savedValue*2500.0/65536, 3);
+	uint8_t address = (channelN == 2) ? 0b10011000 : 0b10010001;
+	SPI.transfer(address);			//enable readback
+	SPI.transfer16(0x0);
+
+	DAC_PORT |= (1 << SS_DAC);      //SS_AD5689 HIGH
+	DAC_PORT &= (~(1 << SS_DAC));   //SS_AD5689 LOW
+
+	uint16_t savedValue=0;
+	SPI.transfer(0x00);
+	savedValue = SPI.transfer16(0x00);	//read
+	Serial.print(F("c"));
+	Serial.print(channelN);
+	Serial.print(F(": "));
+	Serial.println(savedValue*2500.0/65536, 1);
 
 	DAC_PORT |= (1 << SS_DAC);      //SS_AD5689 HIGH
 }

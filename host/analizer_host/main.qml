@@ -17,6 +17,7 @@ ApplicationWindow {
     minimumHeight: 540
     minimumWidth: 960
     title: appTitle
+    property bool drawEt: false //etalon draw or not
 
     Material.theme: Material.Light
     Material.primary: Material.BlueGrey

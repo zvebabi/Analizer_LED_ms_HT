@@ -138,17 +138,20 @@ Column {
                     color: "#80ff0000"
                 }
                 onClicked: {
-                    graphs.numSeries++;
-                    var seriesName = qsTr("calibration_"
-                                          + graphs.numSeries)
-                    graphs.createSeries(ChartView.SeriesTypeLine,
-                                        seriesName,
-                                        axisX, axisY);
+                    if (drawEt === true) {
+                        graphs.numSeries++;
+                        var seriesName = qsTr("calibration_"
+                                              + graphs.numSeries)
+                        graphs.createSeries(ChartView.SeriesTypeLine,
+                                            seriesName,
+                                            axisX, axisY);
+                        tableModel.append({
+                           "name": seriesName,
+                           "isChecked": true,
+                           "seriesColor":
+                                   graphs.series(seriesName).color.toString() })
+                        }
                     reciever.doMeasurements(graphs.series(seriesName), true);
-                    tableModel.append({
-                       "name": seriesName,
-                       "isChecked": true,
-                       "seriesColor": graphs.series(seriesName).color.toString() })
                 }
             }
             ToolButton {

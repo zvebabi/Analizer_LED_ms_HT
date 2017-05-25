@@ -233,16 +233,19 @@ void analizerCDC::processLine(const QByteArray &_line)
 //        qDebug() << "data " << line.at(1).toFloat() <<" "
 //                 <<line.at(3).toFloat();
         auto x = line.at(1).toFloat();
-        auto y = line.at(3).toFloat() < 3600 ? line.at(3).toFloat() : 0;
+        auto y = line.at(3).toFloat();// < 3600 ? line.at(3).toFloat() : 0;
         currentPoints->append(QPointF(x, y));
-        if ( rangeVal[0].x() > x )
-            rangeVal[0].setX(x);
-        if ( rangeVal[1].x() < x )
-            rangeVal[1].setX(x);
-        if ( rangeVal[0].y() > y )
-            rangeVal[0].setY(y);
-        if ( rangeVal[1].y() < y )
-            rangeVal[1].setY(y);
+        if (etalon && drawLines)
+        {
+            if ( rangeVal[0].x() > x )
+                rangeVal[0].setX(x);
+            if ( rangeVal[1].x() < x )
+                rangeVal[1].setX(x);
+            if ( rangeVal[0].y() > y )
+                rangeVal[0].setY(y);
+            if ( rangeVal[1].y() < y )
+                rangeVal[1].setY(y);
+        }
     }
     if( line.first().compare("x=e\n") ==0)
     {
@@ -261,7 +264,7 @@ void analizerCDC::processLine(const QByteArray &_line)
                             QPointF(currentPoints->at(i).x(),
                           currentPoints->at(i).y() / etalonPoints->at(i).y()*100.0));
             }
-            delete currentPoints;
+//            delete currentPoints;
             *currentPoints = calibratedSeries;
             //adjust borders
             qreal xMin = std::numeric_limits<qreal>::max(); // everything is <= this
