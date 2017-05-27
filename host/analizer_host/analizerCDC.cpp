@@ -263,7 +263,7 @@ void analizerCDC::processLine(const QByteArray &_line)
             for (int i=0; i < currentPoints->size(); i++)
             {
                 calibratedSeries.append(
-                            QPointF(currentPoints->at(i).x(),
+                            QPointF(micrometers[i],
                           currentPoints->at(i).y() / etalonPoints->at(i).y()*100.0));
             }
 //            delete currentPoints;
