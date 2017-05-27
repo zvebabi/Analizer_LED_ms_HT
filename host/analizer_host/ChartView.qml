@@ -41,7 +41,7 @@ Item {
             ValueAxis {
                 id: axisX
                 objectName: "axisX"
-                titleText: qsTr("Wavelength(nm)")
+                titleText: qsTr("Wavelength(um)")
                 min: 0
                 max: 42
                 tickCount: 10

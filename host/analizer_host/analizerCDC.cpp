@@ -103,16 +103,18 @@ void analizerCDC::doMeasurements(QtCharts::QAbstractSeries *series, bool _etalon
       // data with sin + random component
         _y = qSin(3.14159265358979 / 30 * j) + 0.5 + (qreal) rand() / (qreal) RAND_MAX;
         y = _y < 1.5 ? _y : 0;
-        x = j;
+        x = micrometers[j];
         //find borders
-        if ( rangeVal[0].x() > x )
-            rangeVal[0].setX(x);
-        if ( rangeVal[1].x() < x )
-            rangeVal[1].setX(x);
-        if ( rangeVal[0].y() > y )
-            rangeVal[0].setY(y);
-        if ( rangeVal[1].y() < y )
-            rangeVal[1].setY(y);
+        if (etalon && drawLines) {
+            if ( rangeVal[0].x() > x )
+                rangeVal[0].setX(x);
+            if ( rangeVal[1].x() < x )
+                rangeVal[1].setX(x);
+            if ( rangeVal[0].y() > y )
+                rangeVal[0].setY(y);
+            if ( rangeVal[1].y() < y )
+                rangeVal[1].setY(y);
+            }
         //add data to graph
         currentPoints->append(QPointF(x, y));
     }

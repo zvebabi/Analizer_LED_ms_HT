@@ -462,15 +462,24 @@ void factoryCalibr()
 					/// Set coeffs of OpAmp\n
 					/// Control digital potentiometers ad5141\n
 					/// Max value is 100kOhm, with step 0.39kOhm\n
+					uint8_t n=1; //number of led group
 					float resVal1;
 					float resVal2;
+					n = Serial.parseInt(SKIP_WHITESPACE);
 					resVal1 = Serial.parseFloat(SKIP_WHITESPACE);
 					resVal2 = Serial.parseFloat(SKIP_WHITESPACE);
 					setPreAmp(resVal1,resVal2);
+					Serial.println(n);
 					resVal1 = (resVal1 > 100.0) ? 100.0 : ((resVal1 < 0) ? 0 : resVal1);
 					resVal2 = (resVal2 > 100.0) ? 100.0 : ((resVal2 < 0.0) ? 0.0 : resVal2);
-					etalons[numEtalon].g1 = resVal1;
-					etalons[numEtalon].g2mid = resVal2;
+					if (n==1) {
+						etalons[numEtalon].g1_1 = resVal1;
+						etalons[numEtalon].g2_1 = resVal2;
+					}
+					else {
+						etalons[numEtalon].g1_2 = resVal1;
+						etalons[numEtalon].g2_2 = resVal2;
+					}
 					break;
 				}
 				case 'r':
@@ -486,7 +495,7 @@ void factoryCalibr()
 					/// Save parameters for all LED to EEPROM\n
 					eeprom_write_block((const void *)&cur4AllLed, (void *) &_pairsOfCurrent, NUM_OF_LED*sizeof(current_t));
 					eeprom_write_block((const void *)&etalons, (void *) &_etalons, NUM_OF_ETALON*sizeof(etalon_t));
-					writeConfigToUart();
+//					writeConfigToUart();
 					break;
 				}
 				case 'e':	// End Calibr
@@ -512,10 +521,10 @@ void factoryCalibr()
 					}
 					for (uint8_t k=0;k<NUM_OF_ETALON; k++)
 					{
-						etalons[k].g1 = 100;
-						etalons[k].g2mid = 100;
-						etalons[k].g2max = 100;
-						etalons[k].g2min = 20;
+						etalons[k].g1_1 = 100;
+						etalons[k].g2_1 = 100;
+						etalons[k].g2_2 = 100;
+						etalons[k].g1_2 = 20;
 						for (uint8_t i=0;i< NUM_OF_LED; i++)
 						{
 							if(i==21) {i=24;}
@@ -576,8 +585,8 @@ void preAmpCalibr()
 					setPreAmp(resVal1,resVal2);
 					resVal1 = (resVal1 > 100.0) ? 100.0 : ((resVal1 < 0) ? 0 : resVal1);
 					resVal2 = (resVal2 > 100.0) ? 100.0 : ((resVal2 < 0.0) ? 0.0 : resVal2);
-					etalons[numEtalon].g1 = resVal1;
-					etalons[numEtalon].g2mid = resVal2;
+					etalons[numEtalon].g1_1 = resVal1;
+					etalons[numEtalon].g2_1 = resVal2;
 					break;
 				}
 				case 'x':
@@ -643,11 +652,11 @@ void preAmpCalibr()
 					/// set min and max value of g2\n
 					float curVal;
 					curVal = Serial.parseFloat(SKIP_WHITESPACE);
-					etalons[numEtalon].g2min = curVal;
+					etalons[numEtalon].g1_2 = curVal;
 					Serial.print(F("Min is "));
 					Serial.println(curVal);
 					curVal = Serial.parseFloat(SKIP_WHITESPACE);
-					etalons[numEtalon].g2max = curVal;
+					etalons[numEtalon].g2_2 = curVal;
 					Serial.print(F("Max is "));
 					Serial.println(curVal);
 					break;
@@ -761,7 +770,7 @@ void doMeasurements(uint8_t numOfEtalon, bool calcNorm)
 	float c_R = eeprom_read_float(&_c_R); //input resistanse of g2
 	uint16_t pulseWidth =	eeprom_read_word(&_pulseWidth);
 	eeprom_read_block((void *)&etalonForCalc, (const void *)&_etalons[index], sizeof(etalon_t));
-	float constant = calcNorm ? (etalonForCalc.g1 * etalonForCalc.g2mid / c_R) :(etalonForCalc.g1 * etalonForCalc.g2mid/c_R) ;
+	float constant = calcNorm ? (etalonForCalc.g1_1 * etalonForCalc.g2_1 / c_R) :(etalonForCalc.g1_1 * etalonForCalc.g2_1/c_R) ;
 	//measurements
 	shiftRegisterReset();
 //	disableLED();
@@ -770,7 +779,7 @@ void doMeasurements(uint8_t numOfEtalon, bool calcNorm)
 	PORTB &= ~(1<<WHITE_LED);
 	indicatorBlinc(); //some waiting before measurements
 
-	setPreAmp(etalonForCalc.g1, etalonForCalc.g2mid);
+	setPreAmp(etalonForCalc.g1_1, etalonForCalc.g2_1);
 	//TODO:
 	for (uint8_t i = 0; i< NUM_OF_LED; i++)
 	{
@@ -780,7 +789,10 @@ void doMeasurements(uint8_t numOfEtalon, bool calcNorm)
 				setPreAmp(0,0);
 				shiftRegisterNext();
 				_delay_ms(10);
-				setPreAmp(etalonForCalc.g1, etalonForCalc.g2mid);
+				if ( i < 24)
+					setPreAmp(etalonForCalc.g1_1, etalonForCalc.g2_1);
+				else
+					setPreAmp(etalonForCalc.g1_2, etalonForCalc.g2_2);
 			}
 
 		setCurrent(1, cur4AllLed[i].curr1);
@@ -863,9 +875,9 @@ void doMeasurementsSH(uint8_t numOfEtalon, bool calcNorm)
 	eeprom_read_block((void *)&etalonForCalc, (const void *)&_etalons[index], sizeof(etalon_t));
 	float c_R = eeprom_read_float(&_c_R); //input resistanse of g2
 	uint16_t pulseWidth =	eeprom_read_word(&_pulseWidth);
-	float constant = calcNorm ? (etalonForCalc.g1 * etalonForCalc.g2mid / c_R) :(etalonForCalc.g1 * etalonForCalc.g2mid/c_R) ;
+	float constant = calcNorm ? (etalonForCalc.g1_1 * etalonForCalc.g2_1 / c_R) :(etalonForCalc.g1_1 * etalonForCalc.g2_1/c_R) ;
 
-	setPreAmp(etalonForCalc.g1, etalonForCalc.g2mid);
+	setPreAmp(etalonForCalc.g1_1, etalonForCalc.g2_1);
 	//measurements
 	shiftRegisterReset();
 	disableLED();
@@ -935,8 +947,8 @@ void doMeasurementsSH_Avg(bool calcNorm)
 		//read config
 		etalon_t etalonForCalc;
 		eeprom_read_block((void *)&etalonForCalc, (const void *)&_etalons[index], sizeof(etalon_t));
-		float constant = etalonForCalc.g1 * etalonForCalc.g2mid / c_R ;
-		setPreAmp(etalonForCalc.g1, etalonForCalc.g2mid);
+		float constant = etalonForCalc.g1_1 * etalonForCalc.g2_1 / c_R ;
+		setPreAmp(etalonForCalc.g1_1, etalonForCalc.g2_1);
 		//reset led and light up first one
 		shiftRegisterReset();
 		disableLED();
@@ -1035,14 +1047,14 @@ void readADC(float& value)
 //Open in excel and you will see a ordinary table
 void writeConfigToUart()
 {
-	Serial.print(F("This data loaded from EEPROM.\r\n"));
+	Serial.print(F("data from EEPROM.\r\n"));
 	//pulse
 	uint16_t pulse_temp = eeprom_read_word(&_pulseWidth);
-	Serial.print(F("\r\nPulse Width is: "));
+	Serial.print(F("\r\nPWidth is: "));
 	Serial.println(pulse_temp/2); //because PW in memory in ticks, not in us
 	//resistance
 	float res_temp = eeprom_read_float(&_c_R);
-	Serial.print(F("\r\nInput resistance is: "));
+	Serial.print(F("\r\nInRes: "));
 	Serial.println(res_temp, 3);
 	//current
 	current_t cur4AllLed_temp[NUM_OF_LED];
@@ -1063,41 +1075,41 @@ void writeConfigToUart()
 	etalon_t etalons_temp[NUM_OF_ETALON];
 	eeprom_read_block((void *)&etalons_temp, (const void *) &_etalons, NUM_OF_ETALON*sizeof(etalon_t));
 	Serial.print(F("\r\nPreamp Data:\r\n"));
-	Serial.print(F("Etalon#, g1, g2mid, g2min, g2max, k\r\n"));
+	Serial.println(F("Etalon#, g1_1, g2_1, g2_2 g2_2"));
 	for (uint8_t i=0;i< NUM_OF_ETALON; i++)
 	{
 		Serial.print(i+1);
 		Serial.print(F(","));
-		Serial.print(etalons_temp[i].g1);
+		Serial.print(etalons_temp[i].g1_1);
 		Serial.print(F(","));
-		Serial.print(etalons_temp[i].g2mid);
+		Serial.print(etalons_temp[i].g2_1);
 		Serial.print(F(","));
-		Serial.print(etalons_temp[i].g2min);
+		Serial.print(etalons_temp[i].g1_2);
 		Serial.print(F(","));
-		Serial.print(etalons_temp[i].g2max);
-		for(uint8_t k=0; k<NUM_OF_LED;k++)
-		{
-			if(k==21) {k=24;}
-			Serial.print(F(","));
-			Serial.print(etalons_temp[i].k[k]);
-		}
+		Serial.print(etalons_temp[i].g2_2);
+//		for(uint8_t k=0; k<NUM_OF_LED;k++)
+//		{
+//			if(k==21) {k=24;}
+//			Serial.print(F(","));
+//			Serial.print(etalons_temp[i].k[k]);
+//		}
 		Serial.print(F("\r\n"));
 	}
 	//coeffs
-	float coeffs_temp[NUM_OF_LED];
-	eeprom_read_block((void *)&coeffs_temp, (const void *) &_coefficients, NUM_OF_LED*sizeof(float));
-	Serial.print(F("\r\nCoeefs Ai:\r\n"));
-	Serial.print(F("LED#, Ai\r\n"));
-
-	for (uint8_t i=0;i< NUM_OF_LED; i++)
-	{
-		if(i==21) i=24;
-		Serial.print(i+1);
-		Serial.print(F(","));
-		Serial.print(coeffs_temp[i]);
-		Serial.print(F("\r\n"));
-	}
-	Serial.print(F("This data loaded from EEPROM.\r\n"));
+//	float coeffs_temp[NUM_OF_LED];
+//	eeprom_read_block((void *)&coeffs_temp, (const void *) &_coefficients, NUM_OF_LED*sizeof(float));
+//	Serial.print(F("\r\nCoeefs Ai:\r\n"));
+//	Serial.print(F("LED#, Ai\r\n"));
+//
+//	for (uint8_t i=0;i< NUM_OF_LED; i++)
+//	{
+//		if(i==21) i=24;
+//		Serial.print(i+1);
+//		Serial.print(F(","));
+//		Serial.print(coeffs_temp[i]);
+//		Serial.print(F("\r\n"));
+//	}
+//	Serial.print(F("This data loaded from EEPROM.\r\n"));
 }
 
 void setC_R(float val)

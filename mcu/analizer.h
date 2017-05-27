@@ -63,11 +63,11 @@
  *
  */
 typedef struct
-{
-	float g1;
-	float g2mid;
-	float g2min;
-	float g2max;
+{      //first digit n of resistor, 2nd digit - number of LED group
+	float g1_1;
+	float g2_1;
+	float g1_2;
+	float g2_2;
 	float k[NUM_OF_LED];
 }  etalon_t ;
 
@@ -144,8 +144,8 @@ current_t EEMEM _pairsOfCurrent[NUM_OF_LED] = {
 
 		53, 0 //12
 };
-															     //  g1 g2mid, g2min g2max
-etalon_t EEMEM _etalons[NUM_OF_ETALON] = {50,    10,       10,      100,
+															     //  g1_1 g2_1, g1_2 g2_2
+etalon_t EEMEM _etalons[NUM_OF_ETALON] = {50,    10,       30,      10,
 		1,1,1,1,1,1,1,1,1,1,	1,1,1,1,1,1,1,1,1,1,	1,1,1,1,1,1,1,1,1,1,
 				1,1,1,1,1,1,1,1,1,1,	1,1,1,1,1};
 float EEMEM _coefficients[NUM_OF_LED] = {1,1,1,1,1,1,1,1,1,1,
