@@ -254,7 +254,13 @@ void analizerCDC::processLine(const QByteArray &_line)
         //save series and data for future
         if (etalon)
         {
-            etalonPoints = new QVector<QPointF>(*currentPoints);
+            etalonPoints = new QVector<QPointF>;//(*currentPoints);
+            for (int i=0; i < currentPoints->size(); i++)
+            {
+                etalonPoints->append(
+                            QPointF(micrometers[i],
+                          currentPoints->at(i).y()));
+            }
             qDebug() << "set etalon";
         }
         else

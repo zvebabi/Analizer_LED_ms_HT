@@ -13,8 +13,11 @@ Item {
     Connections {
         target: reciever
         onAdjustAxis: {
-//            axisX.min = minRng.x - (maxRng.x-minRng.x)*0.05
-//            axisX.max = maxRng.x + (maxRng.x-minRng.x)*0.05
+            if (drawEt === true)
+            {
+                axisX.min = minRng.x - (maxRng.x-minRng.x)*0.05
+                axisX.max = maxRng.x + (maxRng.x-minRng.x)*0.05
+            }
             axisY.min = minRng.y - (maxRng.y-minRng.y)*0.05
             axisY.max = maxRng.y + (maxRng.y-minRng.y)*0.05
         }
