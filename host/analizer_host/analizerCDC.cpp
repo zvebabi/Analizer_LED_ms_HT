@@ -97,12 +97,13 @@ void analizerCDC::doMeasurements(QtCharts::QAbstractSeries *series, bool _etalon
     auto colCount =43;
     // Append the new data depending on the type
     currentPoints->reserve(colCount);
+    srand(0);
     for (int j(0); j < colCount; j++) {
         qreal x(0);
         qreal y(0), _y(0);
       // data with sin + random component
-        _y = qSin(3.14159265358979 / 30 * j) + 0.5 + (qreal) rand() / (qreal) RAND_MAX;
-        y = _y < 1.5 ? _y : 0;
+        y = qSin(3.14159265358979 / 30 * j) + 0.5 + (qreal) rand() / (qreal) RAND_MAX;
+//        y = _y < 1.5 ? _y : 0;
         x = micrometers[j];
         //find borders
         if (etalon && drawLines) {
@@ -126,12 +127,29 @@ void analizerCDC::doMeasurements(QtCharts::QAbstractSeries *series, bool _etalon
     else
     {
         QVector<QPointF> calibratedSeries;
+        ///calibrating
         for (int i=0; i < currentPoints->size(); i++)
         {
             calibratedSeries.append(
                         QPointF(currentPoints->at(i).x(),
                       currentPoints->at(i).y() / etalonPoints->at(i).y()*100.0));
         }
+        ///antialiasing
+        for(int i=0; i < calibratedSeries.size(); i++)
+        {
+            //koeffs
+            int k,l,m,n;
+            k = (i-2 >= 0) ? i-2: 0;
+            l = (i-1 >= 0) ? i-1: 0;
+            m = (i+1 < calibratedSeries.size()) ? (i+1) : (calibratedSeries.size()-1);
+            n = (i+2 < calibratedSeries.size()) ? (i+2) : (calibratedSeries.size()-1);
+
+            calibratedSeries[i] = (calibratedSeries[k] + calibratedSeries[l] +
+                                  calibratedSeries[m] + calibratedSeries[i] +
+                                  calibratedSeries[n] )/5;
+        }
+
+
 //        delete currentPoints;
         qDebug() << *currentPoints;
         *currentPoints = calibratedSeries;
@@ -265,13 +283,31 @@ void analizerCDC::processLine(const QByteArray &_line)
         }
         else
         {
+            ///calibrate and antialiasing
             QVector<QPointF> calibratedSeries;
+            ///calibrate
             for (int i=0; i < currentPoints->size(); i++)
             {
                 calibratedSeries.append(
                             QPointF(micrometers[i],
                           currentPoints->at(i).y() / etalonPoints->at(i).y()*100.0));
             }
+            ///antialiasing
+            for(int i=0; i < calibratedSeries.size(); i++)
+            {
+                //koeffs
+                int k,l,m,n;
+                k = (i-2 >= 0) ? i-2: 0;
+                l = (i-1 >= 0) ? i-1: 0;
+                m = (i+1 < calibratedSeries.size()) ? (i+1) : (calibratedSeries.size()-1);
+                n = (i+2 < calibratedSeries.size()) ? (i+2) : (calibratedSeries.size()-1);
+
+                calibratedSeries[i] = (calibratedSeries[k] + calibratedSeries[l] +
+                                      calibratedSeries[m] + calibratedSeries[i] +
+                                      calibratedSeries[n] )/5;
+            }
+
+
 //            delete currentPoints;
             *currentPoints = calibratedSeries;
             //adjust borders
