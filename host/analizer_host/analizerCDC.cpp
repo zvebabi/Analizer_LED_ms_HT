@@ -138,15 +138,18 @@ void analizerCDC::doMeasurements(QtCharts::QAbstractSeries *series, bool _etalon
         for(int i=0; i < calibratedSeries.size(); i++)
         {
             //koeffs
-            int k,l,m,n;
+            int k,l,m,n,o,p;
+            o = (i-3 >= 0) ? i-3: 0;
             k = (i-2 >= 0) ? i-2: 0;
             l = (i-1 >= 0) ? i-1: 0;
             m = (i+1 < calibratedSeries.size()) ? (i+1) : (calibratedSeries.size()-1);
             n = (i+2 < calibratedSeries.size()) ? (i+2) : (calibratedSeries.size()-1);
+            p = (i+3 < calibratedSeries.size()) ? (i+3) : (calibratedSeries.size()-1);
 
             calibratedSeries[i] = (calibratedSeries[k] + calibratedSeries[l] +
                                   calibratedSeries[m] + calibratedSeries[i] +
-                                  calibratedSeries[n] )/5;
+                                  calibratedSeries[n] + calibratedSeries[o] +
+                                   calibratedSeries[p])/7;
         }
 
 
@@ -296,15 +299,18 @@ void analizerCDC::processLine(const QByteArray &_line)
             for(int i=0; i < calibratedSeries.size(); i++)
             {
                 //koeffs
-                int k,l,m,n;
+                int k,l,m,n,o,p;
+                o = (i-3 >= 0) ? i-3: 0;
                 k = (i-2 >= 0) ? i-2: 0;
                 l = (i-1 >= 0) ? i-1: 0;
                 m = (i+1 < calibratedSeries.size()) ? (i+1) : (calibratedSeries.size()-1);
                 n = (i+2 < calibratedSeries.size()) ? (i+2) : (calibratedSeries.size()-1);
+                p = (i+3 < calibratedSeries.size()) ? (i+3) : (calibratedSeries.size()-1);
 
                 calibratedSeries[i] = (calibratedSeries[k] + calibratedSeries[l] +
                                       calibratedSeries[m] + calibratedSeries[i] +
-                                      calibratedSeries[n] )/5;
+                                      calibratedSeries[n] + calibratedSeries[o] +
+                                       calibratedSeries[p])/7;
             }
 
 
