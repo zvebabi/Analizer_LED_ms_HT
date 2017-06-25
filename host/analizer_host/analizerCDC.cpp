@@ -1,5 +1,6 @@
 #include "analizerCDC.h"
 #include <QtMath>
+
 analizerCDC::analizerCDC(QObject *parent) : QObject(parent)
 {
     qRegisterMetaType<QtCharts::QAbstractSeries*>();
@@ -7,8 +8,14 @@ analizerCDC::analizerCDC(QObject *parent) : QObject(parent)
     documentsPath = QDir::currentPath()+QString("/data/");
     rangeVal.append(QPointF(0,0));
     rangeVal.append(QPointF(0,0));
+#ifdef WINDOWS_PORT
+    device = new WinSerialPort(this);
+    connect(device, &WinSerialPort::readyRead, this, &analizerCDC::readData);
+#else
     device = new QSerialPort(this);
     connect(device, &QSerialPort::readyRead, this, &analizerCDC::readData);
+#endif
+
     etalonPoints = new QVector<QPointF>(43,QPointF(1,1));
     drawLines = false;
 }
@@ -47,8 +54,16 @@ void analizerCDC::cppSlot(const QString &msg)
 
 void analizerCDC::initDevice(QString port, QString baudR)
 {
-#if 0
-    qDebug() << port << "\n" << baudR;
+#ifdef WINDOWS_PORT //windows compatibility
+    device->setPortName(port);
+    if(device->open()){
+        qDebug() << "Connected to: " << device->portName();
+        emit sendDebugInfo("Connected to: " + device->portName());
+    }
+    else {
+        qDebug() << "Can't open port" << port;
+        emit sendDebugInfo("Can't open port" + port);
+    }    
 #else
     device->setPortName(port);
     device->setBaudRate(QSerialPort::Baud115200);
@@ -63,7 +78,7 @@ void analizerCDC::initDevice(QString port, QString baudR)
     else {
         qDebug() << "Can't open port" << port;
         emit sendDebugInfo("Can't open port" + port);
-    }
+    }    
 #endif
 }
 
@@ -235,7 +250,7 @@ void analizerCDC::update(QtCharts::QAbstractSeries *series)
 void analizerCDC::processLine(const QByteArray &_line)
 {
 //    QByteArray line = device->readAll();
-
+    qDebug() << _line;
     QStringList line;//(_line);
     for (auto w : _line.split(','))
     {
@@ -253,21 +268,24 @@ void analizerCDC::processLine(const QByteArray &_line)
     }
     if( line.first().compare("x=d") ==0)
     {
-//        qDebug() << "data " << line.at(1).toFloat() <<" "
-//                 <<line.at(3).toFloat();
-        auto x = line.at(1).toFloat();
-        auto y = line.at(3).toFloat() < 6600 ? line.at(3).toFloat() : line.at(3).toFloat()-6600;
-        currentPoints->append(QPointF(x, y));
-        if (etalon && drawLines)
+        if (line.size() == 4)
         {
-            if ( rangeVal[0].x() > x )
-                rangeVal[0].setX(x);
-            if ( rangeVal[1].x() < x )
-                rangeVal[1].setX(x);
-            if ( rangeVal[0].y() > y )
-                rangeVal[0].setY(y);
-            if ( rangeVal[1].y() < y )
-                rangeVal[1].setY(y);
+            //        qDebug() << "data " << line.at(1).toFloat() <<" "
+            //                 <<line.at(3).toFloat();
+            auto x = line.at(1).toFloat();
+            auto y = line.at(3).toFloat() < 6600 ? line.at(3).toFloat() : line.at(3).toFloat()-6600;
+            currentPoints->append(QPointF(x, y));
+            if (etalon && drawLines)
+            {
+                if ( rangeVal[0].x() > x )
+                    rangeVal[0].setX(x);
+                if ( rangeVal[1].x() < x )
+                    rangeVal[1].setX(x);
+                if ( rangeVal[0].y() > y )
+                    rangeVal[0].setY(y);
+                if ( rangeVal[1].y() < y )
+                    rangeVal[1].setY(y);
+            }
         }
     }
     if( line.first().compare("x=e\n") ==0)

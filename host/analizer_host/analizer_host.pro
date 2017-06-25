@@ -12,7 +12,8 @@ QMAKE_CXXFLAGS += -O3 -g3
 
 SOURCES += main.cpp \
     analizerCDC.cpp \
-    mydevice.cpp
+    mydevice.cpp \
+    WinSerialPort.cpp
 
 RESOURCES += qml.qrc
 
@@ -40,4 +41,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     analizerCDC.h \
-    mydevice.h
+    mydevice.h \
+    WinSerialPort.h

@@ -241,7 +241,8 @@ Column {
                     smooth: true
                 }
                 onClicked: {
-                    graphs.zoomIn()
+//                    graphs.zoomIn()
+                    graphs.zoomIn(Qt.rect(0, 0, graphs.width, graphs.height/2))
                 }
             }
             ToolButton {
@@ -257,7 +258,8 @@ Column {
                     smooth: true
                 }
                 onClicked: {
-                    graphs.zoomOut()
+//                    graphs.zoomOut()
+                    graphs.zoomReset()
                 }
             }
             ToolButton {

@@ -18,6 +18,9 @@
 #include <typeinfo>
 #include <iostream>
 
+#include "WinSerialPort.h"
+#define WINDOWS_PORT
+
 class analizerCDC : public QObject
 {
     Q_OBJECT
@@ -48,7 +51,11 @@ private:
     void processLine(const QByteArray& line);
 
     std::vector<QString> ports;
+#ifdef WINDOWS_PORT
+    WinSerialPort* device = NULL;
+#else
     QSerialPort* device = NULL;
+#endif
     QSerialPort::BaudRate baudRate;
     QVector<QVector<QPointF> > m_data;
     bool etalon, drawLines;
