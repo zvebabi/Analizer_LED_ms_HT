@@ -1317,17 +1317,17 @@ void setPreAmp(float RWB1, float RWB2) {
 	_delay_us(WBDelay);
 
 	//read data from resistance
-	SPI.transfer(B00110000);    //Read from RDAC
-	RWB2_code = SPI.transfer(B00000011); //second
-	SPI.transfer(B00110000);    //Read from RDAC
-	RWB1_code = SPI.transfer(B00000011); //first
-	_delay_us(WBDelay);
+//	SPI.transfer(B00110000);    //Read from RDAC
+//	RWB2_code = SPI.transfer(B00000011); //second
+//	SPI.transfer(B00110000);    //Read from RDAC
+//	RWB1_code = SPI.transfer(B00000011); //first
+//	_delay_us(WBDelay);
 	PREAMP_PORT |= (1 << SS_PREAMP);     //SS_AD5141 HIGH
 	_delay_us(WBDelay);
-	Serial.print(F("r1: "));
-	Serial.print((RWB1_code*100/255.0),1);
-	Serial.print(F(", r2: "));
-	Serial.println((RWB2_code*100/255.0),1);
+//	Serial.print(F("r1: "));
+//	Serial.print((RWB1_code*100/255.0),1);
+//	Serial.print(F(", r2: "));
+//	Serial.println((RWB2_code*100/255.0),1);
 
 	sei();
 }
