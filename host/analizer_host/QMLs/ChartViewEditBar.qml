@@ -8,7 +8,7 @@ import QtGraphicalEffects 1.0
 Column {
     id: ctrlPane
     spacing: 3
-    property int itemWidth: 300*app.dp
+    property int itemWidth: 400*app.dp
     Connections {
         target: reciever
         onMakeSeries: {
@@ -87,20 +87,26 @@ Column {
         Grid {
             id : chartEditMenu
             columns: 1
-            spacing: 6
+            spacing: 0
             ToolButton {
                 id: runAnalizer
-                height: 48*app.dp
+                height: 1.6*48*app.dp
                 width: height
                 ToolTip.visible: hovered
                     ToolTip.text: qsTr("Run " +app.appTitle)
                 Image {
+                    id: rAa
                     anchors.centerIn: parent
                     width: parent.width
                     height: width
                     source: "qrc:/images/runAnalizer.png"
                     antialiasing: true
                     smooth: true
+                }
+                ColorOverlay {
+                    anchors.fill: rAa
+                    source: rAa
+                    color: "#d000ff00"
                 }
                 onClicked: {
                     graphs.numSeries++;
@@ -118,7 +124,7 @@ Column {
             }
             ToolButton {
                 id: runAnalizerExpress
-                height: 48*app.dp
+                height: 1.6*48*app.dp
                 width: height
                 ToolTip.visible: hovered
                     ToolTip.text: qsTr("Calibration")
@@ -156,7 +162,7 @@ Column {
             }
             ToolButton {
                 id: saveData
-                height: 48*app.dp
+                height: 1.5*48*app.dp
                 width: height
                 ToolTip.visible: hovered
                     ToolTip.text: qsTr("Save data to file")
@@ -192,7 +198,7 @@ Column {
             }
             ToolButton {
                 id: saveImage
-                height: 48*app.dp
+                height: 1.5*48*app.dp
                 width: height
                 ToolTip.visible: hovered
                     ToolTip.text: qsTr("Save image")
@@ -229,7 +235,7 @@ Column {
             }
             ToolButton {
                 id: zoomIn
-                height: 48*app.dp
+                height: 1.5*48*app.dp
                 width: height
                 ToolTip.visible: hovered
                     ToolTip.text: qsTr("Zoom In")
@@ -247,7 +253,7 @@ Column {
             }
             ToolButton {
                 id: zoomOut
-                height: 48*app.dp
+                height: 1.5*48*app.dp
                 width: height
                 ToolTip.visible: hovered
                     ToolTip.text: qsTr("Zoom Out")
@@ -264,7 +270,7 @@ Column {
             }
             ToolButton {
                 id: setSeriesVisible
-                height: 48*app.dp
+                height: 1.5*48*app.dp
                 width: height
                 ToolTip.visible: hovered
                     ToolTip.text: qsTr("Show only selected series")
@@ -292,7 +298,7 @@ Column {
             }
             ToolButton {
                 id: deleteSeries
-                height: 48*app.dp
+                height: 1.5*48*app.dp
                 width: height
     //                anchors.left: titleText.right
                 ToolTip.visible: hovered
