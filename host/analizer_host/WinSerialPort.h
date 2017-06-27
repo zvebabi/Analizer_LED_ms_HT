@@ -21,7 +21,7 @@ public slots:
     void setPortName(QString port) {c_portName = port;} //setter
     QString portName() { return c_portName; } //getter
     bool open();
-    bool disconnect();
+    bool disconnectPort();
     bool canReadLine() { return b_canReadLine; } //wait flag
 
     QByteArray readLine();
@@ -37,7 +37,6 @@ private:
     HANDLE hSerial;
     OVERLAPPED overlapped_structure;
     std::thread *st;
-    std::mutex lock;
     std::atomic_bool b_canReadLine, b_stop, finished, b_Write;
     QString c_portName;
     QVector<QByteArray> lineArray;

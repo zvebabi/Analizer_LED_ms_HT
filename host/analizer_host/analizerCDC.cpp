@@ -24,7 +24,11 @@ analizerCDC::~analizerCDC()
 {
     if (device != NULL)
     {
+#ifdef WINDOWS_PORT
+        device->disconnectPort();
+#else
         device->disconnect();
+#endif
         delete device;
     }
 }
