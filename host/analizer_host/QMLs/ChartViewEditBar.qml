@@ -248,7 +248,7 @@ Column {
                 }
                 onClicked: {
 //                    graphs.zoomIn()
-                    graphs.zoomIn(Qt.rect(0, 0, graphs.width, graphs.height/2))
+                    graphs.zoomIn(Qt.rect(0, 0, graphs.plotArea.width, graphs.plotArea.height/2))
                 }
             }
             ToolButton {
