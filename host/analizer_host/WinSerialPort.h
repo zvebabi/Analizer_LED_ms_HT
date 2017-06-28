@@ -3,7 +3,9 @@
 
 #include <QtCore/QObject>
 #include <QDebug>
+#ifdef _WIN32
 #include <windows.h>
+#endif
 #include <QByteArray>
 #include <iostream>
 #include <thread>
