@@ -8,7 +8,7 @@ analizerCDC::analizerCDC(QObject *parent) : QObject(parent)
     documentsPath = QDir::currentPath()+QString("/data/");
     rangeVal.append(QPointF(0,0));
     rangeVal.append(QPointF(0,0));
-#ifdef WINDOWS_PORT
+#ifdef _WIN32
     device = new WinSerialPort(this);
     connect(device, &WinSerialPort::readyRead, this, &analizerCDC::readData);
 #else
@@ -24,7 +24,7 @@ analizerCDC::~analizerCDC()
 {
     if (device != NULL)
     {
-#ifdef WINDOWS_PORT
+#ifdef _WIN32
         device->disconnectPort();
 #else
         device->disconnect();
@@ -58,7 +58,7 @@ void analizerCDC::cppSlot(const QString &msg)
 
 void analizerCDC::initDevice(QString port, QString baudR)
 {
-#ifdef WINDOWS_PORT //windows compatibility
+#ifdef _WIN32 //windows compatibility
     device->setPortName(port);
     if(device->open()){
         qDebug() << "Connected to: " << device->portName();

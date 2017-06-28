@@ -10,6 +10,7 @@ import mydevice 1.0
 ApplicationWindow {
     id:app
     property string appTitle: "LED Minispectrometer"
+    property int seriesType: ChartView.SeriesTypeLine
     visible: true
 //    visibility: "FullScreen"
     width: 960

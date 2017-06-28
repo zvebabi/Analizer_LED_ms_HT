@@ -15,7 +15,7 @@ Column {
             graphs.numSeries++;
             var seriesName = qsTr(lineLabel.text + "_"
                                   + graphs.numSeries)
-            graphs.createSeries(ChartView.SeriesTypeLine,
+            graphs.createSeries(app.seriesType,
                                 seriesName,
                                 axisX, axisY);
             reciever.doMeasurements(graphs.series(seriesName));

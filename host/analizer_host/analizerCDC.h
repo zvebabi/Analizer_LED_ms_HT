@@ -19,7 +19,7 @@
 #include <iostream>
 
 #include "WinSerialPort.h"
-#define WINDOWS_PORT
+//#define WINDOWS_PORT
 
 class analizerCDC : public QObject
 {
@@ -51,7 +51,7 @@ private:
     void processLine(const QByteArray& line);
 
     std::vector<QString> ports;
-#ifdef WINDOWS_PORT
+#ifdef _WIN32
     WinSerialPort* device = NULL;
 #else
     QSerialPort* device = NULL;
