@@ -12,10 +12,22 @@ QMAKE_CXXFLAGS += -O3 -g3
 
 SOURCES += main.cpp \
     analizerCDC.cpp \
-    mydevice.cpp \
-    WinSerialPort.cpp
+    mydevice.cpp
+
+HEADERS += \
+    analizerCDC.h \
+    mydevice.h
 
 RESOURCES += qml.qrc
+
+win32: { //because qserial port not workin in win
+HEADERS += \
+    WinSerialPort.h
+SOURCES += \
+    WinSerialPort.cpp
+
+}
+
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
@@ -38,8 +50,3 @@ DEFINES += QT_DEPRECATED_WARNINGS
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
-
-HEADERS += \
-    analizerCDC.h \
-    mydevice.h \
-    WinSerialPort.h

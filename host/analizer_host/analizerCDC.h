@@ -18,8 +18,9 @@
 #include <typeinfo>
 #include <iostream>
 
+#ifdef _WIN32 //winapi comport
 #include "WinSerialPort.h"
-//#define WINDOWS_PORT
+#endif
 
 class analizerCDC : public QObject
 {
