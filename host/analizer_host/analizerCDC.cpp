@@ -8,6 +8,7 @@ analizerCDC::analizerCDC(QObject *parent) : QObject(parent)
     documentsPath = QDir::homePath()+QString("/Pictures/");
     rangeVal.append(QPointF(0,0));
     rangeVal.append(QPointF(0,0));
+    isPortOpen=false;
 #ifdef _WIN32
     device = new WinSerialPort(this);
     connect(device, &WinSerialPort::readyRead, this, &analizerCDC::readData);
@@ -25,11 +26,16 @@ analizerCDC::~analizerCDC()
     if (device != NULL)
     {
 #ifdef _WIN32
-        device->disconnectPort();
+        if (isPortOpen)
+        {
+            device->disconnectPort();
+            delete device;
+        }
 #else
         device->disconnect();
-#endif
         delete device;
+#endif
+
     }
 }
 
@@ -56,11 +62,12 @@ void analizerCDC::cppSlot(const QString &msg)
     textArea->setProperty("text", str1+" + "+str2+" = "+strResult+" "+msg);
 }
 
-void analizerCDC::initDevice(QString port, QString baudR)
+void analizerCDC::initDevice(QString port)
 {
 #ifdef _WIN32 //windows compatibility
     device->setPortName(port);
-    if(device->open()){
+    isPortOpen = device->open();
+    if(isPortOpen){
         qDebug() << "Connected to: " << device->portName();
         emit sendDebugInfo("Connected to: " + device->portName());
     }

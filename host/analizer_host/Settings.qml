@@ -24,14 +24,16 @@ Item {
         anchors.topMargin: 100*app.dp
         anchors.top: parent.top
         Column {
-            spacing: 10
+            id: deviceSetter
+            spacing: 10*app.dp
             anchors.right: chartStyle.left
             anchors.top: chartStyle.top
             anchors.rightMargin: 50*app.dp
+            property int itemsWidth: 250*app.dp
             Button {
                 id: listDeviceBTN
                 contentItem: ButtonLabel {text: qsTr("ListDevice")}
-                width: 250
+                width: deviceSetter.itemsWidth
                 onClicked: {//getPorts()
                     availablePorts.clear()
                     reciever.getListOfPort()
@@ -42,25 +44,24 @@ Item {
                 id: portsComboList
                 objectName: "comboList"
                 model: availablePorts
-                width: 250
+                width: deviceSetter.itemsWidth
                 ListModel{
                     id: availablePorts
                 }
             }
 
-            ComboBox {
-                id: baudRateComboList
-                objectName: "baudRate"
-                width: 250
-                model: ["115200", "57600"]
-            }
+//            ComboBox {
+//                id: baudRateComboList
+//                objectName: "baudRate"
+//                width: deviceSetter.itemsWidth
+//                model: ["115200", "57600"]
+//            }
 
             Button {
                 id: connectBTN
                 contentItem: ButtonLabel {text: qsTr("Connect")}
-                width: 250
-                onClicked: reciever.initDevice(portsComboList.currentText,
-                                               baudRateComboList.currentText)
+                width: deviceSetter.itemsWidth
+                onClicked: reciever.initDevice(portsComboList.currentText)
             }
             CheckBox {
                 id:drawSeries

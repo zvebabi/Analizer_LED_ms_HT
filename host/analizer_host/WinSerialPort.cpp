@@ -1,7 +1,7 @@
 #include "WinSerialPort.h"
 
 WinSerialPort::WinSerialPort(QObject *parent) : QObject(parent), b_canReadLine(false),
-    b_stop(false)
+    b_stop(false),finished(false), hSerial(INVALID_HANDLE_VALUE), st(NULL)
 {}
 
 WinSerialPort::~WinSerialPort()
@@ -57,7 +57,7 @@ bool WinSerialPort::open()
 bool WinSerialPort::disconnectPort()
 {
      stop();
-     return CloseHandle(hSerial);
+     return hSerial == INVALID_HANDLE_VALUE ? 10: CloseHandle(hSerial);
 }
 
 /* get line by line while container not empty
@@ -95,7 +95,8 @@ void WinSerialPort::start()
 void WinSerialPort::stop()
 {
     b_stop = true;
-    st->join();
+    if(st)
+        st->join();
 }
 
 void WinSerialPort::run()

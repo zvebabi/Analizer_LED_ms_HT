@@ -31,7 +31,7 @@ public:
 public slots:
     void cppSlot(const QString &msg);
 
-    void initDevice(QString port, QString baudR);
+    void initDevice(QString port);
     void getListOfPort();
     QString getDataPath() {return documentsPath;}
     void readData();
@@ -59,7 +59,7 @@ private:
 #endif
     QSerialPort::BaudRate baudRate;
     QVector<QVector<QPointF> > m_data;
-    bool etalon, drawLines;
+    bool etalon, drawLines, isPortOpen;
     QVector<QPointF> *currentPoints;
     QVector<QPointF> *etalonPoints;
     QtCharts::QAbstractSeries* currentSeries;
