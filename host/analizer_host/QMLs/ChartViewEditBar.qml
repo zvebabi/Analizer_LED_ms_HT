@@ -12,17 +12,7 @@ Column {
     Connections {
         target: reciever
         onMakeSeries: {
-            graphs.numSeries++;
-            var seriesName = qsTr(lineLabel.text + "_"
-                                  + graphs.numSeries)
-            graphs.createSeries(app.seriesType,
-                                seriesName,
-                                axisX, axisY);
-            reciever.doMeasurements(graphs.series(seriesName));
-            tableModel.append({
-               "name": seriesName,
-               "isChecked": true,
-               "seriesColor": graphs.series(seriesName).color.toString() })
+            createSeries()
         }
     }
 
@@ -61,8 +51,10 @@ Column {
                 ScrollIndicator.vertical: ScrollIndicator { }
                 remove: Transition {
                     ParallelAnimation {
-                        NumberAnimation { property: "opacity"; to: 0; duration: 1000 }
-                        NumberAnimation { properties: "x,y"; to: 100; duration: 1000 }
+                        NumberAnimation { property: "opacity"; to: 0;
+                            duration: 1000 }
+                        NumberAnimation { properties: "x,y"; to: 100;
+                            duration: 1000 }
                     }
                 }
             }
@@ -78,7 +70,8 @@ Column {
                 standardButtons: StandardButton.OK
                 onAccepted: {
                     console.log(newName.text)
-                    graphs.series(tableOfSeries.currentItem.text).name = newName.text
+                    graphs.series(tableOfSeries.currentItem.text).name =
+                            newName.text
                     tableOfSeries.currentItem.text = newName.text
                     newName.text = ""
                 }
@@ -109,17 +102,7 @@ Column {
                     color: "#d000ff00"
                 }
                 onClicked: {
-                    graphs.numSeries++;
-                    var seriesName = qsTr(lineLabel.text + "_"
-                                          + graphs.numSeries)
-                    graphs.createSeries(ChartView.SeriesTypeLine,
-                                        seriesName,
-                                        axisX, axisY);
-                    reciever.doMeasurements(graphs.series(seriesName));
-                    tableModel.append({
-                       "name": seriesName,
-                       "isChecked": true,
-                       "seriesColor": graphs.series(seriesName).color.toString() })
+                    createSeries()
                 }
             }
             ToolButton {
@@ -336,5 +319,23 @@ Column {
                 onClicked: { messageDialog.setVisible(true) }
             }
         }
+    }
+    function createSeries() {
+        graphs.numSeries++;
+        var seriesName = qsTr(lineLabel.text + "_"
+                              + graphs.numSeries)
+        console.log("create series of type: " + app.seriesType)
+        graphs.createSeries(app.seriesType,
+                            seriesName,
+                            axisX, axisY);
+        reciever.doMeasurements(graphs.series(seriesName));
+
+        var lineColor = app.seriesType == ChartView.SeriesTypeBar ?
+              graphs.series(seriesName).at(0).color.toString() :
+              graphs.series(seriesName).color.toString()
+        tableModel.append({
+           "name": seriesName,
+           "isChecked": true,
+           "seriesColor": lineColor })
     }
 }

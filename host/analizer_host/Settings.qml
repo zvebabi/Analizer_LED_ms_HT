@@ -87,14 +87,12 @@ Item {
                     app.seriesType = ChartView.SeriesTypeLine
                 }
             }
-
-            RadioButton {
-                text: qsTr("Histogam")
-                onClicked: {
-                    app.seriesType = ChartView.SeriesTypeBar
-                }
-            }
-
+//            RadioButton {
+//                text: qsTr("Histogam")
+//                onClicked: {
+//                    app.seriesType = ChartView.SeriesTypeBar
+//                }
+//            }
             RadioButton {
                 text: qsTr("Spline")
                 onClicked: {

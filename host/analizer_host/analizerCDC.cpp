@@ -5,7 +5,7 @@ analizerCDC::analizerCDC(QObject *parent) : QObject(parent)
 {
     qRegisterMetaType<QtCharts::QAbstractSeries*>();
     qRegisterMetaType<QtCharts::QAbstractAxis*>();
-    documentsPath = QDir::currentPath()+QString("/data/");
+    documentsPath = QDir::homePath()+QString("/Pictures/");
     rangeVal.append(QPointF(0,0));
     rangeVal.append(QPointF(0,0));
 #ifdef _WIN32
@@ -109,7 +109,7 @@ void analizerCDC::doMeasurements(QtCharts::QAbstractSeries *series, bool _etalon
     currentPoints = new QVector<QPointF> ;
     etalon = _etalon;
     qDebug() << etalon;
-#if 1
+#if 0
     device->write("m");
     currentSeries = series;
 #else
@@ -173,9 +173,9 @@ void analizerCDC::doMeasurements(QtCharts::QAbstractSeries *series, bool _etalon
 
 
 //        delete currentPoints;
-        qDebug() << *currentPoints;
+//        qDebug() << *currentPoints;
         *currentPoints = calibratedSeries;
-        qDebug() << *currentPoints;
+//        qDebug() << *currentPoints;
         qreal xMin = std::numeric_limits<qreal>::max(); // everything is <= this
         qreal xMax = std::numeric_limits<qreal>::min(); // everything is >= this
         qreal yMin = std::numeric_limits<qreal>::max();

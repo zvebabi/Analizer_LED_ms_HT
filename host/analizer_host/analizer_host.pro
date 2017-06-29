@@ -20,7 +20,7 @@ HEADERS += \
 
 RESOURCES += qml.qrc
 
-win32: { //because qserial port not workin in win
+win32: { #because qserial port not workin in win
 HEADERS += \
     WinSerialPort.h
 SOURCES += \
