@@ -324,18 +324,13 @@ Column {
         graphs.numSeries++;
         var seriesName = qsTr(lineLabel.text + "_"
                               + graphs.numSeries)
-        console.log("create series of type: " + app.seriesType)
-        graphs.createSeries(app.seriesType,
+        graphs.createSeries(ChartView.SeriesTypeSpline,
                             seriesName,
                             axisX, axisY);
         reciever.doMeasurements(graphs.series(seriesName));
-
-        var lineColor = app.seriesType == ChartView.SeriesTypeBar ?
-              graphs.series(seriesName).at(0).color.toString() :
-              graphs.series(seriesName).color.toString()
         tableModel.append({
            "name": seriesName,
            "isChecked": true,
-           "seriesColor": lineColor })
+           "seriesColor": graphs.series(seriesName).color.toString() })
     }
 }

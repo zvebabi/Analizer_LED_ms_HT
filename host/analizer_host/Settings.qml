@@ -74,6 +74,8 @@ Item {
             }
 
         }
+
+        //implement hystogram/lines
         Column {
             anchors.top: parent.top
             id: chartStyle
@@ -81,23 +83,12 @@ Item {
                 readOnly: true
                 text: qsTr("ChartStyle: ")
             }
+
             RadioButton {
                 checked: true
-                text: qsTr("Lines")
+                text: qsTr("Graph view")
                 onClicked: {
-                    app.seriesType = ChartView.SeriesTypeLine
-                }
-            }
-//            RadioButton {
-//                text: qsTr("Histogam")
-//                onClicked: {
-//                    app.seriesType = ChartView.SeriesTypeBar
-//                }
-//            }
-            RadioButton {
-                text: qsTr("Spline")
-                onClicked: {
-                    app.seriesType = ChartView.SeriesTypeSpline
+//                    app.seriesType = ChartView.SeriesTypeSpline
                 }
             }
         }

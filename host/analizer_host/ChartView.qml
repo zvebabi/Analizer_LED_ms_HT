@@ -13,13 +13,13 @@ Item {
     Connections {
         target: reciever
         onAdjustAxis: {
-            if (drawEt === true)
-            {
-                axisX.min = minRng.x - (maxRng.x-minRng.x)*0.05
-                axisX.max = maxRng.x + (maxRng.x-minRng.x)*0.05
-            }
-            axisY.min = minRng.y - (maxRng.y-minRng.y)*0.05
-            axisY.max = maxRng.y + (maxRng.y-minRng.y)*0.05
+//            if (drawEt === true)
+//            {
+                axisX.min = minRng.x// - (maxRng.x-minRng.x)*0.05
+                axisX.max = maxRng.x// + (maxRng.x-minRng.x)*0.05
+//            }
+            axisY.min = minRng.y// - (maxRng.y-minRng.y)*0.05
+            axisY.max = maxRng.y// + (maxRng.y-minRng.y)*0.05
         }
     }
 
@@ -45,8 +45,8 @@ Item {
                 id: axisX
                 objectName: "axisX"
                 titleText: qsTr("Wavelength(um)")
-                min: 1.30
-                max: 2.40
+                min: 0
+                max: 0
                 tickCount: 12
                 minorTickCount: 4
             }
@@ -54,8 +54,8 @@ Item {
                 id: axisY
                 objectName: "axisY"
                 titleText: qsTr("Absorbance")
-                min: -10
-                max:110
+                min: 0
+                max:0
                 tickCount: 5
                 minorTickCount: 4
             }
