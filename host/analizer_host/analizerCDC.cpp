@@ -116,7 +116,7 @@ void analizerCDC::doMeasurements(QtCharts::QAbstractSeries *series, bool _etalon
     currentPoints = new QVector<QPointF> ;
     etalon = _etalon;
     qDebug() << etalon;
-#if 0
+#if 1
     device->write("m");
     currentSeries = series;
 #else
@@ -284,7 +284,8 @@ void analizerCDC::processLine(const QByteArray &_line)
             //        qDebug() << "data " << line.at(1).toFloat() <<" "
             //                 <<line.at(3).toFloat();
             auto x = line.at(1).toFloat();
-            auto y = line.at(3).toFloat() < 6600 ? line.at(3).toFloat() : line.at(3).toFloat()-6600;
+            auto y = line.at(3).toFloat() < 6600 ? line.at(3).toFloat() :
+                                                   line.at(3).toFloat()-6600;
             currentPoints->append(QPointF(x, y));
             if (etalon && drawLines)
             {
@@ -308,7 +309,8 @@ void analizerCDC::processLine(const QByteArray &_line)
             for (int i=0; i < currentPoints->size(); i++)
             {
                 etalonPoints->append(
-                            QPointF(micrometers[i],
+                            QPointF(//micrometers[i],
+                            currentPoints->at(i).x(),
                           currentPoints->at(i).y()));
             }
             qDebug() << "set etalon";
@@ -321,8 +323,9 @@ void analizerCDC::processLine(const QByteArray &_line)
             for (int i=0; i < currentPoints->size(); i++)
             {
                 calibratedSeries.append(
-                            QPointF(micrometers[i],
-                          currentPoints->at(i).y() / etalonPoints->at(i).y()*100.0));
+                    QPointF(//micrometers[i],
+                     currentPoints->at(i).x(),
+                     currentPoints->at(i).y() / etalonPoints->at(i).y()*100.0));
             }
             ///antialiasing
             for(int i=0; i < calibratedSeries.size(); i++)
@@ -336,10 +339,11 @@ void analizerCDC::processLine(const QByteArray &_line)
                 n = (i+2 < calibratedSeries.size()) ? (i+2) : (calibratedSeries.size()-1);
                 p = (i+3 < calibratedSeries.size()) ? (i+3) : (calibratedSeries.size()-1);
 
-                calibratedSeries[i] = (calibratedSeries[k] + calibratedSeries[l] +
-                                      calibratedSeries[m] + calibratedSeries[i] +
-                                      calibratedSeries[n] + calibratedSeries[o] +
-                                       calibratedSeries[p])/7;
+                calibratedSeries[i].ry() =
+                            (calibratedSeries[k].y() + calibratedSeries[l].y() +
+                             calibratedSeries[m].y() + calibratedSeries[i].y() +
+                             calibratedSeries[n].y() + calibratedSeries[o].y() +
+                             calibratedSeries[p].y())/7;
             }
 
 
