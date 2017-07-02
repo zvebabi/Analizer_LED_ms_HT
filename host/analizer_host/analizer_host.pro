@@ -9,10 +9,6 @@ QT += androidextras
 linux: {
 QMAKE_CXXFLAGS += -O3 -g3
 }
-HEADERS += \
-    analizerCDC.h \
-    mydevice.h \
-#    WinSerialPort.h
 
 SOURCES += main.cpp \
     analizerCDC.cpp \
