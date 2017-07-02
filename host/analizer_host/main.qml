@@ -4,13 +4,14 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls.Material 2.2
 import QtQuick.Window 2.0
 import Qt.labs.platform 1.0
+//import QtCharts 2.2
 import "QMLs"
 import mydevice 1.0
 
 ApplicationWindow {
     id:app
     property string appTitle: "LED Minispectrometer"
-    property int seriesType: ChartView.SeriesTypeLine
+//    property int seriesType: ChartView.SeriesTypeSpline
     visible: true
 //    visibility: "FullScreen"
     width: 960

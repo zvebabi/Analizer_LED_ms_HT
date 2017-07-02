@@ -1,13 +1,15 @@
 #include "analizerCDC.h"
 #include <QtMath>
 
-analizerCDC::analizerCDC(QObject *parent) : QObject(parent)
+analizerCDC::analizerCDC(QObject *parent) : QObject(parent),
+    firstLine(true)
 {
     qRegisterMetaType<QtCharts::QAbstractSeries*>();
     qRegisterMetaType<QtCharts::QAbstractAxis*>();
-    documentsPath = QDir::currentPath()+QString("/data/");
+    documentsPath = QDir::homePath()+QString("/Pictures/");
     rangeVal.append(QPointF(0,0));
     rangeVal.append(QPointF(0,0));
+    isPortOpen=false;
 #ifdef _WIN32
     device = new WinSerialPort(this);
     connect(device, &WinSerialPort::readyRead, this, &analizerCDC::readData);
@@ -25,11 +27,16 @@ analizerCDC::~analizerCDC()
     if (device != NULL)
     {
 #ifdef _WIN32
-        device->disconnectPort();
+        if (isPortOpen)
+        {
+            device->disconnectPort();
+            delete device;
+        }
 #else
         device->disconnect();
-#endif
         delete device;
+#endif
+
     }
 }
 
@@ -56,11 +63,12 @@ void analizerCDC::cppSlot(const QString &msg)
     textArea->setProperty("text", str1+" + "+str2+" = "+strResult+" "+msg);
 }
 
-void analizerCDC::initDevice(QString port, QString baudR)
+void analizerCDC::initDevice(QString port)
 {
 #ifdef _WIN32 //windows compatibility
     device->setPortName(port);
-    if(device->open()){
+    isPortOpen = device->open();
+    if(isPortOpen){
         qDebug() << "Connected to: " << device->portName();
         emit sendDebugInfo("Connected to: " + device->portName());
     }
@@ -173,9 +181,9 @@ void analizerCDC::doMeasurements(QtCharts::QAbstractSeries *series, bool _etalon
 
 
 //        delete currentPoints;
-        qDebug() << *currentPoints;
+//        qDebug() << *currentPoints;
         *currentPoints = calibratedSeries;
-        qDebug() << *currentPoints;
+//        qDebug() << *currentPoints;
         qreal xMin = std::numeric_limits<qreal>::max(); // everything is <= this
         qreal xMax = std::numeric_limits<qreal>::min(); // everything is >= this
         qreal yMin = std::numeric_limits<qreal>::max();
@@ -277,8 +285,10 @@ void analizerCDC::processLine(const QByteArray &_line)
             //        qDebug() << "data " << line.at(1).toFloat() <<" "
             //                 <<line.at(3).toFloat();
             auto x = line.at(1).toFloat();
-            auto y = line.at(3).toFloat() < 6600 ? line.at(3).toFloat() : line.at(3).toFloat()-6600;
+            auto y = line.at(3).toFloat() < 6600 ? line.at(3).toFloat() :
+                                                   line.at(3).toFloat()-6600;
             currentPoints->append(QPointF(x, y));
+
             if (etalon && drawLines)
             {
                 if ( rangeVal[0].x() > x )
@@ -301,7 +311,8 @@ void analizerCDC::processLine(const QByteArray &_line)
             for (int i=0; i < currentPoints->size(); i++)
             {
                 etalonPoints->append(
-                            QPointF(micrometers[i],
+                            QPointF(//micrometers[i],
+                            currentPoints->at(i).x(),
                           currentPoints->at(i).y()));
             }
             qDebug() << "set etalon";
@@ -314,8 +325,9 @@ void analizerCDC::processLine(const QByteArray &_line)
             for (int i=0; i < currentPoints->size(); i++)
             {
                 calibratedSeries.append(
-                            QPointF(micrometers[i],
-                          currentPoints->at(i).y() / etalonPoints->at(i).y()*100.0));
+                    QPointF(//micrometers[i],
+                     currentPoints->at(i).x(),
+                     currentPoints->at(i).y() / etalonPoints->at(i).y()*100.0));
             }
             ///antialiasing
             for(int i=0; i < calibratedSeries.size(); i++)
@@ -329,10 +341,11 @@ void analizerCDC::processLine(const QByteArray &_line)
                 n = (i+2 < calibratedSeries.size()) ? (i+2) : (calibratedSeries.size()-1);
                 p = (i+3 < calibratedSeries.size()) ? (i+3) : (calibratedSeries.size()-1);
 
-                calibratedSeries[i] = (calibratedSeries[k] + calibratedSeries[l] +
-                                      calibratedSeries[m] + calibratedSeries[i] +
-                                      calibratedSeries[n] + calibratedSeries[o] +
-                                       calibratedSeries[p])/7;
+                calibratedSeries[i].ry() =
+                            (calibratedSeries[k].y() + calibratedSeries[l].y() +
+                             calibratedSeries[m].y() + calibratedSeries[i].y() +
+                             calibratedSeries[n].y() + calibratedSeries[o].y() +
+                             calibratedSeries[p].y())/7;
             }
 
 
@@ -349,6 +362,14 @@ void analizerCDC::processLine(const QByteArray &_line)
                 yMin = qMin(yMin, p.y());
                 yMax = qMax(yMax, p.y());
             }
+            if(firstLine)
+            {
+                firstLine = false;
+                rangeVal[0].setX(xMin);
+                rangeVal[1].setX(xMax);
+                rangeVal[0].setY(yMin);
+                rangeVal[1].setY(yMax);
+            }
             //find borders
             if ( rangeVal[0].x() > xMin )
                 rangeVal[0].setX(xMin);
@@ -359,6 +380,7 @@ void analizerCDC::processLine(const QByteArray &_line)
             if ( rangeVal[1].y() < yMax )
                 rangeVal[1].setY(yMax);
         }
+//        qDebug() << rangeVal[0] << rangeVal[1];
 //        m_data.append(*currentPoints);
 //        lines.insert(currentSeries, m_data.back());
 //        emit adjustAxis(rangeVal[0], rangeVal[1]);

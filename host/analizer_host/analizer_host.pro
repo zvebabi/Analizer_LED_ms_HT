@@ -16,10 +16,22 @@ HEADERS += \
 
 SOURCES += main.cpp \
     analizerCDC.cpp \
-    mydevice.cpp \
-#    WinSerialPort.cpp
+    mydevice.cpp
+
+HEADERS += \
+    analizerCDC.h \
+    mydevice.h
 
 RESOURCES += qml.qrc
+
+win32: { #because qserial port not workin in win
+HEADERS += \
+    WinSerialPort.h
+SOURCES += \
+    WinSerialPort.cpp
+
+}
+
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
