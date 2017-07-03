@@ -2,7 +2,7 @@
 #include <QtMath>
 
 analizerCDC::analizerCDC(QObject *parent) : QObject(parent),
-    firstLine(true)
+    firstLine(true), aaManual(true)
 {
     qRegisterMetaType<QtCharts::QAbstractSeries*>();
     qRegisterMetaType<QtCharts::QAbstractAxis*>();
@@ -117,7 +117,7 @@ void analizerCDC::doMeasurements(QtCharts::QAbstractSeries *series, bool _etalon
     currentPoints = new QVector<QPointF> ;
     etalon = _etalon;
     qDebug() << etalon;
-#if 1
+#if 0
     device->write("m");
     currentSeries = series;
 #else
@@ -162,22 +162,23 @@ void analizerCDC::doMeasurements(QtCharts::QAbstractSeries *series, bool _etalon
                       currentPoints->at(i).y() / etalonPoints->at(i).y()*100.0));
         }
         ///antialiasing
-        for(int i=0; i < calibratedSeries.size(); i++)
-        {
-            //koeffs
-            int k,l,m,n,o,p;
-            o = (i-3 >= 0) ? i-3: 0;
-            k = (i-2 >= 0) ? i-2: 0;
-            l = (i-1 >= 0) ? i-1: 0;
-            m = (i+1 < calibratedSeries.size()) ? (i+1) : (calibratedSeries.size()-1);
-            n = (i+2 < calibratedSeries.size()) ? (i+2) : (calibratedSeries.size()-1);
-            p = (i+3 < calibratedSeries.size()) ? (i+3) : (calibratedSeries.size()-1);
+        if(aaManual)
+            for(int i=0; i < calibratedSeries.size(); i++)
+            {
+                //koeffs
+                int k,l,m,n,o,p;
+                o = (i-3 >= 0) ? i-3: 0;
+                k = (i-2 >= 0) ? i-2: 0;
+                l = (i-1 >= 0) ? i-1: 0;
+                m = (i+1 < calibratedSeries.size()) ? (i+1) : (calibratedSeries.size()-1);
+                n = (i+2 < calibratedSeries.size()) ? (i+2) : (calibratedSeries.size()-1);
+                p = (i+3 < calibratedSeries.size()) ? (i+3) : (calibratedSeries.size()-1);
 
-            calibratedSeries[i] = (calibratedSeries[k] + calibratedSeries[l] +
-                                  calibratedSeries[m] + calibratedSeries[i] +
-                                  calibratedSeries[n] + calibratedSeries[o] +
-                                   calibratedSeries[p])/7;
-        }
+                calibratedSeries[i] = (calibratedSeries[k] + calibratedSeries[l] +
+                                      calibratedSeries[m] + calibratedSeries[i] +
+                                      calibratedSeries[n] + calibratedSeries[o] +
+                                       calibratedSeries[p])/7;
+            }
 
 
 //        delete currentPoints;
@@ -310,9 +311,10 @@ void analizerCDC::processLine(const QByteArray &_line)
             etalonPoints = new QVector<QPointF>;//(*currentPoints);
             for (int i=0; i < currentPoints->size(); i++)
             {
+                auto xVal = axisValueFromMCU ?
+                            currentPoints->at(i).x() : micrometers[i];
                 etalonPoints->append(
-                            QPointF(//micrometers[i],
-                            currentPoints->at(i).x(),
+                            QPointF(xVal,
                           currentPoints->at(i).y()));
             }
             qDebug() << "set etalon";
@@ -324,29 +326,31 @@ void analizerCDC::processLine(const QByteArray &_line)
             ///calibrate
             for (int i=0; i < currentPoints->size(); i++)
             {
+                auto xVal = axisValueFromMCU ?
+                            currentPoints->at(i).x() : micrometers[i];
                 calibratedSeries.append(
-                    QPointF(//micrometers[i],
-                     currentPoints->at(i).x(),
+                    QPointF(xVal,
                      currentPoints->at(i).y() / etalonPoints->at(i).y()*100.0));
             }
             ///antialiasing
-            for(int i=0; i < calibratedSeries.size(); i++)
-            {
-                //koeffs
-                int k,l,m,n,o,p;
-                o = (i-3 >= 0) ? i-3: 0;
-                k = (i-2 >= 0) ? i-2: 0;
-                l = (i-1 >= 0) ? i-1: 0;
-                m = (i+1 < calibratedSeries.size()) ? (i+1) : (calibratedSeries.size()-1);
-                n = (i+2 < calibratedSeries.size()) ? (i+2) : (calibratedSeries.size()-1);
-                p = (i+3 < calibratedSeries.size()) ? (i+3) : (calibratedSeries.size()-1);
+            if(aaManual)
+                for(int i=0; i < calibratedSeries.size(); i++)
+                {
+                    //koeffs
+                    int k,l,m,n,o,p;
+                    o = (i-3 >= 0) ? i-3: 0;
+                    k = (i-2 >= 0) ? i-2: 0;
+                    l = (i-1 >= 0) ? i-1: 0;
+                    m = (i+1 < calibratedSeries.size()) ? (i+1) : (calibratedSeries.size()-1);
+                    n = (i+2 < calibratedSeries.size()) ? (i+2) : (calibratedSeries.size()-1);
+                    p = (i+3 < calibratedSeries.size()) ? (i+3) : (calibratedSeries.size()-1);
 
-                calibratedSeries[i].ry() =
-                            (calibratedSeries[k].y() + calibratedSeries[l].y() +
-                             calibratedSeries[m].y() + calibratedSeries[i].y() +
-                             calibratedSeries[n].y() + calibratedSeries[o].y() +
-                             calibratedSeries[p].y())/7;
-            }
+                    calibratedSeries[i].ry() =
+                                (calibratedSeries[k].y() + calibratedSeries[l].y() +
+                                 calibratedSeries[m].y() + calibratedSeries[i].y() +
+                                 calibratedSeries[n].y() + calibratedSeries[o].y() +
+                                 calibratedSeries[p].y())/7;
+                }
 
 
 //            delete currentPoints;

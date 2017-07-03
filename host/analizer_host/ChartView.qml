@@ -15,8 +15,9 @@ Item {
         onAdjustAxis: {
             axisX.min = minRng.x - (maxRng.x-minRng.x)*0.02
             axisX.max = maxRng.x + (maxRng.x-minRng.x)*0.02
-            axisY.min = minRng.y - (maxRng.y-minRng.y)*0.02
-            axisY.max = maxRng.y + (maxRng.y-minRng.y)*0.02
+            axisY.min = minRng.y - (maxRng.y-minRng.y)*0.03
+            axisY.max = maxRng.y + (maxRng.y-minRng.y)*0.03
+            axisY.titleText = app.yAxisName
         }
     }
 

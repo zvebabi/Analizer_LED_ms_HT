@@ -25,7 +25,7 @@ Item {
         anchors.top: parent.top
         Column {
             id: deviceSetter
-            spacing: 10*app.dp
+            spacing: 5*app.dp
             anchors.right: chartStyle.left
             anchors.top: chartStyle.top
             anchors.rightMargin: 50*app.dp
@@ -72,7 +72,40 @@ Item {
                     app.drawEt = checked
                 }
             }
-
+            CheckBox {
+                id:antialiasingManual
+                text: qsTr("Enable antialiasing")
+                checked: app.aaManual
+                onClicked: {
+                    reciever.enableAAManual(checked)
+                    app.aaManual = checked
+                }
+            }
+            CheckBox {
+                id:valuesFromMcu
+                text: qsTr("Values from mcu")
+                checked: app.valuesFromMCU
+                onClicked: {
+                    reciever.valuesFromMCU(checked)
+                    app.valuesFromMCU = checked
+                }
+            }
+            RadioButton {
+                id:name1
+                checked: true
+                text: qsTr("Absorbance")
+                onClicked: {
+                    app.yAxisName = name1.text
+                }
+            }
+            RadioButton {
+                id:name2
+                checked: false
+                text: qsTr("Transmittance")
+                onClicked: {
+                    app.yAxisName = name2.text
+                }
+            }
         }
 
         //implement hystogram/lines

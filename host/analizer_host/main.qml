@@ -20,6 +20,9 @@ ApplicationWindow {
     minimumWidth: 960
     title: appTitle
     property bool drawEt: false //etalon draw or not
+    property bool aaManual: true //Enable antialiasing
+    property string yAxisName: qsTr("Absorbance") //Legends from mcu
+    property bool valuesFromMCU: false //Values from mcu
 
     Material.theme: Material.Light
     Material.primary: Material.BlueGrey
