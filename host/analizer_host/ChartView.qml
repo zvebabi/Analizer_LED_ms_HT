@@ -10,13 +10,18 @@ Item {
     //save names here
     property variant allSeriesName
 
+
     Connections {
         target: reciever
         onAdjustAxis: {
-            axisX.min = minRng.x - (maxRng.x-minRng.x)*0.02
-            axisX.max = maxRng.x + (maxRng.x-minRng.x)*0.02
-            axisY.min = minRng.y - (maxRng.y-minRng.y)*0.03
-            axisY.max = maxRng.y + (maxRng.y-minRng.y)*0.03
+            graphs.minRngX = minRng.x - (maxRng.x-minRng.x)*0.02
+            graphs.maxRngX = maxRng.x + (maxRng.x-minRng.x)*0.02
+            graphs.minRngY = minRng.y - (maxRng.y-minRng.y)*0.1
+            graphs.maxRngY = maxRng.y
+            axisX.min = graphs.minRngX
+            axisX.max = graphs.maxRngX
+            axisY.min = 0
+            axisY.max = graphs.maxRngY*1.1
             axisY.titleText = app.yAxisName
         }
     }
@@ -33,6 +38,10 @@ Item {
             antialiasing: true
             legend.visible: false
             property int numSeries : 0 //current number of graphs
+            property real minRngX: 0.0
+            property real maxRngX: 0.0
+            property real minRngY: 0.0
+            property real maxRngY: 0.0
 //            BarCategoryAxis {
 //                id: axisX
 //                objectName: "axisX"

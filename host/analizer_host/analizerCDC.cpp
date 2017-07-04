@@ -117,7 +117,7 @@ void analizerCDC::doMeasurements(QtCharts::QAbstractSeries *series, bool _etalon
     currentPoints = new QVector<QPointF> ;
     etalon = _etalon;
     qDebug() << etalon;
-#if 0
+#if 1
     device->write("m");
     currentSeries = series;
 #else

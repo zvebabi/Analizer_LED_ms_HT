@@ -231,7 +231,13 @@ Column {
                 }
                 onClicked: {
 //                    graphs.zoomIn()
-                    graphs.zoomIn(Qt.rect(0, 0, graphs.plotArea.width, graphs.plotArea.height/2))
+//                    graphs.zoomIn(Qt.rect(0, 0, graphs.plotArea.width, graphs.plotArea.height/2))
+                    console.log(graphs.minRngY)
+                    console.log(graphs.maxRngY)
+                    axisX.min = graphs.minRngX
+                    axisX.max = graphs.maxRngX
+                    axisY.min = graphs.minRngY
+                    axisY.max = graphs.maxRngY + (graphs.maxRngY-graphs.minRngY)*0.1
                 }
             }
             ToolButton {
@@ -249,6 +255,10 @@ Column {
                 onClicked: {
 //                    graphs.zoomOut()
                     graphs.zoomReset()
+                    axisY.min = 0;
+                    axisX.min = graphs.minRngX
+                    axisX.max = graphs.maxRngX
+                    axisY.max = graphs.maxRngY*1.1
                 }
             }
             ToolButton {
