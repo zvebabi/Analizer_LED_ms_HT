@@ -49,6 +49,14 @@ bool WinSerialPort::open()
     memset(&overlapped_structure, 0, sizeof(overlapped_structure));
     overlapped_structure.Offset = 4096;
     overlapped_structure.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+    //set short timeouts
+    timeouts.ReadIntervalTimeout = 2;
+    timeouts.ReadTotalTimeoutMultiplier = 2;
+    timeouts.ReadTotalTimeoutConstant = 2;
+    timeouts.WriteTotalTimeoutMultiplier = 2;
+    timeouts.WriteTotalTimeoutConstant = 2;
+    if (!SetCommTimeouts(hSerial, &timeouts))
+        qDebug() << "setting port time-outs error.";
 
     start();
     return true;
@@ -122,7 +130,13 @@ void WinSerialPort::runReader()
                      &overlapped_structure);  //read byte
             while (!HasOverlappedIoCompleted(&overlapped_structure) && !b_stop)
                 std::this_thread::yield();
-            if (iSize > 0)  //if really readbyte -> process it
+            //sometimes sRecievedChar is empty -> stupid delay
+            auto start = std::chrono::high_resolution_clock::now();
+            while( std::chrono::duration_cast<std::chrono::microseconds>
+                     (std::chrono::high_resolution_clock::now()-start) <
+                                              std::chrono::microseconds(1)) {;}
+
+            if (iSize > 0 && sReceivedChar)  //if really readbyte -> process it
             {
                 line.append(sReceivedChar);
                 if (sReceivedChar == '\n')
@@ -130,10 +144,9 @@ void WinSerialPort::runReader()
                     lineArray.push_back(line);
                     line.clear();
                     b_canReadLine = true;
-                    emit readyRead();
                 }
+                emit readyRead();
             }
-            std::this_thread::sleep_for(std::chrono::microseconds(1000));
         }
     }
 

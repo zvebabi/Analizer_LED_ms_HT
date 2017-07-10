@@ -1,16 +1,20 @@
 #ifndef WINSERIALPORT_H
 #define WINSERIALPORT_H
 
-#include <QtCore/QObject>
-#include <QDebug>
-#ifdef _WIN32
-#include <windows.h>
-#endif
-#include <QByteArray>
 #include <iostream>
 #include <thread>
 #include <mutex>
 #include <atomic>
+#include <chrono>
+
+#include <QtCore/QObject>
+#include <QDebug>
+#include <QByteArray>
+
+#ifdef _WIN32
+  #include <windows.h>
+#endif
+
 
 
 class WinSerialPort : public QObject
@@ -38,6 +42,7 @@ signals:
 private:
     HANDLE hSerial;
     OVERLAPPED overlapped_structure;
+    COMMTIMEOUTS timeouts;
     std::thread *st;
     std::atomic_bool b_canReadLine, b_stop, finished, b_Write;
     QString c_portName;

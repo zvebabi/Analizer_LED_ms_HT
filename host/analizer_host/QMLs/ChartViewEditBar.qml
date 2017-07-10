@@ -236,8 +236,8 @@ Column {
                     console.log(graphs.maxRngY)
                     axisX.min = graphs.minRngX
                     axisX.max = graphs.maxRngX
-                    axisY.min = graphs.minRngY
-                    axisY.max = graphs.maxRngY + (graphs.maxRngY-graphs.minRngY)*0.1
+                    axisY.min = graphs.minRngY*0.97
+                    axisY.max = graphs.maxRngY*1.03
                 }
             }
             ToolButton {
@@ -274,19 +274,33 @@ Column {
                     smooth: true
                 }
                 onClicked: {//if checked vis=true, else false
-                    for(var i = tableOfSeries.count-1; i>=0 ; i--) {
-                        tableOfSeries.currentIndex = i;
-                        if (tableOfSeries.currentItem.checked) {
-                            graphs.series(tableOfSeries.currentItem.text
-                                          ).visible = true;
-                            console.log("Series: " +
-                                        tableOfSeries.currentItem.text +
-                                        " is off.");
-                        } else {
-                            graphs.series(tableOfSeries.currentItem.text
-                                          ).visible = false;
+                  var minRngYY =0;
+                  var maxRngYY =0;
+                  for(var i = tableOfSeries.count-1; i >= 0; i--) {
+                    tableOfSeries.currentIndex = i;
+                    if (tableOfSeries.currentItem.checked) {
+                      graphs.series(tableOfSeries.currentItem.text
+                                    ).visible = true;
+                      console.log("Series: " +
+                                tableOfSeries.currentItem.text + " is off.");
+                    //recalc range
+                      for(var j = 0; j < graphs.series(tableOfSeries.currentItem.text
+                                                       ).count; j ++ ){
+                        if (graphs.series(tableOfSeries.currentItem.text).at(j).y < minRngYY || minRngYY ==0){
+                          minRngYY = graphs.series(tableOfSeries.currentItem.text).at(j).y;
                         }
-                    }
+                        if (graphs.series(tableOfSeries.currentItem.text).at(j).y > maxRngYY || maxRngYY ==0){
+                          maxRngYY = graphs.series(tableOfSeries.currentItem.text).at(j).y;
+                        }
+                      }
+                    } else {
+                      graphs.series(tableOfSeries.currentItem.text).visible =
+                                                                        false;}
+                  }
+//                  graphs.minRngY = minRngYY
+//                  graphs.maxRngY = maxRngYY*1.1
+                  axisY.min = minRngYY*0.97
+                  axisY.max = maxRngYY*1.03
                 }
             }
             ToolButton {
