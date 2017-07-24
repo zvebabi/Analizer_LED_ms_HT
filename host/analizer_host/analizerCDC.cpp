@@ -111,15 +111,18 @@ void analizerCDC::readData()
     while (device->canReadLine()) processLine(device->readLine());
 }
 
-void analizerCDC::doMeasurements(QtCharts::QAbstractSeries *series, bool _etalon)
+void analizerCDC::doMeasurements(QtCharts::QAbstractSeries *lineSeries,
+                                 QtCharts::QAbstractSeries *barSeries,
+                                 bool _etalon)
 {
     qDebug() << "doMeasurements";
     currentPoints = new QVector<QPointF> ;
     etalon = _etalon;
     qDebug() << etalon;
-#if 1
+#if 0
     device->write("m");
-    currentSeries = series;
+    currentSeries = lineSeries;
+    currentBarSeries = barSeries;
 #else
     auto colCount =43;
     // Append the new data depending on the type
@@ -209,9 +212,9 @@ void analizerCDC::doMeasurements(QtCharts::QAbstractSeries *series, bool _etalon
     if (!etalon || (etalon && drawLines))
     {
         m_data.append(*currentPoints);
-        lines.insert(series, m_data.back()); //save series and data pointers for future
+        lines.insert(lineSeries, m_data.back()); //save series and data pointers for future
         emit adjustAxis(rangeVal[0], rangeVal[1]);
-        update(series);
+        update(lineSeries, barSeries);
     }
 
 #endif
@@ -250,13 +253,23 @@ void analizerCDC::deleteSeries(QtCharts::QAbstractSeries *series)
         lines.remove(series);
 }
 
-void analizerCDC::update(QtCharts::QAbstractSeries *series)
+void analizerCDC::update(QtCharts::QAbstractSeries *series,
+                         QtCharts::QAbstractSeries *_barSeries)
 {
     if (series && lines.contains(series)) {
         QtCharts::QXYSeries *xySeries = static_cast<QtCharts::QXYSeries *>(series);
 //        QVector<QPointF> points = lines.value(series);
         // Use replace instead of clear + append, it's optimized for performance
         xySeries->replace(lines.value(series));
+        //fill barseries
+//        QtCharts::QBarSeries *barSeries = static_cast<QtCharts::QBarSeries *>(_barSeries);
+//        QtCharts::QBarSet barSet(xySeries->name());
+//        QList<qreal> list;
+//        foreach (auto point, lines.value(series)) {
+//            list.append(point.y());
+//        }
+//        barSet.append(list);
+//        barSeries->append(&barSet);
     }
 }
 
@@ -396,7 +409,7 @@ void analizerCDC::processLine(const QByteArray &_line)
             m_data.append(*currentPoints);
             lines.insert(currentSeries, m_data.back()); //save series and data pointers for future
             emit adjustAxis(rangeVal[0], rangeVal[1]);
-            update(currentSeries);
+            update(currentSeries, currentBarSeries);
         }
     }
 }

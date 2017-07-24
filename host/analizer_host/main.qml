@@ -138,7 +138,8 @@ ApplicationWindow {
                 }
             }
         }
-    }
+    } //menuView
+
     Loader {
         id: loader
         anchors.top: menuBar.bottom;
@@ -170,26 +171,41 @@ ApplicationWindow {
                 anchors.centerIn: parent
             }
         }
+    } //loader
+    Rectangle {
+        anchors.top: menuBar.bottom
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        anchors.right: editRect.left
+//        color: "red"
+        SwipeView {
+            id: view
+            interactive: false
+            currentIndex: mainMenu.currentItem
+            anchors.fill: parent
+            anchors.top: menuBar.Bottom
+            orientation: Qt.Vertical
+            anchors.margins: 10
+            ChartView {
+                id:line_wr
+            }
+            HistogramView {
+                id:bar_wr
+            }
+            Settings {
+            }
+            Item {
+            }
+        } //view
     }
-    function onMenu() {
-        menuView.x = app.menuIsShown ? -menuWidth : 0
-    }
-
-    Component.onCompleted: {
-//        currentPage = "Settings.qml"
-        mainMenu.currentItem = 1
-    }
-    SwipeView {
-        id: view
-        interactive: false
-        currentIndex: mainMenu.currentItem
-        anchors.fill: parent
-        anchors.top: menuBar.Bottom
-        ChartView {
-        }
-        Settings {
-        }
-        Item {
+    Rectangle {
+        id:editRect
+        width: editBar.itemWidth
+        anchors.right: parent.right
+        anchors.top: menuBar.bottom
+        color: "red"
+        ChartViewEditBar {
+            id: editBar
         }
     }
     Popup {
@@ -207,6 +223,14 @@ ApplicationWindow {
             text: tipsWithPath.showedText
         }
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+    } //popup
+
+    function onMenu() {
+        menuView.x = app.menuIsShown ? -menuWidth : 0
     }
 
+    Component.onCompleted: {
+//        currentPage = "Settings.qml"
+        mainMenu.currentItem = 2
+    }
 }

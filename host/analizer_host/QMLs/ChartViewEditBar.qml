@@ -70,7 +70,7 @@ Column {
                 standardButtons: StandardButton.OK
                 onAccepted: {
                     console.log(newName.text)
-                    graphs.series(tableOfSeries.currentItem.text).name =
+                    lineGraphs.series(tableOfSeries.currentItem.text).name =
                             newName.text
                     tableOfSeries.currentItem.text = newName.text
                     newName.text = ""
@@ -128,19 +128,19 @@ Column {
                 }
                 onClicked: {
                     if (drawEt === true) {
-                        graphs.numSeries++;
+                        lineGraphs.numSeries++;
                         var seriesName = qsTr("calibration_"
-                                              + graphs.numSeries)
-                        graphs.createSeries(ChartView.SeriesTypeLine,
+                                              + lineGraphs.numSeries)
+                        lineGraphs.createSeries(ChartView.SeriesTypeLine,
                                             seriesName,
                                             axisX, axisY);
                         tableModel.append({
                            "name": seriesName,
                            "isChecked": true,
                            "seriesColor":
-                                   graphs.series(seriesName).color.toString() })
+                                   lineGraphs.series(seriesName).color.toString() })
                         }
-                    reciever.doMeasurements(graphs.series(seriesName), true);
+                    reciever.doMeasurements(lineGraphs.series(seriesName), barSeries, true);
                 }
             }
             ToolButton {
@@ -204,8 +204,13 @@ Column {
                     onAccepted: {
                         var path = reciever.getDataPath() +
                                 imgNameTF.text + ".png"
-                        graphs.grabToImage(function(result) {
+                        var pathB = reciever.getDataPath() +
+                                imgNameTF.text + "histogram.png"
+                        lineGraphs.grabToImage(function(result) {
                             result.saveToFile(path);
+                        });
+                        barGraphs.grabToImage(function(result) {
+                            result.saveToFile(pathB);
                         });
                         console.log(path)
                         imgNameTF.text = ""
@@ -221,7 +226,7 @@ Column {
                 height: 1.5*48*app.dp
                 width: height
                 ToolTip.visible: hovered
-                    ToolTip.text: qsTr("Zoom In")
+                    ToolTip.text: qsTr("Zoom In\nLines view only")
                 Image {
                     anchors.fill: parent
                     anchors.centerIn: parent
@@ -232,12 +237,12 @@ Column {
                 onClicked: {
 //                    graphs.zoomIn()
 //                    graphs.zoomIn(Qt.rect(0, 0, graphs.plotArea.width, graphs.plotArea.height/2))
-                    console.log(graphs.minRngY)
-                    console.log(graphs.maxRngY)
-                    axisX.min = graphs.minRngX
-                    axisX.max = graphs.maxRngX
-                    axisY.min = graphs.minRngY*0.97
-                    axisY.max = graphs.maxRngY*1.03
+                    console.log(lineGraphs.minRngY)
+                    console.log(lineGraphs.maxRngY)
+                    axisX.min = lineGraphs.minRngX
+                    axisX.max = lineGraphs.maxRngX
+                    axisY.min = lineGraphs.minRngY*0.97
+                    axisY.max = lineGraphs.maxRngY*1.03
                 }
             }
             ToolButton {
@@ -245,7 +250,7 @@ Column {
                 height: 1.5*48*app.dp
                 width: height
                 ToolTip.visible: hovered
-                    ToolTip.text: qsTr("Zoom Out")
+                    ToolTip.text: qsTr("Zoom Out\nLines view only")
                 Image {
                     anchors.fill: parent
                     source: "qrc:/images/zoomOut.png"
@@ -254,11 +259,11 @@ Column {
                 }
                 onClicked: {
 //                    graphs.zoomOut()
-                    graphs.zoomReset()
+                    lineGraphs.zoomReset()
                     axisY.min = 0;
-                    axisX.min = graphs.minRngX
-                    axisX.max = graphs.maxRngX
-                    axisY.max = graphs.maxRngY*1.1
+                    axisX.min = lineGraphs.minRngX
+                    axisX.max = lineGraphs.maxRngX
+                    axisY.max = lineGraphs.maxRngY*1.1
                 }
             }
             ToolButton {
@@ -276,26 +281,34 @@ Column {
                 onClicked: {//if checked vis=true, else false
                   var minRngYY =0;
                   var maxRngYY =0;
+
+                  //cleanup barSeries
+                  for(var k = barSeries.count-1; k >= 0; k--){
+                      barSeries.remove(barSeries.at(k))
+                  }
                   for(var i = tableOfSeries.count-1; i >= 0; i--) {
                     tableOfSeries.currentIndex = i;
                     if (tableOfSeries.currentItem.checked) {
-                      graphs.series(tableOfSeries.currentItem.text
-                                    ).visible = true;
+                      lineGraphs.series(tableOfSeries.currentItem.text
+                          ).visible = true;
+                      barSeries.append(tableOfSeries.currentItem.text,
+                                       lineGraphs.series(tableOfSeries.currentItem.text))
                       console.log("Series: " +
-                                tableOfSeries.currentItem.text + " is off.");
+                                tableOfSeries.currentItem.text + " is on.");
                     //recalc range
-                      for(var j = 0; j < graphs.series(tableOfSeries.currentItem.text
+                      for(var j = 0; j < lineGraphs.series(tableOfSeries.currentItem.text
                                                        ).count; j ++ ){
-                        if (graphs.series(tableOfSeries.currentItem.text).at(j).y < minRngYY || minRngYY ==0){
-                          minRngYY = graphs.series(tableOfSeries.currentItem.text).at(j).y;
+                        if (lineGraphs.series(tableOfSeries.currentItem.text).at(j).y < minRngYY || minRngYY ==0){
+                          minRngYY = lineGraphs.series(tableOfSeries.currentItem.text).at(j).y;
                         }
-                        if (graphs.series(tableOfSeries.currentItem.text).at(j).y > maxRngYY || maxRngYY ==0){
-                          maxRngYY = graphs.series(tableOfSeries.currentItem.text).at(j).y;
+                        if (lineGraphs.series(tableOfSeries.currentItem.text).at(j).y > maxRngYY || maxRngYY ==0){
+                          maxRngYY = lineGraphs.series(tableOfSeries.currentItem.text).at(j).y;
                         }
                       }
                     } else {
-                      graphs.series(tableOfSeries.currentItem.text).visible =
-                                                                        false;}
+                      lineGraphs.series(
+                          tableOfSeries.currentItem.text).visible = false;
+                    }
                   }
 //                  graphs.minRngY = minRngYY
 //                  graphs.maxRngY = maxRngYY*1.1
@@ -327,10 +340,10 @@ Column {
                             tableOfSeries.currentIndex = i;
                             if (tableOfSeries.currentItem.checked) {
                                 reciever.deleteSeries(
-                                            graphs.series(
+                                            lineGraphs.series(
                                                tableOfSeries.currentItem.text));
-                                graphs.removeSeries(
-                                            graphs.series(
+                                lineGraphs.removeSeries(
+                                            lineGraphs.series(
                                                tableOfSeries.currentItem.text));
                                 tableModel.remove(i);
                                 console.log("Series: " +
@@ -345,16 +358,31 @@ Column {
         }
     }
     function createSeries() {
-        graphs.numSeries++;
+        line_wr.p_lG.numSeries++;
         var seriesName = qsTr(lineLabel.text + "_"
-                              + graphs.numSeries)
-        graphs.createSeries(ChartView.SeriesTypeSpline,
+                              + line_wr.p_lG.numSeries);
+        line_wr.p_lG.createSeries(ChartView.SeriesTypeSpline,
                             seriesName,
-                            axisX, axisY);
-        reciever.doMeasurements(graphs.series(seriesName));
+                            line_wr.p_lG.axisX, line_wr.p_lG.axisY);
+        var seriessss = bar_wr.p_bS;
+        reciever.doMeasurements(line_wr.p_lG.series(seriesName), seriessss);
         tableModel.append({
            "name": seriesName,
            "isChecked": true,
-           "seriesColor": graphs.series(seriesName).color.toString() })
+           "seriesColor": line_wr.p_lG.series(seriesName).color.toString() });
     }
+//    function createSeries() {
+//        lineGraphs.numSeries++;
+//        var seriesName = qsTr(lineLabel.text + "_"
+//                              + lineGraphs.numSeries)
+//        lineGraphs.createSeries(ChartView.SeriesTypeSpline,
+//                            seriesName,
+//                            axisX, axisY);
+//        var seriessss = barSeries
+//        reciever.doMeasurements(lineGraphs.series(seriesName), seriessss);
+//        tableModel.append({
+//           "name": seriesName,
+//           "isChecked": true,
+//           "seriesColor": lineGraphs.series(seriesName).color.toString() })
+//    }
 }

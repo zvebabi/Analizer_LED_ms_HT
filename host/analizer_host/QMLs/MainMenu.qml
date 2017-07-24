@@ -17,6 +17,11 @@ Item {
             page: "ChartView.qml"
         }
         ListElement {
+            item: "hist_view"
+//            icon: "qrc:/images/icon_game.png"
+            page: "HistogramView.qml"
+        }
+        ListElement {
             item: "settings"
 //            icon: "qrc:/images/icon_settings.png"
             page: "Settings.qml"
@@ -38,7 +43,10 @@ Item {
         var textReturn = ""
         switch( item ) {
         case "chart_view":
-            textReturn = qsTr("ChartView")
+            textReturn = qsTr("Lines view")
+            break;
+        case "hist_view":
+            textReturn = qsTr("Histogram view")
             break;
         case "settings":
             textReturn = qsTr("Settings")
@@ -159,15 +167,18 @@ Item {
             id: exitDialog
             title: "Quit"
             text: "Save dataset before exit?"
-            standardButtons: StandardButton.Ok | StandardButton.Cancel
+            standardButtons: StandardButton.Yes |
+                             StandardButton.No |
+                             StandardButton.Cancel
             icon: StandardIcon.Question
-            onAccepted: {
+            onYes:{
                 var path = reciever.getDataPath() + "dataset.csv"
                 tipsWithPath.showedText = qsTr("Data saved to:\n" + path)
                 tipsWithPath.open()
                 reciever.saveDataToCSV("dataset.csv")
                 waiter.running = true
             }
+            onNo: waiter.running = true
         }
         Timer {
             id:waiter
