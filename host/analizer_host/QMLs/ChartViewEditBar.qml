@@ -351,7 +351,7 @@ Column {
         graphs.createSeries(ChartView.SeriesTypeSpline,
                             seriesName,
                             axisX, axisY);
-        reciever.doMeasurements(graphs.series(seriesName));
+        reciever.doMeasurements(graphs.series(seriesName), mainBarSeries);
         tableModel.append({
            "name": seriesName,
            "isChecked": true,

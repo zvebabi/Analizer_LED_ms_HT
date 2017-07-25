@@ -47,6 +47,7 @@ ApplicationWindow {
     }
 //    property alias currentPage: loader.source
     property int menuWidth : 250*app.dp// width/4
+    property int menuBarHeight: 50*app.dp
     property int widthOfSeizure: 15*app.dp
     property real menuProgressOpening
     property bool menuIsShown:
@@ -58,7 +59,7 @@ ApplicationWindow {
       anchors.top: parent.top
       anchors.topMargin: 0
       width: parent.width
-      height: 30
+      height: app.menuBarHeight
       color:palette.darkPrimary // Material.color(Material.BlueGrey)
       Rectangle {
         id: menuButton
