@@ -11,10 +11,8 @@
 #include <QAbstractSeries>
 #include <QtCharts/QAbstractSeries>
 #include <QtCharts/QXYSeries>
-#include <QtCharts/QBarSeries>
-#include <QtCharts/QBarSet>
 #include <QColor>
-#include <QList>
+#include <QVariantList>
 #include <QStringList>
 #include <QDebug>
 #include <QDir>
@@ -47,7 +45,6 @@ public slots:
     void valuesFromMCU(bool _values) {axisValueFromMCU = _values;}
 
     void doMeasurements(QtCharts::QAbstractSeries *series,
-                        QtCharts::QAbstractSeries *barSeries,
                         bool _etalon=false);
 //    void doCalibration();
     void saveDataToCSV(QString filename);
@@ -57,12 +54,11 @@ signals:
     void sendPortName(QString port);
     void sendDebugInfo(QString data);
     void adjustAxis(QPointF minRng, QPointF maxRng);
-    void updateBarSeries(QString _label, QList<qreal> _data, QColor _color,
+    void updateBarSeries(QString _label, QVariantList _data, QColor _color,
                          QStringList _axis);
     void makeSeries();
 private:
-    void update(QtCharts::QAbstractSeries *series,
-                QtCharts::QAbstractSeries *barSeries);
+    void update(QtCharts::QAbstractSeries *series);
     void processLine(const QByteArray& line);
 
     std::vector<QString> ports;
@@ -78,7 +74,6 @@ private:
     QVector<QPointF> *currentPoints;
     QVector<QPointF> *etalonPoints;
     QtCharts::QAbstractSeries* currentSeries;
-    QtCharts::QAbstractSeries* currentBarSeries;
     QtCharts::QAbstractSeries* etalonSeries;
     QMap< QtCharts::QAbstractSeries*, QVector<QPointF> > lines;
     QString documentsPath;

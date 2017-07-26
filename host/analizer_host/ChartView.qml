@@ -29,7 +29,6 @@ Item {
         }
         onUpdateBarSeries: {
             mainBarSeries.append(_label, _data)
-//            mainBarSeries.append("set 1", [0, 0.2, 0.2, 0.5, 0.4, 1.5, 0.9])
             mainBarSeries.at(mainBarSeries.count-1).color = _color
             barAxisX.categories = _axis
 
