@@ -204,9 +204,14 @@ Column {
                     standardButtons: StandardButton.OK
                     onAccepted: {
                         var path = reciever.getDataPath() +
-                                imgNameTF.text + ".png"
+                                imgNameTF.text + ".png";
+                        var pathH = reciever.getDataPath() +
+                                imgNameTF.text + "_hist.png";
                         graphs.grabToImage(function(result) {
                             result.saveToFile(path);
+                        });
+                        barGraphs.grabToImage(function(result) {
+                            result.saveToFile(pathH);
                         });
                         console.log(path)
                         imgNameTF.text = ""
@@ -233,8 +238,8 @@ Column {
                 onClicked: {
 //                    graphs.zoomIn()
 //                    graphs.zoomIn(Qt.rect(0, 0, graphs.plotArea.width, graphs.plotArea.height/2))
-                    console.log(graphs.minRngY)
-                    console.log(graphs.maxRngY)
+//                    console.log(graphs.minRngY)
+//                    console.log(graphs.maxRngY)
                     axisX.min = graphs.minRngX
                     axisX.max = graphs.maxRngX
                     axisY.min = graphs.minRngY*0.97
