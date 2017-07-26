@@ -9,6 +9,7 @@ Column {
     id: ctrlPane
     spacing: 3
     property int itemWidth: 400*app.dp
+    signal redrawHistogram()
     Connections {
         target: reciever
         onMakeSeries: {
@@ -297,6 +298,7 @@ Column {
                       graphs.series(tableOfSeries.currentItem.text).visible =
                                                                         false;}
                   }
+                  redrawHistogram()
 //                  graphs.minRngY = minRngYY
 //                  graphs.maxRngY = maxRngYY*1.1
                   axisY.min = minRngYY*0.97
@@ -338,6 +340,12 @@ Column {
                                             " deleted.");
                             }
                         }
+                        //check-on all non-deleted lines
+                        for(i = tableOfSeries.count-1; i>=0 ; i--) {
+                            tableOfSeries.currentIndex = i;
+                            tableOfSeries.currentItem.checked = true
+                        }
+                        redrawHistogram()
                     }
                 }
                 onClicked: { messageDialog.setVisible(true) }
@@ -356,5 +364,29 @@ Column {
            "name": seriesName,
            "isChecked": true,
            "seriesColor": graphs.series(seriesName).color.toString() })
+    }
+    onRedrawHistogram: {
+        //remove all existing sets of data
+        mainBarSeries.clear()
+        //fill histogram again. and set visible all
+        for ( var i = 0; i < tableOfSeries.count ; i++ ) {
+            tableOfSeries.currentIndex = i;
+            //set visible only checked
+            if (tableOfSeries.currentItem.checked) {
+                var lineS = graphs.series(tableOfSeries.currentItem.text);
+                var label = lineS.name; // name for barset
+                var colorS = lineS.color; //color for barset
+                //fill data values
+                var dataS = [];
+                for (var ind = 0; ind < lineS.count; ind++) { //go through all points
+                    dataS.push(lineS.at(ind).y);
+                }
+//                console.log(dataS);
+//                console.log(label);
+//                console.log(colorS);
+                var newBarSet = mainBarSeries.append(label, dataS);
+                newBarSet.color = colorS;
+            }
+        }
     }
 }
