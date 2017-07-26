@@ -11,6 +11,7 @@ import mydevice 1.0
 ApplicationWindow {
     id:app
     property string appTitle: "LED Minispectrometer"
+    property string chartType: "line"
 //    property int seriesType: ChartView.SeriesTypeSpline
     visible: true
 //    visibility: "FullScreen"
@@ -178,12 +179,18 @@ ApplicationWindow {
 
     Component.onCompleted: {
 //        currentPage = "Settings.qml"
-        mainMenu.currentItem = 1
+        mainMenu.currentItem = 2
     }
     SwipeView {
         id: view
         interactive: false
-        currentIndex: mainMenu.currentItem
+        ///index fix because line and histigram viewer on same page,
+        ///and nmenu numering is different.
+        //indexes: 0 - line      - ChartView.qml
+        //         1 - histogram - ChartView.qml
+        //         2 - settings  - Settings.qml
+        //         3 - about     - empty item
+        currentIndex: mainMenu.currentItem < 2 ? 0 : mainMenu.currentItem -1
         anchors.fill: parent
         anchors.top: menuBar.Bottom
         ChartView {

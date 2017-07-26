@@ -13,7 +13,7 @@ Item {
     Connections {
         target: reciever
         onAdjustAxis: {
-            barGraphs.visible = barGraphs.visible ? false :true
+//            barGraphs.visible = barGraphs.visible ? false :true
             graphs.minRngX = minRng.x - (maxRng.x-minRng.x)*0.02
             graphs.maxRngX = maxRng.x + (maxRng.x-minRng.x)*0.02
             graphs.minRngY = minRng.y - (maxRng.y-minRng.y)*0.1
@@ -50,6 +50,7 @@ Item {
                 anchors.fill: parent
                 antialiasing: true
                 legend.visible: false
+                visible: mainMenu.currentItem == 0 ? true : false // 0 - line
                 property int numSeries : 0 //current number of graphs
                 property real minRngX: 0.0
                 property real maxRngX: 0.0
@@ -107,6 +108,7 @@ Item {
     //            title: "Result"
                 antialiasing: true
                 legend.visible: false
+                visible: mainMenu.currentItem == 1 ? true : false //1-histogram
                 property int numSeries : 0 //current number of graphs
                 property real minRngX: 0.0
                 property real maxRngX: 0.0

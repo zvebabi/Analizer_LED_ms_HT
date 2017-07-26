@@ -17,6 +17,11 @@ Item {
             page: "ChartView.qml"
         }
         ListElement {
+            item: "histogram_view"
+//            icon: "qrc:/images/icon_game.png"
+            page: "ChartView.qml"
+        }
+        ListElement {
             item: "settings"
 //            icon: "qrc:/images/icon_settings.png"
             page: "Settings.qml"
@@ -38,7 +43,10 @@ Item {
         var textReturn = ""
         switch( item ) {
         case "chart_view":
-            textReturn = qsTr("ChartView")
+            textReturn = qsTr("GraphView")
+            break;
+        case "histogram_view":
+            textReturn = qsTr("HistogramView")
             break;
         case "settings":
             textReturn = qsTr("Settings")
