@@ -6,12 +6,19 @@
 #ifndef ANALIZER_H_
 #define ANALIZER_H_
 
+//#define MIXING_LED
+
 #include "Arduino.h"
+//#include "Statistic.h"
 #include <stdio.h>
 #include <stdint.h>
 #include <util/delay.h>
 #include <avr/eeprom.h>
 #include <SPI.h>
+
+#define MEDIAN_FILTER_ENABLE
+//#define PRINT_DEBUG
+//#define MIXING_LED
 
 #define GeneratorPin 9
 #define ShiftRegisterDelay 1
@@ -20,7 +27,14 @@
 #define DISCHARGE_DELAY 50
 #define PULSE_DELAY 25
 #define REFERENCE_V 3000.0
+
+#ifndef MIXING_LED
+#define NUM_OF_LED 12
+#define NUM_OF_POINTS 12
+#else
 #define NUM_OF_LED 45
+#endif
+
 #define NUM_OF_ETALON 3
 #define MAX_PULSE_WIDTH 60
 #define MAX_CURRENT 1000
@@ -86,6 +100,44 @@ typedef struct
 uint8_t EEMEM _empty[20] = {0xF};
 uint16_t EEMEM _pulseWidth = 120;
 float EEMEM _c_R = 3.9;
+
+#ifndef MIXING_LED // without mixing of led
+current_t EEMEM _pairsOfCurrent[NUM_OF_LED] = {
+		250, 0,	// 1
+		0, 450,  // 2
+		160, 0,  // 3
+		0, 140,  // 4
+		200, 0,  // 5
+		0, 290, 	// 6
+
+		26, 0, 	// 7
+		0, 53, 	// 8
+		56, 0,  	// 9
+		0, 58,	// 10
+		63, 0,  	// 11
+		0, 83 	// 12
+};
+//current_t EEMEM _pairsOfCurrent[NUM_OF_LED] = {
+//		80, 0,	// 1
+//		50, 0,  // 2
+//		55, 0,  // 3
+//		68, 0,  // 4
+//		68, 0,  // 5
+//		5, 0, 	// 6
+//
+//		5, 0, 	// 7
+//		6, 0, 	// 8
+//		32, 0,  	// 9
+//		35, 0,	// 10
+//		33, 0,  	// 11
+//		53, 0 	// 12
+//};
+//                                                                   g1_1 g2_1, g1_2 g2_2
+etalon_t EEMEM _etalons[NUM_OF_ETALON] = {50,    10,       30,      10,
+																	1,1,1,1,1,1,1,1,1,1,1,1};
+float EEMEM _coefficients[NUM_OF_LED] = {1,1,1,1,1,1,1,1,1,1,1,1};
+
+#else
 current_t EEMEM _pairsOfCurrent[NUM_OF_LED] = {
 		140, 0,  //1-2
 		90, 240,
@@ -144,13 +196,15 @@ current_t EEMEM _pairsOfCurrent[NUM_OF_LED] = {
 
 		53, 0 //12
 };
-															     //  g1_1 g2_1, g1_2 g2_2
+//  g1_1 g2_1, g1_2 g2_2
 etalon_t EEMEM _etalons[NUM_OF_ETALON] = {50,    10,       30,      10,
-		1,1,1,1,1,1,1,1,1,1,	1,1,1,1,1,1,1,1,1,1,	1,1,1,1,1,1,1,1,1,1,
-				1,1,1,1,1,1,1,1,1,1,	1,1,1,1,1};
+1,1,1,1,1,1,1,1,1,1,	1,1,1,1,1,1,1,1,1,1,	1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,	1,1,1,1,1};
 float EEMEM _coefficients[NUM_OF_LED] = {1,1,1,1,1,1,1,1,1,1,
-		1,1,1,1,1,1,1,1,1,1,	1,1,1,1,1,1,1,1,1,1,
-		1,1,1,1,1,1,1,1,1,1,	1,1,1,1,1};
+1,1,1,1,1,1,1,1,1,1,	1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,	1,1,1,1,1};
+#endif
+
 
 //define sram variable
 //volatile uint16_t pulseWidth;
@@ -317,6 +371,157 @@ void Set_OCR3A(float PulseWidth) {
 	PulseWidth = (PulseWidth > 125) ? 125 : PulseWidth;
 	PulseWidth = (PulseWidth < 1) ? 1 : PulseWidth;
 	OCR0A = (unsigned int) (PulseWidth*2);
+}
+
+
+void Swap(int32_t& a, int32_t& b) {
+	int32_t t=a;
+	a=b;
+	b=t;
+}
+/*
+ * sort array of 3 elems
+ */
+void Sort(int32_t *arr) {
+	if (arr[2] < arr[1]) { Swap(arr[1], arr[2]); }
+	if (arr[1] < arr[0]) { Swap(arr[0], arr[1]); }
+    if (arr[2] < arr[1]) { Swap(arr[1], arr[2]); }
+}
+
+void medianFilter(int32_t *arr, uint8_t& bufSize) {
+	int32_t new_Data_ADC_array[bufSize];
+
+	for (uint8_t q=0; q<bufSize ;q++) { new_Data_ADC_array[q] =0;	}
+
+	int32_t apperture[3];
+	for (uint8_t q=0; q<bufSize ;q++)
+	{
+		if (q == 0) //for first val. duplicate it
+			apperture[0] = arr[q];
+		else
+			apperture[0] = arr[q-1];
+
+		apperture[1] = arr[q];
+
+		if ( q == bufSize - 1 ) //for last val. duplicate it too
+			apperture[2] = arr[q];
+		else
+			apperture[2] = arr[q+1];
+
+		Sort( apperture);
+
+		new_Data_ADC_array[q] = apperture[1]; //median value
+	}
+	for (uint8_t q=0; q<bufSize ;q++)
+	{
+		arr[q] = new_Data_ADC_array[q]; //return data back in same array
+	}
+}
+void movingAverage(int32_t *arr, uint8_t bufSize)
+{
+    uint8_t apperture = 3;
+    uint8_t i;
+    int32_t newData_array[bufSize];
+    int32_t sum=0;
+    // first data
+    for (i=0; i<apperture; i++)
+    {
+        sum+=arr[i];
+        newData_array[i]=sum/(i+1);
+    }
+    //main buf
+    for (i=apperture; i<bufSize; i++)
+    {
+        sum-=arr[i-apperture]; 	// minus prev.val
+        sum+=arr[i]; 					// plus nxt.val
+        newData_array[i]=sum/apperture;
+    }
+
+    for (i=0; i<bufSize; i++)
+    {
+        arr[i]=newData_array[i];
+    }
+}
+
+int32_t std_var(int32_t *arr, uint8_t& bufSize)
+{
+	if( bufSize ==0 ) return 0;
+	int64_t sum = 0;
+	int64_t sqSum =0;
+	for (uint8_t i =0; i< bufSize; i++)
+	{
+		int32_t ai = arr[i];
+		sum += ai;
+		sqSum += ai * ai;
+	}
+	int64_t N = bufSize;
+	return ( sqSum - (sum * sum) / N ) / (N);
+}
+
+int32_t reAverage(int32_t *arr, uint8_t& bufSize)
+{
+    uint8_t i = 0;
+    uint8_t goodValNums = 0;
+    int32_t returnVal=0;
+    int64_t  avg=0;
+    int64_t  avg2=0;
+    int32_t upperBorder=0;
+    int32_t bottomBorder=0;
+    //calc std error
+    int32_t variance = std_var( arr, bufSize );
+#ifdef PRINT_DEBUG
+    Serial.print(F("Var is: "));
+    Serial.println(variance);
+#endif
+    int32_t stdErr = sqrt( variance / bufSize );
+//    double stdErr = stat.pop_stdev()/sqrt(bufSize);
+    //calc avg
+    for(i=0; i< bufSize; i++)
+	{
+		avg += arr[i];
+	}
+    avg /= bufSize;
+//    avg = stat.average();
+
+    upperBorder = avg  + stdErr * 2;
+    bottomBorder = avg -  stdErr * 2;
+#ifdef PRINT_DEBUG
+    Serial.print(F("stdErr is: "));
+	Serial.println(stdErr);
+	Serial.print(F("avg is: "));
+	Serial.println((int32_t)avg);
+	Serial.print(F("upB is: "));
+	Serial.println((int32_t)upperBorder);
+	Serial.print(F("bottomB is: "));
+	Serial.println((int32_t)bottomBorder);
+#endif
+
+    //recalc avg
+//    avg = 0;
+    for(i=0; i< bufSize; i++)
+    {
+        int32_t ai = arr[i];
+        if ( ai < bottomBorder || ai > upperBorder)
+        {
+#ifdef PRINT_DEBUG
+        	Serial.print(F("\t\tBad val: "));
+        	Serial.println(ai);
+#endif
+        	continue;
+        }
+        avg2 += ai;
+        ++goodValNums;
+    }
+
+    if (goodValNums > 0 )
+    	returnVal = avg2 / goodValNums;
+    else
+    	returnVal = avg;
+#ifdef PRINT_DEBUG
+    Serial.print(F("newAvg is: "));
+	Serial.println((int32_t)returnVal);
+#endif
+    return returnVal;
 }
 /**
  * Main initialization of MCU

@@ -108,23 +108,23 @@ Item {
             }
         }
 
-        //implement hystogram/lines
-        Column {
-            anchors.top: parent.top
-            id: chartStyle
-            TextField{
-                readOnly: true
-                text: qsTr("ChartStyle: ")
-            }
+//        //implement hystogram/lines
+//        Column {
+//            anchors.top: parent.top
+//            id: chartStyle
+//            TextField{
+//                readOnly: true
+//                text: qsTr("ChartStyle: ")
+//            }
 
-            RadioButton {
-                checked: true
-                text: qsTr("Graph view")
-                onClicked: {
-//                    app.seriesType = ChartView.SeriesTypeSpline
-                }
-            }
-        }
+//            RadioButton {
+//                checked: true
+//                text: qsTr("Graph view")
+//                onClicked: {
+////                    app.seriesType = ChartView.SeriesTypeSpline
+//                }
+//            }
+//        }
 
     }
 }

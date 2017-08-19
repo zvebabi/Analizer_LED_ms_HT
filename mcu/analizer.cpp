@@ -12,11 +12,15 @@
 //	pulseEnd= true;
 //}
 volatile boolean RegVal = 0;
-volatile uint16_t pulseW = 816;
+volatile uint16_t pulseW = 1116;
 volatile boolean StageValMeasure = 0;
 volatile uint8_t adcStop =0;
 int32_t Data_ADC = 0;
 int32_t Data_ADC_bgnd = 0;
+
+#ifdef MEDIAN_FILTER_ENABLE
+int32_t Data_ADC_array[NUM_OF_POINTS] ={0};
+#endif
 
 ISR(TIMER1_COMPA_vect)
 {
@@ -68,11 +72,11 @@ ISR(TIMER0_COMPA_vect)
 		if(adcStop==3) //two times measurement
 			TCCR0B = (0 << WGM02) | (0 << CS02) | (0 << CS01) | (0 << CS00); // set CTC-mode, scale to clock = *Timer STOPPED
 		  // Timer clear
-		adcStop > 0 ? (adcStop ==1 ? Set_OCR3A(100): Set_OCR3A(8)) : Set_OCR3A(15) ;
+		adcStop > 0 ? (adcStop ==1 ? Set_OCR3A(100): Set_OCR3A(30)) : Set_OCR3A(7) ;
 
 		TCNT0 = 0;
-		if(adcStop <2) {
-		Data_ADC += SPI.transfer16(0x0);
+		if(adcStop <2 /*adcStop == 1*/) {
+		Data_ADC += SPI.transfer16(0x0); //one measurements
 		}
 		else {
 			Data_ADC_bgnd += SPI.transfer16(0x0);
@@ -121,7 +125,7 @@ void setup() {
 		TCCR0B = (0 << WGM02) | (0 << CS02) | (0 << CS01) | (0 << CS00); // set CTC-mode, scale to clock = *Timer STOPPED
 		TCNT0 = 0; // Timer Clear
 		TIMSK0 = (1 << OCIE0A); // Set interrupt on Compare A Match
-		Set_OCR3A(10);
+		Set_OCR3A(30);
 //		TCCR0B = (0 << WGM02) | (0 << CS02) | (1 << CS01) | (0 << CS00);   // set CTC-mode, prescaling =*1, timer START
 //		while (TCCR0B == ((0 << WGM02) | (0 << CS02) | (1 << CS01) | (0 << CS00) )) { ;}
 		//---------------
@@ -158,6 +162,7 @@ void setup() {
 	//initialize SPI
 	SPI.setBitOrder(MSBFIRST);
 	SPI.setDataMode(SPI_MODE2);
+	SPI.setClockDivider(SPI_CLOCK_DIV2);  //NEW !!!!!!!!!!!!!!!!!
 	SPI.begin();
 
 	Serial.print(F("Reading config... "));
@@ -170,9 +175,14 @@ void setup() {
 	shiftRegisterReset();
 //	shiftRegisterFirst();
 	PORTB &= (~(1 << SR_IND_ENABLE));
+	//hello indication
+	singleLEDBlinc();
+	_delay_ms(200);
 	indicatorBlinc();
-
+	indicatorBlinc();
+	_delay_ms(200);
 	PORTB |= (1<<WHITE_LED);
+
 	PORTD &= (~(1 << SR_ENABLE));  //OE HIGH - enble shiftreg
 	doOnePulse(10);
 }
@@ -248,7 +258,11 @@ void loop()
 			case 'b':
 					{
 						Serial.print(F("blinctest\r\n"));
+						singleLEDBlinc();
+						_delay_ms(200);
 						indicatorBlinc();
+						indicatorBlinc();
+						_delay_ms(200);
 						break;
 					}
 			case 'q':
@@ -407,10 +421,12 @@ void factoryCalibr()
 					else
 					{
 						++numLed;
+#ifdef MIXING_LED
 						if(numLed == 21 )
 							numLed = 24;
 						if (numLed%4 == 0)     //light up next group of led
-							shiftRegisterNext();  //
+#endif
+						shiftRegisterNext();  //
 						Serial.print("LED ");
 						Serial.print(numLed+1); //actually, numeration starts from zero
 						Serial.print(" is on!\r\n");  //here we will see the classic numeration from 1
@@ -470,6 +486,9 @@ void factoryCalibr()
 					resVal2 = Serial.parseFloat(SKIP_WHITESPACE);
 					setPreAmp(resVal1,resVal2);
 					Serial.println(n);
+					Serial.println(resVal1);
+					Serial.println(resVal2);
+
 					resVal1 = (resVal1 > 100.0) ? 100.0 : ((resVal1 < 0) ? 0 : resVal1);
 					resVal2 = (resVal2 > 100.0) ? 100.0 : ((resVal2 < 0.0) ? 0.0 : resVal2);
 					if (n==1) {
@@ -750,6 +769,7 @@ void preAmpCalibr()
 void doMeasurements(uint8_t numOfEtalon, bool calcNorm)
 {
 	float measuredU[NUM_OF_LED];
+	for (uint8_t l=0;l<NUM_OF_LED;l++) { measuredU[l]=0; }
 	float k=0; // norm coeefs or result
 	uint8_t index;
 //	Serial.print(F("You are in measurements mode!\r\n"));
@@ -781,8 +801,12 @@ void doMeasurements(uint8_t numOfEtalon, bool calcNorm)
 
 	setPreAmp(etalonForCalc.g1_1, etalonForCalc.g2_1);
 	//TODO:
+#ifdef PRINT_DEBUG
+	Serial.println(F("RAW:\n Sig;bckgr\n"));
+#endif
 	for (uint8_t i = 0; i< NUM_OF_LED; i++)
 	{
+#ifdef MIXING_LED
 		if( i == 21 ) i = 24;//skip 6-7 leds combinations
 		if( i != 0 && i % 4 == 0) // !=0 for first led exception
 			{
@@ -794,34 +818,114 @@ void doMeasurements(uint8_t numOfEtalon, bool calcNorm)
 				else
 					setPreAmp(etalonForCalc.g1_2, etalonForCalc.g2_2);
 			}
+#else
+		setPreAmp(0,0);
+		if( i != 0 ) { shiftRegisterNext(); }
 
+		_delay_ms(1);
+		if ( i < 7) //first chain of led
+			setPreAmp(etalonForCalc.g1_1, etalonForCalc.g2_1);
+		else //second chain of led
+			setPreAmp(etalonForCalc.g1_2, etalonForCalc.g2_2);
+#endif
 		setCurrent(1, cur4AllLed[i].curr1);
 		setCurrent(2, cur4AllLed[i].curr2);
+		///repeat pulse few times
+		/// each pulse adc reads 2 times
+		uint8_t j=0;
+		uint8_t goodPulses =0;
 
-		doOnePulse(pulseWidth);
-//		_delay_ms(50);
+#ifdef MEDIAN_FILTER_ENABLE
+		for (uint8_t l = 0; l<NUM_OF_POINTS; l++)
+		{
+			Data_ADC_array[l]=0;
+		}
+#endif
 
-//		Serial.print(F("v: "));
-//		Serial.println(((Data_ADC>>1)));
-//		Serial.print(F("b: "));
-//		Serial.println(Data_ADC_bgnd>>1);
+		while ( j < NUM_OF_POINTS )
+		{
+			++j;
+			doOnePulse(pulseWidth);
 
-		measuredU[i] = ( ( Data_ADC >> 1) + ( 0xFFFF - ( Data_ADC_bgnd >> 1 ) ) ) * 3300.0 / 32767.0;
+			Data_ADC >>= 1;          //averaging
+			Data_ADC_bgnd >>= 1; //--//--//--
+			if (Data_ADC > 32767)
+				Data_ADC =  Data_ADC - 0xFFFF;
+			if (Data_ADC_bgnd > 32767)
+				Data_ADC_bgnd = Data_ADC_bgnd - 0xFFFF;
 
-		Data_ADC=0;
-		Data_ADC_bgnd =0;
+#if 1//check correctness
+			if (Data_ADC_bgnd > 3000  || Data_ADC < Data_ADC_bgnd || Data_ADC < 100)
+				continue;
+//			if( i>0 )
+//				if( difference > ( 2*measuredU[i-1] ))
+//					continue;
+#endif
 
-//		while(!pulseEnd) {_delay_us(1);}
+#ifdef PRINT_DEBUG
+			Serial.print(Data_ADC);
+			Serial.print(F(", "));
+			Serial.println(Data_ADC_bgnd);
+#endif
+
+#ifdef MEDIAN_FILTER_ENABLE
+			Data_ADC_array[goodPulses] = Data_ADC-Data_ADC_bgnd;
+//			Data_ADC_bgnd_array[j] =Data_ADC_bgnd;
+#else
+			int32_t difference = ( Data_ADC - Data_ADC_bgnd );
+			measuredU[i] += difference;
+//			measuredU[i] += Data_ADC;
+//			measuredU[i] += Data_ADC_bgnd;
+#endif
+			goodPulses++;
+
+			Data_ADC=0;
+			Data_ADC_bgnd =0;
+			_delay_ms(5);
+		}
+
+		//median filtration of adc data
+		if (goodPulses !=0)
+		{
+#ifdef MEDIAN_FILTER_ENABLE
+//			medianFilter(Data_ADC_array, goodPulses);
+//			medianFilter(Data_ADC_bgnd_array, goodPulses);
+			measuredU[i] = reAverage(Data_ADC_array, goodPulses);
+//		    movingAverage(Data_ADC_array, goodPulses);
+//		    medianFilter(Data_ADC_array, goodPulses);
+
+		//average it
+//		int32_t avg_value=0;
+////		int32_t avg_background=0;
+//		for (uint8_t q=0; q<goodPulses ;q++)
+//		{
+//			avg_value += Data_ADC_array[q];
+//
+//		}
+//		avg_value /=(float)goodPulses;
+//
+//		measuredU[i] = avg_value;
+#else
+		measuredU[i] /=(float)goodPulses;
+#endif
+		}
+		else
+			measuredU[i] =0.0;
+
 		disableLED();
 	}
-
+#ifdef PRINT_DEBUG
+	Serial.println(F("END RAW\n"));
+#endif
 	//calc k
 	if (calcNorm) // part of express calibration
 	{
 		for (uint8_t i = 0; i< NUM_OF_LED; i++)
 		{
+#ifdef MIXING_LED
 			if(i == 21 ) //skip 6-7 leds combinations
 				i = 24;
+#endif
 			k = measuredU[i] / ( etalonForCalc.k[i] * constant);
 			coeffs[i] = k;
 		}
@@ -832,8 +936,10 @@ void doMeasurements(uint8_t numOfEtalon, bool calcNorm)
 //		Serial.print(F("LED#,k,Uamp(mV)\r\n"));
 		for (uint8_t i = 0; i< NUM_OF_LED; i++)
 		{
+#ifdef MIXING_LED
 			if(i == 21 ) //skip 6-7 leds combinations
 				i = 24;
+#endif
 			Serial.print(F("x=d,"));
 			Serial.print(i);
 			Serial.print(F(","));
@@ -845,6 +951,7 @@ void doMeasurements(uint8_t numOfEtalon, bool calcNorm)
 		Serial.print(F("x=e\n")); //end transmit
 	}
 	indicatorBlinc();
+	_delay_ms(10);
 	PORTB |= (1<<WHITE_LED);
 }
 /*
@@ -1116,7 +1223,11 @@ void setC_R(float val)
 {
 	eeprom_write_float(&_c_R, val); //save to eeprom
 }
-
+/*
+ *
+ * Statr timers to do pulse and run adc
+ * then exit back to measurements
+ */
 void doOnePulse(uint16_t pulseWidth)
 {
 //	oneTimes = true;
@@ -1235,7 +1346,7 @@ void indicatorRegisterNext() {
 	_delay_us(ShiftRegisterDelay);
 	PORTD &= (~(1 << SR_IND_CLK));   //RCLK-LOW
 	_delay_us(ShiftRegisterDelay);
-	PORTD &= (~(1 << SR_IND_DATA));   //SER-LOW
+//	PORTD &= (~(1 << SR_IND_DATA));   //SER-LOW
 }
 
 //Выбор первой пары светодиодов
@@ -1253,13 +1364,18 @@ void indicatorRegisterFirst() {
 
 void indicatorBlinc()
 {
+//	PORTB &= (~(1 << SR_IND_ENABLE));
 	indicatorRegisterReset();
 	indicatorRegisterFirst();
-	for (uint8_t i=0;i<17;i++)
+//	_delay_ms(100);
+	for (uint8_t i=0;i<18;i++)
 	{
-		_delay_ms(30);
+		_delay_ms(7);
 		indicatorRegisterNext();
 	}
+//	PORTB |= (1 << SR_IND_ENABLE);
+//	_delay_ms(1);
+//	indicatorRegisterReset();
 }
 
 void singleLEDBlinc()
