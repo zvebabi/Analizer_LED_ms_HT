@@ -26,8 +26,8 @@ Item {
         Column {
             id: deviceSetter
             spacing: 5*app.dp
-            anchors.right: chartStyle.left
-            anchors.top: chartStyle.top
+//            anchors.right: chartStyle.left
+//            anchors.top: chartStyle.top
             anchors.rightMargin: 50*app.dp
             property int itemsWidth: 250*app.dp
             Button {
@@ -108,23 +108,23 @@ Item {
             }
         }
 
-        //implement hystogram/lines
-        Column {
-            anchors.top: parent.top
-            id: chartStyle
-            TextField{
-                readOnly: true
-                text: qsTr("ChartStyle: ")
-            }
+//        //implement hystogram/lines
+//        Column {
+//            anchors.top: parent.top
+//            id: chartStyle
+//            TextField{
+//                readOnly: true
+//                text: qsTr("ChartStyle: ")
+//            }
 
-            RadioButton {
-                checked: true
-                text: qsTr("Graph view")
-                onClicked: {
-//                    app.seriesType = ChartView.SeriesTypeSpline
-                }
-            }
-        }
+//            RadioButton {
+//                checked: true
+//                text: qsTr("Graph view")
+//                onClicked: {
+////                    app.seriesType = ChartView.SeriesTypeSpline
+//                }
+//            }
+//        }
 
     }
 }
