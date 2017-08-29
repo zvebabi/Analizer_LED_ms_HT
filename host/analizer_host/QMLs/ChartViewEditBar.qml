@@ -304,8 +304,8 @@ Column {
                                                                         false;}
                   }
                   redrawHistogram()
-//                  graphs.minRngY = minRngYY
-//                  graphs.maxRngY = maxRngYY*1.1
+                  graphs.minRngY = minRngYY
+                  graphs.maxRngY = maxRngYY//*1.1
                   axisY.min = minRngYY*0.97
                   axisY.max = maxRngYY*1.03
                 }
