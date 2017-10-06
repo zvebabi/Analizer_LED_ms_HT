@@ -2,14 +2,14 @@
 #include <QtMath>
 
 analizerCDC::analizerCDC(QObject *parent) : QObject(parent),
-    firstLine(true), aaManual(true)
+    firstLine(true), aaManual(true), serviceMode(false), isPortOpen(false)
 {
     qRegisterMetaType<QtCharts::QAbstractSeries*>();
     qRegisterMetaType<QtCharts::QAbstractAxis*>();
-    documentsPath = QDir::homePath()+QString("/Pictures/");
+    documentsPath = QDir::homePath()+QString("/Documents/");
     rangeVal.append(QPointF(0,0));
     rangeVal.append(QPointF(0,0));
-    isPortOpen=false;
+//    isPortOpen=false;
 #ifdef _WIN32
     device = new WinSerialPort(this);
     connect(device, &WinSerialPort::readyRead, this, &analizerCDC::readData);
@@ -85,13 +85,23 @@ void analizerCDC::initDevice(QString port)
     device->setFlowControl(QSerialPort::NoFlowControl);
     if(device->open(QIODevice::ReadWrite)){
         qDebug() << "Connected to: " << device->portName();
-        emit sendDebugInfo("Connected to: " + device->portName());
+        device->write("i");
+//        emit sendDebugInfo("Connected to: " + device->portName());
     }
     else {
         qDebug() << "Can't open port" << port;
-        emit sendDebugInfo("Can't open port" + port);
+        emit sendDebugInfo("Can't open port" + port, 2000);
     }    
 #endif
+    //read calibration file
+    float k;
+    std::ifstream f("calibrator");
+    if(!f.is_open())
+        emit sendDebugInfo("Can't read calibration parameters", 10000);
+    while(f >> k)
+    {
+        calibratorData.push_back(k);
+    }
 }
 
 void analizerCDC::getListOfPort()
@@ -119,7 +129,10 @@ void analizerCDC::doMeasurements(QtCharts::QAbstractSeries *series,
     etalon = _etalon;
     qDebug() << etalon;
 #if 1
-    device->write("m");
+    if(serviceMode)
+        device->write("d");
+    else
+        device->write("m");
     currentSeries = series;
 #else
     auto colCount =10;
@@ -274,17 +287,33 @@ void analizerCDC::update(QtCharts::QAbstractSeries *series)
 void analizerCDC::processLine(const QByteArray &_line)
 {
 //    QByteArray line = device->readAll();
-    qDebug() << _line;
+//    qDebug() << _line;
     QStringList line;//(_line);
     for (auto w : _line.split(','))
     {
         line.append(QString(w));
     }
-//    line.append(_line.split(','));
-
-
-//    qDebug()  << _line;
-//    qDebug() << line;
+//identity
+    if( line.first().compare("x=i") ==0)
+    {
+        qDebug() << "identity is "<< line.at(1);
+        if (line.at(1).toInt() == 42 )
+        {
+            emit sendAxisName("Absorbance");
+            emit sendDebugInfo("Connected to absorbance minispectrometer");
+        }
+        else
+        {
+            emit sendAxisName("Transmittance");
+            emit sendDebugInfo("Connected to transmittance minispectrometer");
+        }
+    }
+//service mode parser
+    if( line.first().compare("x=s") == 0)
+    {
+        serviceModeHandler(line);   //parse all comands here
+    }
+//measure mode
     if( line.first().compare("x=m\n") == 0)
     {
         emit makeSeries();
@@ -300,7 +329,6 @@ void analizerCDC::processLine(const QByteArray &_line)
             auto y = line.at(3).toFloat() < 6600 ? line.at(3).toFloat() :
                                                    line.at(3).toFloat()-6600;
             currentPoints->append(QPointF(x, y));
-
             if (etalon && drawLines)
             {
                 if ( rangeVal[0].x() > x )
@@ -316,17 +344,21 @@ void analizerCDC::processLine(const QByteArray &_line)
     }
     if( line.first().compare("x=e\n") ==0)
     {
+        if (currentPoints->rbegin()->y() == -1.0)
+            emit sendDebugInfo("Bad data", 5000);
         //save series and data for future
         if (etalon)
         {
             etalonPoints = new QVector<QPointF>;//(*currentPoints);
             for (int i=0; i < currentPoints->size(); i++)
             {
-                auto xVal = axisValueFromMCU ?
-                            currentPoints->at(i).x() : micrometers[i];
-                etalonPoints->append(
-                            QPointF(xVal,
-                          currentPoints->at(i).y()));
+//                auto xVal = axisValueFromMCU ?
+//                            currentPoints->at(i).x() : micrometers[i];
+                auto xVal = currentPoints->at(i).x();
+                auto yVal = relativeMode ?
+                                currentPoints->at(i).y() :
+                                currentPoints->at(i).y() * calibratorData[i];
+                etalonPoints->append(QPointF( xVal, yVal ) );
             }
             qDebug() << "set etalon";
         }
@@ -337,10 +369,10 @@ void analizerCDC::processLine(const QByteArray &_line)
             ///calibrate
             for (int i=0; i < currentPoints->size(); i++)
             {
-                auto xVal = axisValueFromMCU ?
-                            currentPoints->at(i).x() : micrometers[i];
+//                auto xVal = axisValueFromMCU ?
+//                            currentPoints->at(i).x() : micrometers[i];
                 calibratedSeries.append(
-                    QPointF(xVal,
+                    QPointF(currentPoints->at(i).x(),
                      currentPoints->at(i).y() / etalonPoints->at(i).y()*100.0));
             }
             ///antialiasing
@@ -409,6 +441,44 @@ void analizerCDC::processLine(const QByteArray &_line)
             emit adjustAxis(rangeVal[0], rangeVal[1]);
             update(currentSeries);
         }
+    }
+}
+
+void analizerCDC::serviceModeHandler(const QStringList &line)
+{
+//    qDebug() << line.at(1);
+//    qDebug() << line.at(1).compare("START");
+    if(line.at(1).compare("START") == 0)    //create file
+    {
+        std::time_t  t = time(0);
+        struct std::tm * now = localtime( & t );
+        char buf[200];
+        std::strftime(buf, sizeof(buf), "%Y%m%d_%H%M%S_raw.csv", now);
+        QString filename(buf);
+        diagnosticLog.open(QString(documentsPath+"/"+filename).toStdString(),
+                       std::fstream::out);
+        if (!diagnosticLog.is_open())
+            qDebug()<< "Can't open file!";
+        qDebug() << "start file";
+    }
+    if(line.at(1).compare("END") == 0)      //close file
+    {
+        if (diagnosticLog.is_open())
+            diagnosticLog.close();
+        qDebug() << "endfile";
+    }
+    if(line.at(1).compare("LED") == 0)      //insert line with led wavelenght
+    {
+        diagnosticLog << "\nLed#" << line.at(2).toStdString()
+                      << " (" << line.at(3).toFloat() << " um)\n"
+                      << "Signal,Background\n";
+        qDebug() << "Led#"<<line.at(2) << " (" <<line.at(3) << "um)";
+    }
+    if(line.at(1).compare("DATA") == 0)     //insert line with data
+    {
+        diagnosticLog << std::fixed << line.at(2).toFloat() << ", "
+                      << std::fixed << line.at(3).toFloat() << "\n";
+        qDebug() << "signal: "<<line.at(2) << ", bgd: " <<line.at(3);
     }
 }
 

@@ -111,7 +111,8 @@ Column {
                 height: 1.6*48*app.dp
                 width: height
                 ToolTip.visible: hovered
-                    ToolTip.text: qsTr("Calibration")
+                    ToolTip.text: app.relativeMode ?
+                                      qsTr("Run +app.appTitle in relative/comparative mode") : qsTr("Run express calibration")
                 Image {
                     id: rAe
                     anchors.centerIn: parent

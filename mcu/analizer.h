@@ -94,6 +94,8 @@ typedef struct
     uint16_t curr2;
 } current_t;
 
+const uint8_t serNumber PROGMEM  = 42;
+
 /**
  * allocate eeprom variable
  */
@@ -101,10 +103,27 @@ uint8_t EEMEM _empty[20] = {0xF};
 uint16_t EEMEM _pulseWidth = 120;
 float EEMEM _c_R = 3.9;
 
+
 #ifndef MIXING_LED // without mixing of led
+const float wavelenght[NUM_OF_LED] PROGMEM = {
+		2.36,
+		2.21,
+		2.16,
+		2.06,
+		1.94,
+		1.84,
+		1.76,
+		1.66,
+		1.55,
+		1.51,
+		1.45,
+		1.31
+};
+
+
 current_t EEMEM _pairsOfCurrent[NUM_OF_LED] = {
 		250, 0,	// 1
-		0, 450,  // 2
+		0, 350,  // 2
 		160, 0,  // 3
 		0, 140,  // 4
 		200, 0,  // 5
@@ -115,7 +134,7 @@ current_t EEMEM _pairsOfCurrent[NUM_OF_LED] = {
 		56, 0,  	// 9
 		0, 58,	// 10
 		63, 0,  	// 11
-		0, 83 	// 12
+		0, 73 	// 12
 };
 //current_t EEMEM _pairsOfCurrent[NUM_OF_LED] = {
 //		80, 0,	// 1
@@ -295,7 +314,7 @@ void doMeasurementsSH_Avg(bool calcNorm=false);
  * @param[in] numOfEtalon - which etalon we use for fast calibration
  * @param[in] calcNorm - true - calibration, false - measurements
  */
-void doMeasurements(uint8_t numOfEtalon=0, bool calcNorm=false);
+void doMeasurements(uint8_t numOfEtalon=0, bool calcNorm=false, bool serviceMode=false);
 
 /**
  * Utility function for inpulse mode of measurements
@@ -523,6 +542,11 @@ int32_t reAverage(int32_t *arr, uint8_t& bufSize)
 #endif
     return returnVal;
 }
+
+/**
+ * Send to com port ID, s/n etc...
+ */
+void sendIdentity();
 /**
  * Main initialization of MCU
  */

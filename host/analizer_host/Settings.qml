@@ -11,10 +11,23 @@ Item {
             availablePorts.append({"text": port});
             console.log(port)
         }
-        onSendDebugIngo: {
-            tipsWithPath.showedText = qsTr("data is: " + data)
+        onSendDebugInfo: {
+            tipsWithPath.showedText = qsTr(data)
             tipsWithPath.open()
+            delay(time, tipsWithPath.close)
         }
+        onSendAxisName: {
+            app.yAxisName = qsTr(data)
+        }
+    }
+    Timer {
+        id: timer
+    }
+    function delay(delayTime, cb) {
+        timer.interval = delayTime;
+        timer.repeat = false;
+        timer.triggered.connect(cb);
+        timer.start();
     }
     Grid{
         columns: 2
@@ -82,30 +95,40 @@ Item {
                 }
             }
             CheckBox {
-                id:valuesFromMcu
-                text: qsTr("Values from mcu")
-                checked: app.valuesFromMCU
+                id:serviceMode
+                text: qsTr("Save raw data")
+                checked: app.serviceMode
                 onClicked: {
-                    reciever.valuesFromMCU(checked)
-                    app.valuesFromMCU = checked
+                    reciever.setServiceMode(checked)
+                    app.serviceMode = checked
                 }
             }
-            RadioButton {
-                id:name1
-                checked: true
-                text: qsTr("Absorbance")
+            CheckBox {
+                id:relativeMeasurements
+                text: qsTr("Relative mode")
+                checked: app.relativeMode
                 onClicked: {
-                    app.yAxisName = name1.text
+                    reciever.setRelativeMode(checked)
+                    app.relativeMode = checked
                 }
             }
-            RadioButton {
-                id:name2
-                checked: false
-                text: qsTr("Transmittance")
-                onClicked: {
-                    app.yAxisName = name2.text
-                }
-            }
+
+//            RadioButton {
+//                id:name1
+//                checked: true
+//                text: qsTr("Absorbance")
+//                onClicked: {
+//                    app.yAxisName = name1.text
+//                }
+//            }
+//            RadioButton {
+//                id:name2
+//                checked: false
+//                text: qsTr("Transmittance")
+//                onClicked: {
+//                    app.yAxisName = name2.text
+//                }
+//            }
         }
 
 //        //implement hystogram/lines

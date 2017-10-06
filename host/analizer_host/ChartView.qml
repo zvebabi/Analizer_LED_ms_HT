@@ -22,7 +22,6 @@ Item {
             axisX.max = graphs.maxRngX
             axisY.min = 0
             axisY.max = graphs.maxRngY*1.1
-            axisY.titleText = app.yAxisName
 
             barAxisY.min = 0
             barAxisY.max = graphs.maxRngY*1.1
@@ -32,6 +31,11 @@ Item {
             mainBarSeries.at(mainBarSeries.count-1).color = _color
             barAxisX.categories = _axis
 
+        }
+        onSendDebugInfo: {
+            tipsWithPath.showedText = qsTr(data)
+            tipsWithPath.open()
+            delay(time, tipsWithPath.close)
         }
     }
 
@@ -68,7 +72,7 @@ Item {
                 ValueAxis {
                     id: axisY
                     objectName: "axisY"
-                    titleText: qsTr("Absorbance")
+                    titleText: app.yAxisName
                     min: 0
                     max:0
                     tickCount: 5
@@ -150,6 +154,15 @@ Item {
 
         }
 
+    }
+    Timer {
+        id: timer1
+    }
+    function delay(delayTime, cb) {
+        timer1.interval = delayTime;
+        timer1.repeat = false;
+        timer1.triggered.connect(cb);
+        timer1.start();
     }
     function createAxis(min, max) {
         // The following creates a ValueAxis object that can be then

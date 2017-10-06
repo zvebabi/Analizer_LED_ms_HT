@@ -207,7 +207,6 @@ void loop()
 		}
 	}
 
-
 	/// Available in main menu commands:
 	if (Serial.available() > 0)
 	{
@@ -295,6 +294,21 @@ void loop()
 				/// Manually choosing preamps parameters \n
 				/// Inpulse measurements mode
 				doMeasurements(0, false);
+				break;
+			}
+			case 'd':
+			{
+				/// - 	\b d \n
+				/// diagnostic regime
+				/// Show raw data
+				doMeasurements(0, false, true);
+				break;
+			}
+			case 'i':
+			{
+				/// - 	\b i \n
+				/// send info about device
+				sendIdentity();
 				break;
 			}
 			case 'a':
@@ -766,7 +780,7 @@ void preAmpCalibr()
 }
 ///@}
 
-void doMeasurements(uint8_t numOfEtalon, bool calcNorm)
+void doMeasurements(uint8_t numOfEtalon, bool calcNorm, bool serviceMode)
 {
 	float measuredU[NUM_OF_LED];
 	for (uint8_t l=0;l<NUM_OF_LED;l++) { measuredU[l]=0; }
@@ -774,16 +788,7 @@ void doMeasurements(uint8_t numOfEtalon, bool calcNorm)
 	uint8_t index;
 //	Serial.print(F("You are in measurements mode!\r\n"));
 	if (!calcNorm)
-	{
-//		do {
-//			Serial.print(F("Set etalon # \n"));
-//			while (Serial.available() == 0) {_delay_ms(1);}
-//			index = Serial.parseInt(SKIP_WHITESPACE);
-//		}
-//		while (index > NUM_OF_ETALON && index < 1);
-//		--index; //convert to programmers numering
 		index = 0;
-	}
 	else
 		index = numOfEtalon;
 	etalon_t etalonForCalc;
@@ -801,11 +806,20 @@ void doMeasurements(uint8_t numOfEtalon, bool calcNorm)
 
 	setPreAmp(etalonForCalc.g1_1, etalonForCalc.g2_1);
 	//TODO:
-#ifdef PRINT_DEBUG
-	Serial.println(F("RAW:\n Sig;bckgr\n"));
-#endif
+
+	if (serviceMode)
+		Serial.println(F("x=s,START,1"));
+
 	for (uint8_t i = 0; i< NUM_OF_LED; i++)
 	{
+		if (serviceMode)
+		{
+			Serial.print(F("x=s,LED,"));
+			Serial.print(i+1);
+			Serial.print(F(","));
+			Serial.println(pgm_read_float(&wavelenght[i]));
+		}
+
 #ifdef MIXING_LED
 		if( i == 21 ) i = 24;//skip 6-7 leds combinations
 		if( i != 0 && i % 4 == 0) // !=0 for first led exception
@@ -854,23 +868,20 @@ void doMeasurements(uint8_t numOfEtalon, bool calcNorm)
 			if (Data_ADC_bgnd > 32767)
 				Data_ADC_bgnd = Data_ADC_bgnd - 0xFFFF;
 
+			if (serviceMode)
+			{
+				Serial.print(F("x=s,DATA,"));
+				Serial.print(Data_ADC);
+				Serial.print(F(","));
+				Serial.println(Data_ADC_bgnd);
+			}
 #if 1//check correctness
 			if (Data_ADC_bgnd > 3000  || Data_ADC < Data_ADC_bgnd || Data_ADC < 100)
 				continue;
-//			if( i>0 )
-//				if( difference > ( 2*measuredU[i-1] ))
-//					continue;
-#endif
-
-#ifdef PRINT_DEBUG
-			Serial.print(Data_ADC);
-			Serial.print(F(", "));
-			Serial.println(Data_ADC_bgnd);
 #endif
 
 #ifdef MEDIAN_FILTER_ENABLE
 			Data_ADC_array[goodPulses] = Data_ADC-Data_ADC_bgnd;
-//			Data_ADC_bgnd_array[j] =Data_ADC_bgnd;
 #else
 			int32_t difference = ( Data_ADC - Data_ADC_bgnd );
 			measuredU[i] += difference;
@@ -883,40 +894,22 @@ void doMeasurements(uint8_t numOfEtalon, bool calcNorm)
 			Data_ADC_bgnd =0;
 			_delay_ms(5);
 		}
-
 		//median filtration of adc data
 		if (goodPulses !=0)
 		{
 #ifdef MEDIAN_FILTER_ENABLE
-//			medianFilter(Data_ADC_array, goodPulses);
-//			medianFilter(Data_ADC_bgnd_array, goodPulses);
 			measuredU[i] = reAverage(Data_ADC_array, goodPulses);
-//		    movingAverage(Data_ADC_array, goodPulses);
-//		    medianFilter(Data_ADC_array, goodPulses);
-
-		//average it
-//		int32_t avg_value=0;
-////		int32_t avg_background=0;
-//		for (uint8_t q=0; q<goodPulses ;q++)
-//		{
-//			avg_value += Data_ADC_array[q];
-//
-//		}
-//		avg_value /=(float)goodPulses;
-//
-//		measuredU[i] = avg_value;
 #else
-		measuredU[i] /=(float)goodPulses;
+			measuredU[i] /=(float)goodPulses;
 #endif
 		}
 		else
-			measuredU[i] =0.0;
-
+			measuredU[i] = -1.0;
 		disableLED();
 	}
-#ifdef PRINT_DEBUG
-	Serial.println(F("END RAW\n"));
-#endif
+	if (serviceMode)
+		Serial.println(F("x=s,END,1"));
+
 	//calc k
 	if (calcNorm) // part of express calibration
 	{
@@ -929,11 +922,9 @@ void doMeasurements(uint8_t numOfEtalon, bool calcNorm)
 			k = measuredU[i] / ( etalonForCalc.k[i] * constant);
 			coeffs[i] = k;
 		}
-//		Serial.print(F("Coefficients are ready to save.\r\n"));
 	}
 	else //calc k of sample
 	{
-//		Serial.print(F("LED#,k,Uamp(mV)\r\n"));
 		for (uint8_t i = 0; i< NUM_OF_LED; i++)
 		{
 #ifdef MIXING_LED
@@ -941,7 +932,7 @@ void doMeasurements(uint8_t numOfEtalon, bool calcNorm)
 				i = 24;
 #endif
 			Serial.print(F("x=d,"));
-			Serial.print(i);
+			Serial.print( pgm_read_float( &wavelenght[i] ) );
 			Serial.print(F(","));
 			k = measuredU[i] / ( coeffs[i] * constant);
 			Serial.print(k);
@@ -1476,25 +1467,24 @@ void setCurrent(uint8_t channelN, uint16_t curValue) {
 		SPI.transfer16(index);
 	}
 	DAC_PORT |= (1 << SS_DAC);      //SS_AD5689 HIGH
-	DAC_PORT &= (~(1 << SS_DAC));   //SS_AD5689 LOW
 
-	//readback data
-	uint8_t address = (channelN == 2) ? 0b10011000 : 0b10010001;
-	SPI.transfer(address);			//enable readback
-	SPI.transfer16(0x0);
-
-	DAC_PORT |= (1 << SS_DAC);      //SS_AD5689 HIGH
-	DAC_PORT &= (~(1 << SS_DAC));   //SS_AD5689 LOW
-
-	uint16_t savedValue=0;
-	SPI.transfer(0x00);
-	savedValue = SPI.transfer16(0x00);	//read
-	Serial.print(F("c"));
-	Serial.print(channelN);
-	Serial.print(F(": "));
-	Serial.println(savedValue*2500.0/65536, 1);
-
-	DAC_PORT |= (1 << SS_DAC);      //SS_AD5689 HIGH
+//	//readback data
+//	DAC_PORT &= (~(1 << SS_DAC));   //SS_AD5689 LOW
+//	uint8_t address = (channelN == 2) ? 0b10011000 : 0b10010001;
+//	SPI.transfer(address);			//enable readback
+//	SPI.transfer16(0x0);
+//
+//	DAC_PORT |= (1 << SS_DAC);      //SS_AD5689 HIGH
+//	DAC_PORT &= (~(1 << SS_DAC));   //SS_AD5689 LOW
+//
+//	uint16_t savedValue=0;
+//	SPI.transfer(0x00);
+//	savedValue = SPI.transfer16(0x00);	//read
+//	Serial.print(F("c"));
+//	Serial.print(channelN);
+//	Serial.print(F(": "));
+//	Serial.println(savedValue*2500.0/65536, 1);
+//	DAC_PORT |= (1 << SS_DAC);      //SS_AD5689 HIGH
 }
 
 //set width of impulse in microseconds
@@ -1503,4 +1493,10 @@ void setPulseWidth(uint16_t width)
 {
 	width = width > MAX_PULSE_WIDTH ? MAX_PULSE_WIDTH : ( width < 0 ? 0 : width*2);
 	eeprom_write_word(&_pulseWidth, width); //save to eeprom
+}
+
+void sendIdentity()
+{
+	Serial.print( F( "x=i," ) );
+	Serial.println( pgm_read_byte( &serNumber ) );
 }
