@@ -27,6 +27,7 @@ ApplicationWindow {
     property bool serviceMode: false //write raw data to file
     property bool relativeMode: false   //compare with calibration data or with
                                         //previous sample
+    property bool cumulativeMode: false
 
     Material.theme: Material.Light
     Material.primary: Material.BlueGrey

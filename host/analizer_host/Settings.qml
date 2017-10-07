@@ -112,7 +112,15 @@ Item {
                     app.relativeMode = checked
                 }
             }
-
+            CheckBox {
+                id:cumulativeMeasurements
+                text: qsTr("Cumulative mode")
+                checked: app.cumulativeMode
+                onClicked: {
+                    reciever.setCumulativeMode(checked)
+                    app.cumulativeMode = checked
+                }
+            }
 //            RadioButton {
 //                id:name1
 //                checked: true

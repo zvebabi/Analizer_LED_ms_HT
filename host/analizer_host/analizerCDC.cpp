@@ -2,7 +2,8 @@
 #include <QtMath>
 
 analizerCDC::analizerCDC(QObject *parent) : QObject(parent),
-    firstLine(true), aaManual(true), serviceMode(false), isPortOpen(false)
+    firstLine(true), aaManual(true), serviceMode(false), isPortOpen(false),
+    cumulativeMode(false), relativeMode(false), numberCumulativeLines(0)
 {
     qRegisterMetaType<QtCharts::QAbstractSeries*>();
     qRegisterMetaType<QtCharts::QAbstractAxis*>();
@@ -265,6 +266,9 @@ void analizerCDC::deleteSeries(QtCharts::QAbstractSeries *series)
     //recalc axis
     std::vector<float> xVals;
     std::vector<float> yVals;
+    if (lines.size() <= 0)
+        return;
+
     for (auto series : lines.keys())
     {
         for ( auto& points : lines.value(series))
@@ -430,7 +434,7 @@ void analizerCDC::dataProcessingHandler(const QStringList &line)
             auto xVal = currentPoints->at(i).x();
             auto yVal = relativeMode ?
                             currentPoints->at(i).y() :
-                            currentPoints->at(i).y() * calibratorData[i];
+                            currentPoints->at(i).y() / calibratorData[i];
             etalonPoints->append(QPointF( xVal, yVal ) );
         }
         qDebug() << "set etalon";
@@ -449,7 +453,7 @@ void analizerCDC::dataProcessingHandler(const QStringList &line)
                  currentPoints->at(i).y() / etalonPoints->at(i).y()*100.0));
         }
         ///antialiasing
-        if(aaManual)
+        if(0)
             for(int i=0; i < calibratedSeries.size(); i++)
             {
                 //koeffs
@@ -507,9 +511,49 @@ void analizerCDC::dataProcessingHandler(const QStringList &line)
 //        update(currentSeries);
 //        qDebug() << "end";// << *currentPoints;
 
+
+    //cumulative process
+    if (cumulativeMode && numberCumulativeLines != 0 )
+    {
+        //calc incremental average
+        numberCumulativeLines++;
+        float val=0;
+        auto pair = vectorLines.rbegin();
+        auto prevSeries = (*pair).first;
+        auto prevData = (*pair).second;
+
+        for (int i=0; i< currentPoints->size(); i++ )
+        {
+            auto An = cumulativePoints.at(i).y();
+            auto xi = currentPoints->at(i).y();
+            val = An + ( ( xi - An) / numberCumulativeLines );
+            QPointF p(currentPoints->at(i).x(), val);
+            prevData[i] = (*currentPoints)[i];
+            cumulativePoints[i] = p;
+            (*currentPoints)[i] = p;
+        }
+        m_data.pop_back();
+        m_data.append(prevData);
+        if (prevSeries && lines.contains(prevSeries))
+            lines[prevSeries] = m_data.back();
+        update(prevSeries);
+    }
+    else if(!etalon)
+    {
+        numberCumulativeLines = 1;
+        cumulativePoints.clear();
+        for (auto& point : *currentPoints)
+        {
+            cumulativePoints.push_back(point);
+        }
+    }
+
     if (!etalon || (etalon && drawLines))
     {
         m_data.append(*currentPoints);
+        vectorLines.push_back(
+             QPair<QtCharts::QAbstractSeries*, QVector<QPointF> >(
+                        currentSeries, m_data.back()));
         lines.insert(currentSeries, m_data.back()); //save series
         emit adjustAxis(rangeVal[0], rangeVal[1]);
         update(currentSeries);

@@ -16,6 +16,7 @@
 #include <QStringList>
 #include <QDebug>
 #include <QDir>
+#include <QPair>
 #include <vector>
 #include <fstream>
 #include <typeinfo>
@@ -48,6 +49,7 @@ public slots:
     void valuesFromMCU(bool _values) {axisValueFromMCU = _values;}
     void setServiceMode(bool _values) {serviceMode = _values;}
     void setRelativeMode(bool _values) {relativeMode = _values;}
+    void setCumulativeMode(bool _values) {cumulativeMode = _values;}
 
     void doMeasurements(QtCharts::QAbstractSeries *series,
                         bool _etalon=false);
@@ -82,12 +84,15 @@ private:
     QSerialPort::BaudRate baudRate;
     QVector<QVector<QPointF> > m_data;
     bool etalon, drawLines, aaManual,axisNameFromMCU, axisValueFromMCU;
-    bool isPortOpen, firstLine, serviceMode , relativeMode;
+    bool isPortOpen, firstLine, serviceMode , relativeMode, cumulativeMode;
     QVector<QPointF> *currentPoints;
     QVector<QPointF> *etalonPoints;
+    QVector<QPointF> cumulativePoints;
+    int numberCumulativeLines;
     QVector<float> calibratorData;
     QtCharts::QAbstractSeries* currentSeries;
     QtCharts::QAbstractSeries* etalonSeries;
+    QVector<QPair<QtCharts::QAbstractSeries*, QVector<QPointF> > > vectorLines;
     QMap< QtCharts::QAbstractSeries*, QVector<QPointF> > lines;
     QString documentsPath;
 //    float micrometers[42] = {2.3600, 2.3225, 2.2850, 2.2475,
