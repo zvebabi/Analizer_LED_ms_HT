@@ -85,15 +85,15 @@ Item {
                     app.drawEt = checked
                 }
             }
-            CheckBox {
-                id:antialiasingManual
-                text: qsTr("Enable antialiasing")
-                checked: app.aaManual
-                onClicked: {
-                    reciever.enableAAManual(checked)
-                    app.aaManual = checked
-                }
-            }
+//            CheckBox {
+//                id:antialiasingManual
+//                text: qsTr("Enable antialiasing")
+//                checked: app.aaManual
+//                onClicked: {
+//                    reciever.enableAAManual(checked)
+//                    app.aaManual = checked
+//                }
+//            }
             CheckBox {
                 id:serviceMode
                 text: qsTr("Save raw data")
