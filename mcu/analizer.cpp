@@ -460,7 +460,14 @@ void factoryCalibr()
 							Data_ADC =  Data_ADC - 0xFFFF;
 						if (Data_ADC_bgnd > 32767)
 							Data_ADC_bgnd = Data_ADC_bgnd - 0xFFFF;
+
+						Serial.print(F("mv= "));
 						Serial.println( ( Data_ADC -  Data_ADC_bgnd ) * 3300.0 / 32767.0);
+						Serial.print(F("sig= "));
+						Serial.print(Data_ADC);
+						Serial.print(F(", bgd= "));
+						Serial.println(Data_ADC_bgnd);
+
 						Data_ADC=0;
 						Data_ADC_bgnd =0;
 						_delay_ms(150);
@@ -478,7 +485,14 @@ void factoryCalibr()
 						Data_ADC =  Data_ADC - 0xFFFF;
 					if (Data_ADC_bgnd > 32767)
 						Data_ADC_bgnd = Data_ADC_bgnd - 0xFFFF;
+
+					Serial.print(F("mv= "));
 					Serial.println( ( Data_ADC -  Data_ADC_bgnd ) * 3300.0 / 32767.0);
+					Serial.print(F("sig= "));
+					Serial.print(Data_ADC);
+					Serial.print(F(", bgd= "));
+					Serial.println(Data_ADC_bgnd);
+
 					Data_ADC=0;
 					Data_ADC_bgnd =0;
 					break;
