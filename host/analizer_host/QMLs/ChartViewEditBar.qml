@@ -87,7 +87,7 @@ Column {
                 height: 1.6*48*app.dp
                 width: height
                 ToolTip.visible: hovered
-                    ToolTip.text: qsTr("Run " +app.appTitle)
+                    ToolTip.text: qsTr("Measurement")
                 Image {
                     id: rAa
                     anchors.centerIn: parent
@@ -112,7 +112,7 @@ Column {
                 width: height
                 ToolTip.visible: hovered
                     ToolTip.text: app.relativeMode ?
-                                      qsTr("Run +app.appTitle in relative/comparative mode") : qsTr("Run express calibration")
+                                      qsTr("Relative mode calibration") : qsTr("Absolute mode calibration")
                 Image {
                     id: rAe
                     anchors.centerIn: parent
