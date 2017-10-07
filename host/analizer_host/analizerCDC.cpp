@@ -2,7 +2,8 @@
 #include <QtMath>
 
 analizerCDC::analizerCDC(QObject *parent) : QObject(parent),
-    firstLine(true), aaManual(true), serviceMode(false), isPortOpen(false)
+    firstLine(true), aaManual(true), serviceMode(false), isPortOpen(false),
+    relativeMode(false)
 {
     qRegisterMetaType<QtCharts::QAbstractSeries*>();
     qRegisterMetaType<QtCharts::QAbstractAxis*>();
@@ -430,7 +431,7 @@ void analizerCDC::dataProcessingHandler(const QStringList &line)
             auto xVal = currentPoints->at(i).x();
             auto yVal = relativeMode ?
                             currentPoints->at(i).y() :
-                            currentPoints->at(i).y() * calibratorData[i];
+                            currentPoints->at(i).y() / calibratorData[i];
             etalonPoints->append(QPointF( xVal, yVal ) );
         }
         qDebug() << "set etalon";
