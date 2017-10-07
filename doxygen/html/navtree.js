@@ -1,22 +1,25 @@
 var NAVTREE =
 [
-  [ "analizer", "index.html", [
+  [ "MiniSpectrometer", "index.html", [
     [ "Modules", "modules.html", "modules" ],
     [ "Classes", null, [
       [ "Class List", "annotated.html", "annotated" ],
       [ "Class Index", "classes.html", null ],
+      [ "Class Hierarchy", "hierarchy.html", "hierarchy" ],
       [ "Class Members", "functions.html", [
         [ "All", "functions.html", null ],
-        [ "Variables", "functions_vars.html", null ]
+        [ "Functions", "functions_func.html", null ],
+        [ "Variables", "functions_vars.html", null ],
+        [ "Properties", "functions_prop.html", null ]
       ] ]
     ] ],
     [ "Files", null, [
       [ "File List", "files.html", "files" ],
       [ "File Members", "globals.html", [
-        [ "All", "globals.html", null ],
+        [ "All", "globals.html", "globals_dup" ],
         [ "Functions", "globals_func.html", null ],
         [ "Variables", "globals_vars.html", null ],
-        [ "Macros", "globals_defs.html", null ]
+        [ "Macros", "globals_defs.html", "globals_defs" ]
       ] ]
     ] ]
   ] ]
@@ -24,7 +27,10 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"_s_p_i_8d.html"
+"_s_p_i_8cpp.html",
+"build-analizer__host-_desktop___qt__5__9__0___g_c_c__64bit-_release_2moc__predefs_8h.html#a64a27148d4e67c4ae167442c7dc92a0a",
+"build-analizer__host-_desktop___qt__5__9__0___g_c_c__64bit-debug_2moc__predefs_8h.html#a5aed2c2843dad661012dac2d465f89e1",
+"globals.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

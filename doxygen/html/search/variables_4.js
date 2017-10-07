@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['onetimes',['oneTimes',['../analizer_8h.html#ab7bf7e4c38fa1ebbfe16fe17b09be01f',1,'analizer.h']]]
+  ['eemem',['EEMEM',['../analizer_8h.html#a54cfbfc730c345ef7ce24e671239903b',1,'analizer.h']]]
 ];

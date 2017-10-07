@@ -570,6 +570,15 @@ void factoryCalibr()
 					writeConfigToUart();
 					break;
 				}
+				case 'x': //set serial number
+				{
+					/// - \b x \n
+					/// set serial number
+					uint8_t serialNum = 0;
+					serialNum = Serial.parseInt(SKIP_WHITESPACE);
+					eeprom_write_byte(&_serialNumber, serialNum);
+					break;
+				}
 				default:
 				{
 					SerialClean();
@@ -1146,6 +1155,12 @@ void readADC(float& value)
 void writeConfigToUart()
 {
 	Serial.print(F("data from EEPROM.\r\n"));
+	//serial number
+	uint8_t sn = eeprom_read_byte(&_serialNumber);
+	Serial.print( F("Serial number: ") );
+	Serial.println(sn);
+	Serial.print( F("Type ") );
+	PrintHexByte(pgm_read_byte(&deviceType));
 	//pulse
 	uint16_t pulse_temp = eeprom_read_word(&_pulseWidth);
 	Serial.print(F("\r\nPWidth is: "));
@@ -1497,6 +1512,10 @@ void setPulseWidth(uint16_t width)
 
 void sendIdentity()
 {
-	Serial.print( F( "x=i," ) );
-	Serial.println( pgm_read_byte( &serNumber ) );
+	Serial.print( F( "x=i,TYPE," ) );
+	Serial.println( pgm_read_byte( &deviceType ) );
+
+	uint8_t serialN =	eeprom_read_byte(&_serialNumber);
+	Serial.print(F("x=i,SERIAL,"));
+	Serial.println(serialN);
 }

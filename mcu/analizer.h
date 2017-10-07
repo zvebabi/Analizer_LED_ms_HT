@@ -94,8 +94,8 @@ typedef struct
     uint16_t curr2;
 } current_t;
 
-const uint8_t serNumber PROGMEM  = 42;
-
+const uint8_t deviceType PROGMEM  = 0x01;//0x01 absorbance, 0x81- transmittance
+uint8_t _serialNumber EEMEM = 0x01;
 /**
  * allocate eeprom variable
  */
@@ -542,6 +542,15 @@ int32_t reAverage(int32_t *arr, uint8_t& bufSize)
 #endif
     return returnVal;
 }
+
+void PrintHexByte(uint8_t data) // prints 8-bit data in hex with leading zeroes
+{
+	Serial.print("0x");
+    if (data < 0x10 )
+    	Serial.print("0");
+    Serial.println(data,HEX);
+}
+
 
 /**
  * Send to com port ID, s/n etc...

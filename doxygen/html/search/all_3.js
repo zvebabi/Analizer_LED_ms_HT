@@ -1,12 +1,13 @@
 var searchData=
 [
-  ['dac_5fport',['DAC_PORT',['../analizer_8h.html#afbdc123b0b82a37ee0e8272c6e39e66c',1,'analizer.h']]],
-  ['dacdelay',['DACDelay',['../analizer_8h.html#a2553b1fa6f7f5606de68a2df573221e2',1,'analizer.h']]],
-  ['disableled',['disableLED',['../analizer_8cpp.html#a9383278dce0daeb3cec5424679c5b815',1,'disableLED():&#160;analizer.cpp'],['../analizer_8h.html#a9383278dce0daeb3cec5424679c5b815',1,'disableLED():&#160;analizer.cpp']]],
-  ['discharge_5fdelay',['DISCHARGE_DELAY',['../analizer_8h.html#a85eee24026283aa727d1cb401b1e16b5',1,'analizer.h']]],
-  ['dischargesamplehold',['dischargeSampleHold',['../analizer_8cpp.html#a5bb74041e7d0fa1c5edbd3dce87f5048',1,'dischargeSampleHold():&#160;analizer.cpp'],['../analizer_8h.html#a5bb74041e7d0fa1c5edbd3dce87f5048',1,'dischargeSampleHold():&#160;analizer.cpp']]],
-  ['domeasurements',['doMeasurements',['../analizer_8cpp.html#a27a63ca1875269459f73d3d42c96e69d',1,'doMeasurements(uint8_t numOfEtalon, bool calcNorm):&#160;analizer.cpp'],['../analizer_8h.html#ab68664ccade14fee45935208d6a19bfc',1,'doMeasurements(uint8_t numOfEtalon=0, bool calcNorm=false):&#160;analizer.cpp']]],
-  ['domeasurementssh',['doMeasurementsSH',['../analizer_8cpp.html#a2a1145e3b9b91ff3a4285fdd1a7e12c7',1,'doMeasurementsSH(uint8_t numOfEtalon, bool calcNorm):&#160;analizer.cpp'],['../analizer_8h.html#a577f03741b4c820e66e0e76a984fa535',1,'doMeasurementsSH(uint8_t numOfEtalon=0, bool calcNorm=false):&#160;analizer.cpp']]],
-  ['domeasurementssh_5favg',['doMeasurementsSH_Avg',['../analizer_8cpp.html#a9f60d86f45cad8d26b1af473247570b8',1,'doMeasurementsSH_Avg(bool calcNorm):&#160;analizer.cpp'],['../analizer_8h.html#aa3800b390098f0c30155a3b4c3629fc4',1,'doMeasurementsSH_Avg(bool calcNorm=false):&#160;analizer.cpp']]],
-  ['doonepulse',['doOnePulse',['../analizer_8cpp.html#a367302e50a423db3a23f1be59a7fd4a2',1,'doOnePulse(uint16_t pulseWidth):&#160;analizer.cpp'],['../analizer_8h.html#a367302e50a423db3a23f1be59a7fd4a2',1,'doOnePulse(uint16_t pulseWidth):&#160;analizer.cpp']]]
+  ['canreadline',['canReadLine',['../class_win_serial_port.html#a55e9f80f4464d95ab49182f473e554e9',1,'WinSerialPort']]],
+  ['clear',['clear',['../class_statistic.html#aede7bb9d06227b787b241f73693995f6',1,'Statistic']]],
+  ['coeffs',['coeffs',['../analizer_8h.html#a515bd80a2008b8ce4477be6f8f4fa692',1,'analizer.h']]],
+  ['count',['count',['../class_statistic.html#a1057b4e2152fd136cf67fb4a9c21a205',1,'Statistic']]],
+  ['cppslot',['cppSlot',['../classanalizer_c_d_c.html#a37a970cbbe83fbbcb6a5c6911ae62482',1,'analizerCDC']]],
+  ['cur4allled',['cur4AllLed',['../analizer_8h.html#a6bccd06c6f4cd5703f2aad7e7bf19d8a',1,'analizer.h']]],
+  ['curr1',['curr1',['../structcurrent__t.html#a67184c6cc4a6cc7d301880214965518b',1,'current_t']]],
+  ['curr2',['curr2',['../structcurrent__t.html#aa9880547f852fd6b213265f267da44c8',1,'current_t']]],
+  ['current_5ft',['current_t',['../structcurrent__t.html',1,'']]],
+  ['calibration_20mode',['Calibration mode',['../group__factory_calibr.html',1,'']]]
 ];

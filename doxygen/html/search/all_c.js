@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['onetimes',['oneTimes',['../analizer_8h.html#ab7bf7e4c38fa1ebbfe16fe17b09be01f',1,'analizer.h']]]
+  ['num_5fof_5fetalon',['NUM_OF_ETALON',['../analizer_8h.html#a39d05713f9a15de04077b8bea7b13f44',1,'analizer.h']]],
+  ['num_5fof_5fled',['NUM_OF_LED',['../analizer_8h.html#a2bdaf37b88fc3b0920fffa2b6166be22',1,'analizer.h']]],
+  ['num_5fof_5fpoints',['NUM_OF_POINTS',['../analizer_8h.html#a864b43588aed04ef9d694ec60ef7a9f1',1,'analizer.h']]]
 ];

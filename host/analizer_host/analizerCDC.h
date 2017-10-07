@@ -67,6 +67,10 @@ private:
     void update(QtCharts::QAbstractSeries *series);
     void processLine(const QByteArray& line);
     void serviceModeHandler(const QStringList& line);
+    void identityHandler(const QStringList& line);
+    void dataAquisitionHandler(const QStringList& line);
+    void dataProcessingHandler(const QStringList& line);
+    void buttonPressHandler(const QStringList& line);
 
     std::vector<QString> ports;
 #ifdef _WIN32

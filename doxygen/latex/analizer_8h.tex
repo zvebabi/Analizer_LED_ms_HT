@@ -1,8 +1,9 @@
-\hypertarget{analizer_8h}{\section{/home/zvebabi/\+Documents/workspace/\+L\+E\+D\+Microsensor\+\_\+project0/analizer/analizer.h File Reference}
-\label{analizer_8h}\index{/home/zvebabi/\+Documents/workspace/\+L\+E\+D\+Microsensor\+\_\+project0/analizer/analizer.\+h@{/home/zvebabi/\+Documents/workspace/\+L\+E\+D\+Microsensor\+\_\+project0/analizer/analizer.\+h}}
+\hypertarget{analizer_8h}{\section{/home/zvebabi/\+Documents/workspace/\+L\+E\+D\+Microsensor\+\_\+project0/analizer/mcu/analizer.h File Reference}
+\label{analizer_8h}\index{/home/zvebabi/\+Documents/workspace/\+L\+E\+D\+Microsensor\+\_\+project0/analizer/mcu/analizer.\+h@{/home/zvebabi/\+Documents/workspace/\+L\+E\+D\+Microsensor\+\_\+project0/analizer/mcu/analizer.\+h}}
 }
 {\ttfamily \#include \char`\"{}Arduino.\+h\char`\"{}}\\*
 {\ttfamily \#include $<$stdio.\+h$>$}\\*
+{\ttfamily \#include $<$stdint.\+h$>$}\\*
 {\ttfamily \#include $<$util/delay.\+h$>$}\\*
 {\ttfamily \#include $<$avr/eeprom.\+h$>$}\\*
 {\ttfamily \#include $<$S\+P\+I.\+h$>$}\\*
@@ -16,13 +17,15 @@ struct \hyperlink{structcurrent__t}{current\+\_\+t}
 \subsection*{Macros}
 \begin{DoxyCompactItemize}
 \item 
+\#define \hyperlink{analizer_8h_a9e65c7c5572fb7f3809193aa0f046649}{M\+E\+D\+I\+A\+N\+\_\+\+F\+I\+L\+T\+E\+R\+\_\+\+E\+N\+A\+B\+L\+E}
+\item 
 \#define \hyperlink{analizer_8h_a1d0d1e6152ace91f351302a46b658fb8}{Generator\+Pin}~9
 \item 
 \#define \hyperlink{analizer_8h_a7eba70092c80595372a62a2129c15d38}{Shift\+Register\+Delay}~1
 \item 
 \#define \hyperlink{analizer_8h_a2553b1fa6f7f5606de68a2df573221e2}{D\+A\+C\+Delay}~1
 \item 
-\#define \hyperlink{analizer_8h_aeab37383c7e172bb368142281eed6bd0}{W\+B\+Delay}~1000
+\#define \hyperlink{analizer_8h_aeab37383c7e172bb368142281eed6bd0}{W\+B\+Delay}~1
 \item 
 \#define \hyperlink{analizer_8h_a85eee24026283aa727d1cb401b1e16b5}{D\+I\+S\+C\+H\+A\+R\+G\+E\+\_\+\+D\+E\+L\+A\+Y}~50
 \item 
@@ -30,33 +33,49 @@ struct \hyperlink{structcurrent__t}{current\+\_\+t}
 \item 
 \#define \hyperlink{analizer_8h_afbca82ecf34ce7c95ce220c97c1645cf}{R\+E\+F\+E\+R\+E\+N\+C\+E\+\_\+\+V}~3000.\+0
 \item 
-\#define \hyperlink{analizer_8h_a2bdaf37b88fc3b0920fffa2b6166be22}{N\+U\+M\+\_\+\+O\+F\+\_\+\+L\+E\+D}~45
+\#define \hyperlink{analizer_8h_a2bdaf37b88fc3b0920fffa2b6166be22}{N\+U\+M\+\_\+\+O\+F\+\_\+\+L\+E\+D}~12
+\item 
+\#define \hyperlink{analizer_8h_a864b43588aed04ef9d694ec60ef7a9f1}{N\+U\+M\+\_\+\+O\+F\+\_\+\+P\+O\+I\+N\+T\+S}~12
 \item 
 \#define \hyperlink{analizer_8h_a39d05713f9a15de04077b8bea7b13f44}{N\+U\+M\+\_\+\+O\+F\+\_\+\+E\+T\+A\+L\+O\+N}~3
 \item 
-\#define \hyperlink{analizer_8h_a57a10261e6511f97317cee9076692315}{M\+A\+X\+\_\+\+P\+U\+L\+S\+E\+\_\+\+W\+I\+D\+T\+H}~150
+\#define \hyperlink{analizer_8h_a57a10261e6511f97317cee9076692315}{M\+A\+X\+\_\+\+P\+U\+L\+S\+E\+\_\+\+W\+I\+D\+T\+H}~60
 \item 
 \#define \hyperlink{analizer_8h_a2989837a37d6d63b59c6dd541b785435}{M\+A\+X\+\_\+\+C\+U\+R\+R\+E\+N\+T}~1000
 \item 
-\#define \hyperlink{analizer_8h_a1c6ce969ab3d12ac37f62c399a1e02c1}{A\+D\+C\+\_\+\+P\+O\+R\+T}~P\+O\+R\+T\+E
+\#define \hyperlink{analizer_8h_a1c6ce969ab3d12ac37f62c399a1e02c1}{A\+D\+C\+\_\+\+P\+O\+R\+T}~P\+O\+R\+T\+F
 \item 
 \#define \hyperlink{analizer_8h_afbdc123b0b82a37ee0e8272c6e39e66c}{D\+A\+C\+\_\+\+P\+O\+R\+T}~P\+O\+R\+T\+F
 \item 
-\#define \hyperlink{analizer_8h_a444e7e81c7325bd22f75bdec540b53e8}{P\+R\+E\+A\+M\+P\+\_\+\+P\+O\+R\+T}~P\+O\+R\+T\+B
+\#define \hyperlink{analizer_8h_a444e7e81c7325bd22f75bdec540b53e8}{P\+R\+E\+A\+M\+P\+\_\+\+P\+O\+R\+T}~P\+O\+R\+T\+F
 \item 
-\#define \hyperlink{analizer_8h_a578b28f704eca688ec84459052e700c1}{S\+S\+\_\+\+A\+D\+C}~P\+E6
+\#define \hyperlink{analizer_8h_a69c0fba73c43146e5858f1df6e80ac81}{E\+E\+P\+R\+O\+M\+\_\+\+P\+O\+R\+T}~P\+O\+R\+T\+F
 \item 
-\#define \hyperlink{analizer_8h_a7e138e04db53cabc3b98326ba1703972}{S\+S\+\_\+\+P\+R\+E\+A\+M\+P}~P\+B4
+\#define \hyperlink{analizer_8h_a578b28f704eca688ec84459052e700c1}{S\+S\+\_\+\+A\+D\+C}~P\+F6
 \item 
-\#define \hyperlink{analizer_8h_a6acb416abfa9b672f29efbce6b4f514d}{S\+S\+\_\+\+D\+A\+C}~P\+F1
+\#define \hyperlink{analizer_8h_a7e138e04db53cabc3b98326ba1703972}{S\+S\+\_\+\+P\+R\+E\+A\+M\+P}~P\+F7
 \item 
-\#define \hyperlink{analizer_8h_afa636b6fa889108da6792530f7c7e604}{S\+R\+\_\+\+E\+N\+A\+B\+L\+E}~P\+B7
+\#define \hyperlink{analizer_8h_a6acb416abfa9b672f29efbce6b4f514d}{S\+S\+\_\+\+D\+A\+C}~P\+F5
 \item 
-\#define \hyperlink{analizer_8h_a9d3e7db6665a7ef3578f39a55b80caff}{S\+R\+\_\+\+C\+L\+R}~P\+D4
+\#define \hyperlink{analizer_8h_a710fee1f215f3aef17d02423272be6ff}{S\+S\+\_\+\+E\+E\+P\+R\+O\+M}~P\+F4
 \item 
-\#define \hyperlink{analizer_8h_acb10407e3214cbd4dbbb30d143d2ff64}{S\+R\+\_\+\+D\+A\+T\+A}~P\+D7
+\#define \hyperlink{analizer_8h_afa636b6fa889108da6792530f7c7e604}{S\+R\+\_\+\+E\+N\+A\+B\+L\+E}~P\+D0
 \item 
-\#define \hyperlink{analizer_8h_a86d5a90c888ff7597811ad9356383dd9}{S\+R\+\_\+\+C\+L\+K}~P\+D6
+\#define \hyperlink{analizer_8h_a9d3e7db6665a7ef3578f39a55b80caff}{S\+R\+\_\+\+C\+L\+R}~P\+D3
+\item 
+\#define \hyperlink{analizer_8h_acb10407e3214cbd4dbbb30d143d2ff64}{S\+R\+\_\+\+D\+A\+T\+A}~P\+D2
+\item 
+\#define \hyperlink{analizer_8h_a86d5a90c888ff7597811ad9356383dd9}{S\+R\+\_\+\+C\+L\+K}~P\+D1
+\item 
+\#define \hyperlink{analizer_8h_a0d71f73291edc630bc502df728ba43ad}{S\+R\+\_\+\+I\+N\+D\+\_\+\+E\+N\+A\+B\+L\+E}~P\+B6
+\item 
+\#define \hyperlink{analizer_8h_af399a58b8fe72b9b9aa149693b893680}{S\+R\+\_\+\+I\+N\+D\+\_\+\+C\+L\+R}~P\+D7
+\item 
+\#define \hyperlink{analizer_8h_a53fe7c01a23d332a64a372f4f7981f6d}{S\+R\+\_\+\+I\+N\+D\+\_\+\+D\+A\+T\+A}~P\+D6
+\item 
+\#define \hyperlink{analizer_8h_ae8f85c1ad63332e2073d5a9c58aacce9}{S\+R\+\_\+\+I\+N\+D\+\_\+\+C\+L\+K}~P\+D5
+\item 
+\#define \hyperlink{analizer_8h_ac0165a0a5be101747a734f0991fd0a35}{W\+H\+I\+T\+E\+\_\+\+L\+E\+D}~P\+B7
 \item 
 \#define \hyperlink{analizer_8h_a22e32198639ff7666964ceb2c7663ce2}{S\+H\+\_\+\+P\+O\+R\+T}~P\+O\+R\+T\+D
 \item 
@@ -67,6 +86,10 @@ struct \hyperlink{structcurrent__t}{current\+\_\+t}
 \#define \hyperlink{analizer_8h_acc0381ac0fe7d05df767e24886574eda}{G\+E\+N1}~O\+C\+R1\+A
 \item 
 \#define \hyperlink{analizer_8h_a14da44c27dbccb1845387bc989eb76a3}{G\+E\+N2}~O\+C\+R1\+B
+\item 
+\#define \hyperlink{analizer_8h_a2a253e6c2961bb89db7ce729c9ce2948}{G\+E\+N3}~O\+C\+R1\+C
+\item 
+\#define \hyperlink{analizer_8h_ad475217c28645ec178b59c745f3fc3ba}{B\+T\+N}~P\+E6
 \end{DoxyCompactItemize}
 \subsection*{Functions}
 \begin{DoxyCompactItemize}
@@ -93,7 +116,7 @@ void \hyperlink{analizer_8h_a577f03741b4c820e66e0e76a984fa535}{do\+Measurements\
 \item 
 void \hyperlink{analizer_8h_aa3800b390098f0c30155a3b4c3629fc4}{do\+Measurements\+S\+H\+\_\+\+Avg} (bool calc\+Norm=false)
 \item 
-void \hyperlink{analizer_8h_ab68664ccade14fee45935208d6a19bfc}{do\+Measurements} (uint8\+\_\+t num\+Of\+Etalon=0, bool calc\+Norm=false)
+void \hyperlink{analizer_8h_a56ebf1de5d965036365a5a5d042e3244}{do\+Measurements} (uint8\+\_\+t num\+Of\+Etalon=0, bool calc\+Norm=false, bool service\+Mode=false)
 \item 
 void \hyperlink{analizer_8h_a7541e761cd601bddb339b3323d6dca81}{read\+A\+D\+C\+One\+Time} (uint16\+\_\+t \&value)
 \item 
@@ -107,7 +130,35 @@ void \hyperlink{analizer_8h_a97373a5239e1af8b6e6be8d4b63663e4}{shift\+Register\+
 \item 
 void \hyperlink{analizer_8h_a630003ae387b30a0811665c6887fba7d}{shift\+Register\+First} ()
 \item 
+void \hyperlink{analizer_8h_a193af7bce8a9091fb88fbd1a5bf74713}{indicator\+Register\+Reset} ()
+\item 
+void \hyperlink{analizer_8h_af0039775f43b8ef810cf6b7bfe84447b}{indicator\+Register\+Next} ()
+\item 
+void \hyperlink{analizer_8h_a54ff76308c2091c11e5aabbc4368a7e7}{indicator\+Register\+First} ()
+\item 
+void \hyperlink{analizer_8h_af9b71971d8e56088dd6cdb93a53159ee}{indicator\+Blinc} ()
+\item 
+void \hyperlink{analizer_8h_a94b48a3d4f5207db26a78b4a28bfeb32}{single\+L\+E\+D\+Blinc} ()
+\item 
 void \hyperlink{analizer_8h_a5997158c293a908f361bed8d45f3fbf3}{Serial\+Clean} ()
+\item 
+void \hyperlink{analizer_8h_a6717207a79a2ea94ee3868bec1664b6e}{Set\+\_\+\+O\+C\+R3\+A} (float Pulse\+Width)
+\item 
+void \hyperlink{analizer_8h_aee48b3c20e91c0a264040f00eac40f05}{Swap} (int32\+\_\+t \&a, int32\+\_\+t \&b)
+\item 
+void \hyperlink{analizer_8h_acad4e24432f2b7ab656042503e4afa56}{Sort} (int32\+\_\+t $\ast$arr)
+\item 
+void \hyperlink{analizer_8h_a7b1c9ee396c529915fbf18648d2777f4}{median\+Filter} (int32\+\_\+t $\ast$arr, uint8\+\_\+t \&buf\+Size)
+\item 
+void \hyperlink{analizer_8h_a796d970f5c64ad93353a4c0dcf7fd535}{moving\+Average} (int32\+\_\+t $\ast$arr, uint8\+\_\+t buf\+Size)
+\item 
+int32\+\_\+t \hyperlink{analizer_8h_a47da859e3c5c815cbf0b0b7aa9e965c5}{std\+\_\+var} (int32\+\_\+t $\ast$arr, uint8\+\_\+t \&buf\+Size)
+\item 
+int32\+\_\+t \hyperlink{analizer_8h_ab3741687bcbb6b335697a98771f85679}{re\+Average} (int32\+\_\+t $\ast$arr, uint8\+\_\+t \&buf\+Size)
+\item 
+void \hyperlink{analizer_8h_a9a97d561257eead613aebcb2fc24175e}{Print\+Hex\+Byte} (uint8\+\_\+t data)
+\item 
+void \hyperlink{analizer_8h_ada2730fc8b42995bba8630b7c7bde8a8}{send\+Identity} ()
 \item 
 void \hyperlink{analizer_8h_a4fc01d736fe50cf5b977f755b675f11d}{setup} ()
 \item 
@@ -118,17 +169,21 @@ void \hyperlink{analizer_8h_a6be7d9ce80c86f5178635fa86c2dd5e7}{\+\_\+\+\_\+cxa\+
 \subsection*{Variables}
 \begin{DoxyCompactItemize}
 \item 
-uint8\+\_\+t E\+E\+M\+E\+M \hyperlink{analizer_8h_af63de6e867db6fde11d360f92bc5ec5b}{\+\_\+empty} \mbox{[}20\mbox{]} = \{0x\+F\}
+const uint8\+\_\+t device\+Type \hyperlink{analizer_8h_a3bc666ac3434ea6736654de0ccabe403}{P\+R\+O\+G\+M\+E\+M} = 0x01
 \item 
-uint16\+\_\+t E\+E\+M\+E\+M \hyperlink{analizer_8h_ad966df199c19df74f4d7a58be19e203d}{\+\_\+pulse\+Width} = 80
+uint8\+\_\+t \+\_\+serial\+Number \hyperlink{analizer_8h_a54cfbfc730c345ef7ce24e671239903b}{E\+E\+M\+E\+M} = 0x01
 \item 
-float E\+E\+M\+E\+M \hyperlink{analizer_8h_abb91ab54bac51c395a0960a0577adda9}{\+\_\+c\+\_\+\+R} = 3.\+9
+uint8\+\_\+t \hyperlink{analizer_8h_a54cfbfc730c345ef7ce24e671239903b}{E\+E\+M\+E\+M} \hyperlink{analizer_8h_af63de6e867db6fde11d360f92bc5ec5b}{\+\_\+empty} \mbox{[}20\mbox{]} = \{0x\+F\}
 \item 
-\hyperlink{structcurrent__t}{current\+\_\+t} E\+E\+M\+E\+M \hyperlink{analizer_8h_a213d55f7dee81b5d04640c2eeaf623b7}{\+\_\+pairs\+Of\+Current} \mbox{[}\hyperlink{analizer_8h_a2bdaf37b88fc3b0920fffa2b6166be22}{N\+U\+M\+\_\+\+O\+F\+\_\+\+L\+E\+D}\mbox{]}
+uint16\+\_\+t \hyperlink{analizer_8h_a54cfbfc730c345ef7ce24e671239903b}{E\+E\+M\+E\+M} \hyperlink{analizer_8h_ad966df199c19df74f4d7a58be19e203d}{\+\_\+pulse\+Width} = 120
 \item 
-\hyperlink{structetalon__t}{etalon\+\_\+t} E\+E\+M\+E\+M \hyperlink{analizer_8h_a66d5735c5e0542432b55d57d57955b5b}{\+\_\+etalons} \mbox{[}\hyperlink{analizer_8h_a39d05713f9a15de04077b8bea7b13f44}{N\+U\+M\+\_\+\+O\+F\+\_\+\+E\+T\+A\+L\+O\+N}\mbox{]}
+float \hyperlink{analizer_8h_a54cfbfc730c345ef7ce24e671239903b}{E\+E\+M\+E\+M} \hyperlink{analizer_8h_abb91ab54bac51c395a0960a0577adda9}{\+\_\+c\+\_\+\+R} = 3.\+9
 \item 
-float E\+E\+M\+E\+M \hyperlink{analizer_8h_a9fdedfdc8da3f95ebe79a42bb0f85f10}{\+\_\+coefficients} \mbox{[}\hyperlink{analizer_8h_a2bdaf37b88fc3b0920fffa2b6166be22}{N\+U\+M\+\_\+\+O\+F\+\_\+\+L\+E\+D}\mbox{]}
+\hyperlink{structcurrent__t}{current\+\_\+t} \hyperlink{analizer_8h_a54cfbfc730c345ef7ce24e671239903b}{E\+E\+M\+E\+M} \hyperlink{analizer_8h_a213d55f7dee81b5d04640c2eeaf623b7}{\+\_\+pairs\+Of\+Current} \mbox{[}\hyperlink{analizer_8h_a2bdaf37b88fc3b0920fffa2b6166be22}{N\+U\+M\+\_\+\+O\+F\+\_\+\+L\+E\+D}\mbox{]}
+\item 
+\hyperlink{structetalon__t}{etalon\+\_\+t} \hyperlink{analizer_8h_a54cfbfc730c345ef7ce24e671239903b}{E\+E\+M\+E\+M} \hyperlink{analizer_8h_a66d5735c5e0542432b55d57d57955b5b}{\+\_\+etalons} \mbox{[}\hyperlink{analizer_8h_a39d05713f9a15de04077b8bea7b13f44}{N\+U\+M\+\_\+\+O\+F\+\_\+\+E\+T\+A\+L\+O\+N}\mbox{]}
+\item 
+float \hyperlink{analizer_8h_a54cfbfc730c345ef7ce24e671239903b}{E\+E\+M\+E\+M} \hyperlink{analizer_8h_a9fdedfdc8da3f95ebe79a42bb0f85f10}{\+\_\+coefficients} \mbox{[}\hyperlink{analizer_8h_a2bdaf37b88fc3b0920fffa2b6166be22}{N\+U\+M\+\_\+\+O\+F\+\_\+\+L\+E\+D}\mbox{]} = \{1,1,1,1,1,1,1,1,1,1,1,1\}
 \item 
 volatile \hyperlink{structcurrent__t}{current\+\_\+t} \hyperlink{analizer_8h_a6bccd06c6f4cd5703f2aad7e7bf19d8a}{cur4\+All\+Led} \mbox{[}\hyperlink{analizer_8h_a2bdaf37b88fc3b0920fffa2b6166be22}{N\+U\+M\+\_\+\+O\+F\+\_\+\+L\+E\+D}\mbox{]}
 \item 
@@ -143,188 +198,265 @@ volatile bool \hyperlink{analizer_8h_a81eef57f3f8c19b296ef1c12a59b66a8}{pulse\+E
 \subsection{Macro Definition Documentation}
 \hypertarget{analizer_8h_a1c6ce969ab3d12ac37f62c399a1e02c1}{\index{analizer.\+h@{analizer.\+h}!A\+D\+C\+\_\+\+P\+O\+R\+T@{A\+D\+C\+\_\+\+P\+O\+R\+T}}
 \index{A\+D\+C\+\_\+\+P\+O\+R\+T@{A\+D\+C\+\_\+\+P\+O\+R\+T}!analizer.\+h@{analizer.\+h}}
-\subsubsection[{A\+D\+C\+\_\+\+P\+O\+R\+T}]{\setlength{\rightskip}{0pt plus 5cm}\#define A\+D\+C\+\_\+\+P\+O\+R\+T~P\+O\+R\+T\+E}}\label{analizer_8h_a1c6ce969ab3d12ac37f62c399a1e02c1}
+\subsubsection[{A\+D\+C\+\_\+\+P\+O\+R\+T}]{\setlength{\rightskip}{0pt plus 5cm}\#define A\+D\+C\+\_\+\+P\+O\+R\+T~P\+O\+R\+T\+F}}\label{analizer_8h_a1c6ce969ab3d12ac37f62c399a1e02c1}
 
 
-Definition at line 28 of file analizer.\+h.
+Definition at line 43 of file analizer.\+h.
+
+\hypertarget{analizer_8h_ad475217c28645ec178b59c745f3fc3ba}{\index{analizer.\+h@{analizer.\+h}!B\+T\+N@{B\+T\+N}}
+\index{B\+T\+N@{B\+T\+N}!analizer.\+h@{analizer.\+h}}
+\subsubsection[{B\+T\+N}]{\setlength{\rightskip}{0pt plus 5cm}\#define B\+T\+N~P\+E6}}\label{analizer_8h_ad475217c28645ec178b59c745f3fc3ba}
+
+
+Definition at line 75 of file analizer.\+h.
 
 \hypertarget{analizer_8h_afbdc123b0b82a37ee0e8272c6e39e66c}{\index{analizer.\+h@{analizer.\+h}!D\+A\+C\+\_\+\+P\+O\+R\+T@{D\+A\+C\+\_\+\+P\+O\+R\+T}}
 \index{D\+A\+C\+\_\+\+P\+O\+R\+T@{D\+A\+C\+\_\+\+P\+O\+R\+T}!analizer.\+h@{analizer.\+h}}
 \subsubsection[{D\+A\+C\+\_\+\+P\+O\+R\+T}]{\setlength{\rightskip}{0pt plus 5cm}\#define D\+A\+C\+\_\+\+P\+O\+R\+T~P\+O\+R\+T\+F}}\label{analizer_8h_afbdc123b0b82a37ee0e8272c6e39e66c}
 
 
-Definition at line 29 of file analizer.\+h.
+Definition at line 44 of file analizer.\+h.
 
 \hypertarget{analizer_8h_a2553b1fa6f7f5606de68a2df573221e2}{\index{analizer.\+h@{analizer.\+h}!D\+A\+C\+Delay@{D\+A\+C\+Delay}}
 \index{D\+A\+C\+Delay@{D\+A\+C\+Delay}!analizer.\+h@{analizer.\+h}}
 \subsubsection[{D\+A\+C\+Delay}]{\setlength{\rightskip}{0pt plus 5cm}\#define D\+A\+C\+Delay~1}}\label{analizer_8h_a2553b1fa6f7f5606de68a2df573221e2}
 
 
-Definition at line 17 of file analizer.\+h.
+Definition at line 25 of file analizer.\+h.
 
 \hypertarget{analizer_8h_a85eee24026283aa727d1cb401b1e16b5}{\index{analizer.\+h@{analizer.\+h}!D\+I\+S\+C\+H\+A\+R\+G\+E\+\_\+\+D\+E\+L\+A\+Y@{D\+I\+S\+C\+H\+A\+R\+G\+E\+\_\+\+D\+E\+L\+A\+Y}}
 \index{D\+I\+S\+C\+H\+A\+R\+G\+E\+\_\+\+D\+E\+L\+A\+Y@{D\+I\+S\+C\+H\+A\+R\+G\+E\+\_\+\+D\+E\+L\+A\+Y}!analizer.\+h@{analizer.\+h}}
 \subsubsection[{D\+I\+S\+C\+H\+A\+R\+G\+E\+\_\+\+D\+E\+L\+A\+Y}]{\setlength{\rightskip}{0pt plus 5cm}\#define D\+I\+S\+C\+H\+A\+R\+G\+E\+\_\+\+D\+E\+L\+A\+Y~50}}\label{analizer_8h_a85eee24026283aa727d1cb401b1e16b5}
 
 
-Definition at line 19 of file analizer.\+h.
+Definition at line 27 of file analizer.\+h.
+
+\hypertarget{analizer_8h_a69c0fba73c43146e5858f1df6e80ac81}{\index{analizer.\+h@{analizer.\+h}!E\+E\+P\+R\+O\+M\+\_\+\+P\+O\+R\+T@{E\+E\+P\+R\+O\+M\+\_\+\+P\+O\+R\+T}}
+\index{E\+E\+P\+R\+O\+M\+\_\+\+P\+O\+R\+T@{E\+E\+P\+R\+O\+M\+\_\+\+P\+O\+R\+T}!analizer.\+h@{analizer.\+h}}
+\subsubsection[{E\+E\+P\+R\+O\+M\+\_\+\+P\+O\+R\+T}]{\setlength{\rightskip}{0pt plus 5cm}\#define E\+E\+P\+R\+O\+M\+\_\+\+P\+O\+R\+T~P\+O\+R\+T\+F}}\label{analizer_8h_a69c0fba73c43146e5858f1df6e80ac81}
+
+
+Definition at line 46 of file analizer.\+h.
 
 \hypertarget{analizer_8h_acc0381ac0fe7d05df767e24886574eda}{\index{analizer.\+h@{analizer.\+h}!G\+E\+N1@{G\+E\+N1}}
 \index{G\+E\+N1@{G\+E\+N1}!analizer.\+h@{analizer.\+h}}
 \subsubsection[{G\+E\+N1}]{\setlength{\rightskip}{0pt plus 5cm}\#define G\+E\+N1~O\+C\+R1\+A}}\label{analizer_8h_acc0381ac0fe7d05df767e24886574eda}
 
 
-Definition at line 47 of file analizer.\+h.
+Definition at line 71 of file analizer.\+h.
 
 \hypertarget{analizer_8h_a14da44c27dbccb1845387bc989eb76a3}{\index{analizer.\+h@{analizer.\+h}!G\+E\+N2@{G\+E\+N2}}
 \index{G\+E\+N2@{G\+E\+N2}!analizer.\+h@{analizer.\+h}}
 \subsubsection[{G\+E\+N2}]{\setlength{\rightskip}{0pt plus 5cm}\#define G\+E\+N2~O\+C\+R1\+B}}\label{analizer_8h_a14da44c27dbccb1845387bc989eb76a3}
 
 
-Definition at line 48 of file analizer.\+h.
+Definition at line 72 of file analizer.\+h.
+
+\hypertarget{analizer_8h_a2a253e6c2961bb89db7ce729c9ce2948}{\index{analizer.\+h@{analizer.\+h}!G\+E\+N3@{G\+E\+N3}}
+\index{G\+E\+N3@{G\+E\+N3}!analizer.\+h@{analizer.\+h}}
+\subsubsection[{G\+E\+N3}]{\setlength{\rightskip}{0pt plus 5cm}\#define G\+E\+N3~O\+C\+R1\+C}}\label{analizer_8h_a2a253e6c2961bb89db7ce729c9ce2948}
+
+
+Definition at line 73 of file analizer.\+h.
 
 \hypertarget{analizer_8h_a1d0d1e6152ace91f351302a46b658fb8}{\index{analizer.\+h@{analizer.\+h}!Generator\+Pin@{Generator\+Pin}}
 \index{Generator\+Pin@{Generator\+Pin}!analizer.\+h@{analizer.\+h}}
 \subsubsection[{Generator\+Pin}]{\setlength{\rightskip}{0pt plus 5cm}\#define Generator\+Pin~9}}\label{analizer_8h_a1d0d1e6152ace91f351302a46b658fb8}
-Analizer.\+cpp \begin{DoxyAuthor}{Author}
-L\+E\+D Microsensor 
-\end{DoxyAuthor}
 
 
-Definition at line 15 of file analizer.\+h.
+Definition at line 23 of file analizer.\+h.
 
 \hypertarget{analizer_8h_a2989837a37d6d63b59c6dd541b785435}{\index{analizer.\+h@{analizer.\+h}!M\+A\+X\+\_\+\+C\+U\+R\+R\+E\+N\+T@{M\+A\+X\+\_\+\+C\+U\+R\+R\+E\+N\+T}}
 \index{M\+A\+X\+\_\+\+C\+U\+R\+R\+E\+N\+T@{M\+A\+X\+\_\+\+C\+U\+R\+R\+E\+N\+T}!analizer.\+h@{analizer.\+h}}
 \subsubsection[{M\+A\+X\+\_\+\+C\+U\+R\+R\+E\+N\+T}]{\setlength{\rightskip}{0pt plus 5cm}\#define M\+A\+X\+\_\+\+C\+U\+R\+R\+E\+N\+T~1000}}\label{analizer_8h_a2989837a37d6d63b59c6dd541b785435}
 
 
-Definition at line 25 of file analizer.\+h.
+Definition at line 40 of file analizer.\+h.
 
 \hypertarget{analizer_8h_a57a10261e6511f97317cee9076692315}{\index{analizer.\+h@{analizer.\+h}!M\+A\+X\+\_\+\+P\+U\+L\+S\+E\+\_\+\+W\+I\+D\+T\+H@{M\+A\+X\+\_\+\+P\+U\+L\+S\+E\+\_\+\+W\+I\+D\+T\+H}}
 \index{M\+A\+X\+\_\+\+P\+U\+L\+S\+E\+\_\+\+W\+I\+D\+T\+H@{M\+A\+X\+\_\+\+P\+U\+L\+S\+E\+\_\+\+W\+I\+D\+T\+H}!analizer.\+h@{analizer.\+h}}
-\subsubsection[{M\+A\+X\+\_\+\+P\+U\+L\+S\+E\+\_\+\+W\+I\+D\+T\+H}]{\setlength{\rightskip}{0pt plus 5cm}\#define M\+A\+X\+\_\+\+P\+U\+L\+S\+E\+\_\+\+W\+I\+D\+T\+H~150}}\label{analizer_8h_a57a10261e6511f97317cee9076692315}
+\subsubsection[{M\+A\+X\+\_\+\+P\+U\+L\+S\+E\+\_\+\+W\+I\+D\+T\+H}]{\setlength{\rightskip}{0pt plus 5cm}\#define M\+A\+X\+\_\+\+P\+U\+L\+S\+E\+\_\+\+W\+I\+D\+T\+H~60}}\label{analizer_8h_a57a10261e6511f97317cee9076692315}
 
 
-Definition at line 24 of file analizer.\+h.
+Definition at line 39 of file analizer.\+h.
+
+\hypertarget{analizer_8h_a9e65c7c5572fb7f3809193aa0f046649}{\index{analizer.\+h@{analizer.\+h}!M\+E\+D\+I\+A\+N\+\_\+\+F\+I\+L\+T\+E\+R\+\_\+\+E\+N\+A\+B\+L\+E@{M\+E\+D\+I\+A\+N\+\_\+\+F\+I\+L\+T\+E\+R\+\_\+\+E\+N\+A\+B\+L\+E}}
+\index{M\+E\+D\+I\+A\+N\+\_\+\+F\+I\+L\+T\+E\+R\+\_\+\+E\+N\+A\+B\+L\+E@{M\+E\+D\+I\+A\+N\+\_\+\+F\+I\+L\+T\+E\+R\+\_\+\+E\+N\+A\+B\+L\+E}!analizer.\+h@{analizer.\+h}}
+\subsubsection[{M\+E\+D\+I\+A\+N\+\_\+\+F\+I\+L\+T\+E\+R\+\_\+\+E\+N\+A\+B\+L\+E}]{\setlength{\rightskip}{0pt plus 5cm}\#define M\+E\+D\+I\+A\+N\+\_\+\+F\+I\+L\+T\+E\+R\+\_\+\+E\+N\+A\+B\+L\+E}}\label{analizer_8h_a9e65c7c5572fb7f3809193aa0f046649}
+Analizer.\+cpp \begin{DoxyAuthor}{Author}
+L\+E\+D Microsensor 
+\end{DoxyAuthor}
+
+
+Definition at line 19 of file analizer.\+h.
 
 \hypertarget{analizer_8h_a39d05713f9a15de04077b8bea7b13f44}{\index{analizer.\+h@{analizer.\+h}!N\+U\+M\+\_\+\+O\+F\+\_\+\+E\+T\+A\+L\+O\+N@{N\+U\+M\+\_\+\+O\+F\+\_\+\+E\+T\+A\+L\+O\+N}}
 \index{N\+U\+M\+\_\+\+O\+F\+\_\+\+E\+T\+A\+L\+O\+N@{N\+U\+M\+\_\+\+O\+F\+\_\+\+E\+T\+A\+L\+O\+N}!analizer.\+h@{analizer.\+h}}
 \subsubsection[{N\+U\+M\+\_\+\+O\+F\+\_\+\+E\+T\+A\+L\+O\+N}]{\setlength{\rightskip}{0pt plus 5cm}\#define N\+U\+M\+\_\+\+O\+F\+\_\+\+E\+T\+A\+L\+O\+N~3}}\label{analizer_8h_a39d05713f9a15de04077b8bea7b13f44}
 
 
-Definition at line 23 of file analizer.\+h.
+Definition at line 38 of file analizer.\+h.
 
 \hypertarget{analizer_8h_a2bdaf37b88fc3b0920fffa2b6166be22}{\index{analizer.\+h@{analizer.\+h}!N\+U\+M\+\_\+\+O\+F\+\_\+\+L\+E\+D@{N\+U\+M\+\_\+\+O\+F\+\_\+\+L\+E\+D}}
 \index{N\+U\+M\+\_\+\+O\+F\+\_\+\+L\+E\+D@{N\+U\+M\+\_\+\+O\+F\+\_\+\+L\+E\+D}!analizer.\+h@{analizer.\+h}}
-\subsubsection[{N\+U\+M\+\_\+\+O\+F\+\_\+\+L\+E\+D}]{\setlength{\rightskip}{0pt plus 5cm}\#define N\+U\+M\+\_\+\+O\+F\+\_\+\+L\+E\+D~45}}\label{analizer_8h_a2bdaf37b88fc3b0920fffa2b6166be22}
+\subsubsection[{N\+U\+M\+\_\+\+O\+F\+\_\+\+L\+E\+D}]{\setlength{\rightskip}{0pt plus 5cm}\#define N\+U\+M\+\_\+\+O\+F\+\_\+\+L\+E\+D~12}}\label{analizer_8h_a2bdaf37b88fc3b0920fffa2b6166be22}
 
 
-Definition at line 22 of file analizer.\+h.
+Definition at line 32 of file analizer.\+h.
+
+\hypertarget{analizer_8h_a864b43588aed04ef9d694ec60ef7a9f1}{\index{analizer.\+h@{analizer.\+h}!N\+U\+M\+\_\+\+O\+F\+\_\+\+P\+O\+I\+N\+T\+S@{N\+U\+M\+\_\+\+O\+F\+\_\+\+P\+O\+I\+N\+T\+S}}
+\index{N\+U\+M\+\_\+\+O\+F\+\_\+\+P\+O\+I\+N\+T\+S@{N\+U\+M\+\_\+\+O\+F\+\_\+\+P\+O\+I\+N\+T\+S}!analizer.\+h@{analizer.\+h}}
+\subsubsection[{N\+U\+M\+\_\+\+O\+F\+\_\+\+P\+O\+I\+N\+T\+S}]{\setlength{\rightskip}{0pt plus 5cm}\#define N\+U\+M\+\_\+\+O\+F\+\_\+\+P\+O\+I\+N\+T\+S~12}}\label{analizer_8h_a864b43588aed04ef9d694ec60ef7a9f1}
+
+
+Definition at line 33 of file analizer.\+h.
 
 \hypertarget{analizer_8h_a444e7e81c7325bd22f75bdec540b53e8}{\index{analizer.\+h@{analizer.\+h}!P\+R\+E\+A\+M\+P\+\_\+\+P\+O\+R\+T@{P\+R\+E\+A\+M\+P\+\_\+\+P\+O\+R\+T}}
 \index{P\+R\+E\+A\+M\+P\+\_\+\+P\+O\+R\+T@{P\+R\+E\+A\+M\+P\+\_\+\+P\+O\+R\+T}!analizer.\+h@{analizer.\+h}}
-\subsubsection[{P\+R\+E\+A\+M\+P\+\_\+\+P\+O\+R\+T}]{\setlength{\rightskip}{0pt plus 5cm}\#define P\+R\+E\+A\+M\+P\+\_\+\+P\+O\+R\+T~P\+O\+R\+T\+B}}\label{analizer_8h_a444e7e81c7325bd22f75bdec540b53e8}
+\subsubsection[{P\+R\+E\+A\+M\+P\+\_\+\+P\+O\+R\+T}]{\setlength{\rightskip}{0pt plus 5cm}\#define P\+R\+E\+A\+M\+P\+\_\+\+P\+O\+R\+T~P\+O\+R\+T\+F}}\label{analizer_8h_a444e7e81c7325bd22f75bdec540b53e8}
 
 
-Definition at line 30 of file analizer.\+h.
+Definition at line 45 of file analizer.\+h.
 
 \hypertarget{analizer_8h_a475c17e71b3911e78f6fa5c3062764bc}{\index{analizer.\+h@{analizer.\+h}!P\+U\+L\+S\+E\+\_\+\+D\+E\+L\+A\+Y@{P\+U\+L\+S\+E\+\_\+\+D\+E\+L\+A\+Y}}
 \index{P\+U\+L\+S\+E\+\_\+\+D\+E\+L\+A\+Y@{P\+U\+L\+S\+E\+\_\+\+D\+E\+L\+A\+Y}!analizer.\+h@{analizer.\+h}}
 \subsubsection[{P\+U\+L\+S\+E\+\_\+\+D\+E\+L\+A\+Y}]{\setlength{\rightskip}{0pt plus 5cm}\#define P\+U\+L\+S\+E\+\_\+\+D\+E\+L\+A\+Y~25}}\label{analizer_8h_a475c17e71b3911e78f6fa5c3062764bc}
 
 
-Definition at line 20 of file analizer.\+h.
+Definition at line 28 of file analizer.\+h.
 
 \hypertarget{analizer_8h_afbca82ecf34ce7c95ce220c97c1645cf}{\index{analizer.\+h@{analizer.\+h}!R\+E\+F\+E\+R\+E\+N\+C\+E\+\_\+\+V@{R\+E\+F\+E\+R\+E\+N\+C\+E\+\_\+\+V}}
 \index{R\+E\+F\+E\+R\+E\+N\+C\+E\+\_\+\+V@{R\+E\+F\+E\+R\+E\+N\+C\+E\+\_\+\+V}!analizer.\+h@{analizer.\+h}}
 \subsubsection[{R\+E\+F\+E\+R\+E\+N\+C\+E\+\_\+\+V}]{\setlength{\rightskip}{0pt plus 5cm}\#define R\+E\+F\+E\+R\+E\+N\+C\+E\+\_\+\+V~3000.\+0}}\label{analizer_8h_afbca82ecf34ce7c95ce220c97c1645cf}
 
 
-Definition at line 21 of file analizer.\+h.
+Definition at line 29 of file analizer.\+h.
 
 \hypertarget{analizer_8h_a22e32198639ff7666964ceb2c7663ce2}{\index{analizer.\+h@{analizer.\+h}!S\+H\+\_\+\+P\+O\+R\+T@{S\+H\+\_\+\+P\+O\+R\+T}}
 \index{S\+H\+\_\+\+P\+O\+R\+T@{S\+H\+\_\+\+P\+O\+R\+T}!analizer.\+h@{analizer.\+h}}
 \subsubsection[{S\+H\+\_\+\+P\+O\+R\+T}]{\setlength{\rightskip}{0pt plus 5cm}\#define S\+H\+\_\+\+P\+O\+R\+T~P\+O\+R\+T\+D}}\label{analizer_8h_a22e32198639ff7666964ceb2c7663ce2}
 
 
-Definition at line 42 of file analizer.\+h.
+Definition at line 66 of file analizer.\+h.
 
 \hypertarget{analizer_8h_ab740c8813d932dfe825663ad9ade65ac}{\index{analizer.\+h@{analizer.\+h}!S\+H\+\_\+\+R\+E\+S\+E\+T@{S\+H\+\_\+\+R\+E\+S\+E\+T}}
 \index{S\+H\+\_\+\+R\+E\+S\+E\+T@{S\+H\+\_\+\+R\+E\+S\+E\+T}!analizer.\+h@{analizer.\+h}}
 \subsubsection[{S\+H\+\_\+\+R\+E\+S\+E\+T}]{\setlength{\rightskip}{0pt plus 5cm}\#define S\+H\+\_\+\+R\+E\+S\+E\+T~P\+D1}}\label{analizer_8h_ab740c8813d932dfe825663ad9ade65ac}
 
 
-Definition at line 44 of file analizer.\+h.
+Definition at line 68 of file analizer.\+h.
 
 \hypertarget{analizer_8h_a2d989d6cda290418d17bb6e0f2693b3c}{\index{analizer.\+h@{analizer.\+h}!S\+H\+\_\+\+S\+E\+T@{S\+H\+\_\+\+S\+E\+T}}
 \index{S\+H\+\_\+\+S\+E\+T@{S\+H\+\_\+\+S\+E\+T}!analizer.\+h@{analizer.\+h}}
 \subsubsection[{S\+H\+\_\+\+S\+E\+T}]{\setlength{\rightskip}{0pt plus 5cm}\#define S\+H\+\_\+\+S\+E\+T~P\+D0}}\label{analizer_8h_a2d989d6cda290418d17bb6e0f2693b3c}
 
 
-Definition at line 43 of file analizer.\+h.
+Definition at line 67 of file analizer.\+h.
 
 \hypertarget{analizer_8h_a7eba70092c80595372a62a2129c15d38}{\index{analizer.\+h@{analizer.\+h}!Shift\+Register\+Delay@{Shift\+Register\+Delay}}
 \index{Shift\+Register\+Delay@{Shift\+Register\+Delay}!analizer.\+h@{analizer.\+h}}
 \subsubsection[{Shift\+Register\+Delay}]{\setlength{\rightskip}{0pt plus 5cm}\#define Shift\+Register\+Delay~1}}\label{analizer_8h_a7eba70092c80595372a62a2129c15d38}
 
 
-Definition at line 16 of file analizer.\+h.
+Definition at line 24 of file analizer.\+h.
 
 \hypertarget{analizer_8h_a86d5a90c888ff7597811ad9356383dd9}{\index{analizer.\+h@{analizer.\+h}!S\+R\+\_\+\+C\+L\+K@{S\+R\+\_\+\+C\+L\+K}}
 \index{S\+R\+\_\+\+C\+L\+K@{S\+R\+\_\+\+C\+L\+K}!analizer.\+h@{analizer.\+h}}
-\subsubsection[{S\+R\+\_\+\+C\+L\+K}]{\setlength{\rightskip}{0pt plus 5cm}\#define S\+R\+\_\+\+C\+L\+K~P\+D6}}\label{analizer_8h_a86d5a90c888ff7597811ad9356383dd9}
+\subsubsection[{S\+R\+\_\+\+C\+L\+K}]{\setlength{\rightskip}{0pt plus 5cm}\#define S\+R\+\_\+\+C\+L\+K~P\+D1}}\label{analizer_8h_a86d5a90c888ff7597811ad9356383dd9}
 
 
-Definition at line 39 of file analizer.\+h.
+Definition at line 56 of file analizer.\+h.
 
 \hypertarget{analizer_8h_a9d3e7db6665a7ef3578f39a55b80caff}{\index{analizer.\+h@{analizer.\+h}!S\+R\+\_\+\+C\+L\+R@{S\+R\+\_\+\+C\+L\+R}}
 \index{S\+R\+\_\+\+C\+L\+R@{S\+R\+\_\+\+C\+L\+R}!analizer.\+h@{analizer.\+h}}
-\subsubsection[{S\+R\+\_\+\+C\+L\+R}]{\setlength{\rightskip}{0pt plus 5cm}\#define S\+R\+\_\+\+C\+L\+R~P\+D4}}\label{analizer_8h_a9d3e7db6665a7ef3578f39a55b80caff}
+\subsubsection[{S\+R\+\_\+\+C\+L\+R}]{\setlength{\rightskip}{0pt plus 5cm}\#define S\+R\+\_\+\+C\+L\+R~P\+D3}}\label{analizer_8h_a9d3e7db6665a7ef3578f39a55b80caff}
 
 
-Definition at line 37 of file analizer.\+h.
+Definition at line 54 of file analizer.\+h.
 
 \hypertarget{analizer_8h_acb10407e3214cbd4dbbb30d143d2ff64}{\index{analizer.\+h@{analizer.\+h}!S\+R\+\_\+\+D\+A\+T\+A@{S\+R\+\_\+\+D\+A\+T\+A}}
 \index{S\+R\+\_\+\+D\+A\+T\+A@{S\+R\+\_\+\+D\+A\+T\+A}!analizer.\+h@{analizer.\+h}}
-\subsubsection[{S\+R\+\_\+\+D\+A\+T\+A}]{\setlength{\rightskip}{0pt plus 5cm}\#define S\+R\+\_\+\+D\+A\+T\+A~P\+D7}}\label{analizer_8h_acb10407e3214cbd4dbbb30d143d2ff64}
+\subsubsection[{S\+R\+\_\+\+D\+A\+T\+A}]{\setlength{\rightskip}{0pt plus 5cm}\#define S\+R\+\_\+\+D\+A\+T\+A~P\+D2}}\label{analizer_8h_acb10407e3214cbd4dbbb30d143d2ff64}
 
 
-Definition at line 38 of file analizer.\+h.
+Definition at line 55 of file analizer.\+h.
 
 \hypertarget{analizer_8h_afa636b6fa889108da6792530f7c7e604}{\index{analizer.\+h@{analizer.\+h}!S\+R\+\_\+\+E\+N\+A\+B\+L\+E@{S\+R\+\_\+\+E\+N\+A\+B\+L\+E}}
 \index{S\+R\+\_\+\+E\+N\+A\+B\+L\+E@{S\+R\+\_\+\+E\+N\+A\+B\+L\+E}!analizer.\+h@{analizer.\+h}}
-\subsubsection[{S\+R\+\_\+\+E\+N\+A\+B\+L\+E}]{\setlength{\rightskip}{0pt plus 5cm}\#define S\+R\+\_\+\+E\+N\+A\+B\+L\+E~P\+B7}}\label{analizer_8h_afa636b6fa889108da6792530f7c7e604}
+\subsubsection[{S\+R\+\_\+\+E\+N\+A\+B\+L\+E}]{\setlength{\rightskip}{0pt plus 5cm}\#define S\+R\+\_\+\+E\+N\+A\+B\+L\+E~P\+D0}}\label{analizer_8h_afa636b6fa889108da6792530f7c7e604}
 
 
-Definition at line 36 of file analizer.\+h.
+Definition at line 53 of file analizer.\+h.
+
+\hypertarget{analizer_8h_ae8f85c1ad63332e2073d5a9c58aacce9}{\index{analizer.\+h@{analizer.\+h}!S\+R\+\_\+\+I\+N\+D\+\_\+\+C\+L\+K@{S\+R\+\_\+\+I\+N\+D\+\_\+\+C\+L\+K}}
+\index{S\+R\+\_\+\+I\+N\+D\+\_\+\+C\+L\+K@{S\+R\+\_\+\+I\+N\+D\+\_\+\+C\+L\+K}!analizer.\+h@{analizer.\+h}}
+\subsubsection[{S\+R\+\_\+\+I\+N\+D\+\_\+\+C\+L\+K}]{\setlength{\rightskip}{0pt plus 5cm}\#define S\+R\+\_\+\+I\+N\+D\+\_\+\+C\+L\+K~P\+D5}}\label{analizer_8h_ae8f85c1ad63332e2073d5a9c58aacce9}
+
+
+Definition at line 62 of file analizer.\+h.
+
+\hypertarget{analizer_8h_af399a58b8fe72b9b9aa149693b893680}{\index{analizer.\+h@{analizer.\+h}!S\+R\+\_\+\+I\+N\+D\+\_\+\+C\+L\+R@{S\+R\+\_\+\+I\+N\+D\+\_\+\+C\+L\+R}}
+\index{S\+R\+\_\+\+I\+N\+D\+\_\+\+C\+L\+R@{S\+R\+\_\+\+I\+N\+D\+\_\+\+C\+L\+R}!analizer.\+h@{analizer.\+h}}
+\subsubsection[{S\+R\+\_\+\+I\+N\+D\+\_\+\+C\+L\+R}]{\setlength{\rightskip}{0pt plus 5cm}\#define S\+R\+\_\+\+I\+N\+D\+\_\+\+C\+L\+R~P\+D7}}\label{analizer_8h_af399a58b8fe72b9b9aa149693b893680}
+
+
+Definition at line 60 of file analizer.\+h.
+
+\hypertarget{analizer_8h_a53fe7c01a23d332a64a372f4f7981f6d}{\index{analizer.\+h@{analizer.\+h}!S\+R\+\_\+\+I\+N\+D\+\_\+\+D\+A\+T\+A@{S\+R\+\_\+\+I\+N\+D\+\_\+\+D\+A\+T\+A}}
+\index{S\+R\+\_\+\+I\+N\+D\+\_\+\+D\+A\+T\+A@{S\+R\+\_\+\+I\+N\+D\+\_\+\+D\+A\+T\+A}!analizer.\+h@{analizer.\+h}}
+\subsubsection[{S\+R\+\_\+\+I\+N\+D\+\_\+\+D\+A\+T\+A}]{\setlength{\rightskip}{0pt plus 5cm}\#define S\+R\+\_\+\+I\+N\+D\+\_\+\+D\+A\+T\+A~P\+D6}}\label{analizer_8h_a53fe7c01a23d332a64a372f4f7981f6d}
+
+
+Definition at line 61 of file analizer.\+h.
+
+\hypertarget{analizer_8h_a0d71f73291edc630bc502df728ba43ad}{\index{analizer.\+h@{analizer.\+h}!S\+R\+\_\+\+I\+N\+D\+\_\+\+E\+N\+A\+B\+L\+E@{S\+R\+\_\+\+I\+N\+D\+\_\+\+E\+N\+A\+B\+L\+E}}
+\index{S\+R\+\_\+\+I\+N\+D\+\_\+\+E\+N\+A\+B\+L\+E@{S\+R\+\_\+\+I\+N\+D\+\_\+\+E\+N\+A\+B\+L\+E}!analizer.\+h@{analizer.\+h}}
+\subsubsection[{S\+R\+\_\+\+I\+N\+D\+\_\+\+E\+N\+A\+B\+L\+E}]{\setlength{\rightskip}{0pt plus 5cm}\#define S\+R\+\_\+\+I\+N\+D\+\_\+\+E\+N\+A\+B\+L\+E~P\+B6}}\label{analizer_8h_a0d71f73291edc630bc502df728ba43ad}
+
+
+Definition at line 59 of file analizer.\+h.
 
 \hypertarget{analizer_8h_a578b28f704eca688ec84459052e700c1}{\index{analizer.\+h@{analizer.\+h}!S\+S\+\_\+\+A\+D\+C@{S\+S\+\_\+\+A\+D\+C}}
 \index{S\+S\+\_\+\+A\+D\+C@{S\+S\+\_\+\+A\+D\+C}!analizer.\+h@{analizer.\+h}}
-\subsubsection[{S\+S\+\_\+\+A\+D\+C}]{\setlength{\rightskip}{0pt plus 5cm}\#define S\+S\+\_\+\+A\+D\+C~P\+E6}}\label{analizer_8h_a578b28f704eca688ec84459052e700c1}
+\subsubsection[{S\+S\+\_\+\+A\+D\+C}]{\setlength{\rightskip}{0pt plus 5cm}\#define S\+S\+\_\+\+A\+D\+C~P\+F6}}\label{analizer_8h_a578b28f704eca688ec84459052e700c1}
 
 
-Definition at line 31 of file analizer.\+h.
+Definition at line 47 of file analizer.\+h.
 
 \hypertarget{analizer_8h_a6acb416abfa9b672f29efbce6b4f514d}{\index{analizer.\+h@{analizer.\+h}!S\+S\+\_\+\+D\+A\+C@{S\+S\+\_\+\+D\+A\+C}}
 \index{S\+S\+\_\+\+D\+A\+C@{S\+S\+\_\+\+D\+A\+C}!analizer.\+h@{analizer.\+h}}
-\subsubsection[{S\+S\+\_\+\+D\+A\+C}]{\setlength{\rightskip}{0pt plus 5cm}\#define S\+S\+\_\+\+D\+A\+C~P\+F1}}\label{analizer_8h_a6acb416abfa9b672f29efbce6b4f514d}
+\subsubsection[{S\+S\+\_\+\+D\+A\+C}]{\setlength{\rightskip}{0pt plus 5cm}\#define S\+S\+\_\+\+D\+A\+C~P\+F5}}\label{analizer_8h_a6acb416abfa9b672f29efbce6b4f514d}
 
 
-Definition at line 33 of file analizer.\+h.
+Definition at line 49 of file analizer.\+h.
+
+\hypertarget{analizer_8h_a710fee1f215f3aef17d02423272be6ff}{\index{analizer.\+h@{analizer.\+h}!S\+S\+\_\+\+E\+E\+P\+R\+O\+M@{S\+S\+\_\+\+E\+E\+P\+R\+O\+M}}
+\index{S\+S\+\_\+\+E\+E\+P\+R\+O\+M@{S\+S\+\_\+\+E\+E\+P\+R\+O\+M}!analizer.\+h@{analizer.\+h}}
+\subsubsection[{S\+S\+\_\+\+E\+E\+P\+R\+O\+M}]{\setlength{\rightskip}{0pt plus 5cm}\#define S\+S\+\_\+\+E\+E\+P\+R\+O\+M~P\+F4}}\label{analizer_8h_a710fee1f215f3aef17d02423272be6ff}
+
+
+Definition at line 50 of file analizer.\+h.
 
 \hypertarget{analizer_8h_a7e138e04db53cabc3b98326ba1703972}{\index{analizer.\+h@{analizer.\+h}!S\+S\+\_\+\+P\+R\+E\+A\+M\+P@{S\+S\+\_\+\+P\+R\+E\+A\+M\+P}}
 \index{S\+S\+\_\+\+P\+R\+E\+A\+M\+P@{S\+S\+\_\+\+P\+R\+E\+A\+M\+P}!analizer.\+h@{analizer.\+h}}
-\subsubsection[{S\+S\+\_\+\+P\+R\+E\+A\+M\+P}]{\setlength{\rightskip}{0pt plus 5cm}\#define S\+S\+\_\+\+P\+R\+E\+A\+M\+P~P\+B4}}\label{analizer_8h_a7e138e04db53cabc3b98326ba1703972}
+\subsubsection[{S\+S\+\_\+\+P\+R\+E\+A\+M\+P}]{\setlength{\rightskip}{0pt plus 5cm}\#define S\+S\+\_\+\+P\+R\+E\+A\+M\+P~P\+F7}}\label{analizer_8h_a7e138e04db53cabc3b98326ba1703972}
 
 
-Definition at line 32 of file analizer.\+h.
+Definition at line 48 of file analizer.\+h.
 
 \hypertarget{analizer_8h_aeab37383c7e172bb368142281eed6bd0}{\index{analizer.\+h@{analizer.\+h}!W\+B\+Delay@{W\+B\+Delay}}
 \index{W\+B\+Delay@{W\+B\+Delay}!analizer.\+h@{analizer.\+h}}
-\subsubsection[{W\+B\+Delay}]{\setlength{\rightskip}{0pt plus 5cm}\#define W\+B\+Delay~1000}}\label{analizer_8h_aeab37383c7e172bb368142281eed6bd0}
+\subsubsection[{W\+B\+Delay}]{\setlength{\rightskip}{0pt plus 5cm}\#define W\+B\+Delay~1}}\label{analizer_8h_aeab37383c7e172bb368142281eed6bd0}
 
 
-Definition at line 18 of file analizer.\+h.
+Definition at line 26 of file analizer.\+h.
+
+\hypertarget{analizer_8h_ac0165a0a5be101747a734f0991fd0a35}{\index{analizer.\+h@{analizer.\+h}!W\+H\+I\+T\+E\+\_\+\+L\+E\+D@{W\+H\+I\+T\+E\+\_\+\+L\+E\+D}}
+\index{W\+H\+I\+T\+E\+\_\+\+L\+E\+D@{W\+H\+I\+T\+E\+\_\+\+L\+E\+D}!analizer.\+h@{analizer.\+h}}
+\subsubsection[{W\+H\+I\+T\+E\+\_\+\+L\+E\+D}]{\setlength{\rightskip}{0pt plus 5cm}\#define W\+H\+I\+T\+E\+\_\+\+L\+E\+D~P\+B7}}\label{analizer_8h_ac0165a0a5be101747a734f0991fd0a35}
+
+
+Definition at line 63 of file analizer.\+h.
 
 
 
@@ -338,7 +470,7 @@ Definition at line 18 of file analizer.\+h.
 )}}\label{analizer_8h_a6be7d9ce80c86f5178635fa86c2dd5e7}
 
 
-Definition at line 224 of file analizer.\+h.
+Definition at line 570 of file analizer.\+h.
 
 \hypertarget{analizer_8h_a9383278dce0daeb3cec5424679c5b815}{\index{analizer.\+h@{analizer.\+h}!disable\+L\+E\+D@{disable\+L\+E\+D}}
 \index{disable\+L\+E\+D@{disable\+L\+E\+D}!analizer.\+h@{analizer.\+h}}
@@ -349,7 +481,7 @@ Definition at line 224 of file analizer.\+h.
 )}}\label{analizer_8h_a9383278dce0daeb3cec5424679c5b815}
 Utility function for calibration mode 
 
-Definition at line 983 of file analizer.\+cpp.
+Definition at line 1398 of file analizer.\+cpp.
 
 \hypertarget{analizer_8h_a5bb74041e7d0fa1c5edbd3dce87f5048}{\index{analizer.\+h@{analizer.\+h}!discharge\+Sample\+Hold@{discharge\+Sample\+Hold}}
 \index{discharge\+Sample\+Hold@{discharge\+Sample\+Hold}!analizer.\+h@{analizer.\+h}}
@@ -360,16 +492,17 @@ Definition at line 983 of file analizer.\+cpp.
 )}}\label{analizer_8h_a5bb74041e7d0fa1c5edbd3dce87f5048}
 Discharge capasitor, while measurements going in Sample\&Hold mode 
 
-Definition at line 923 of file analizer.\+cpp.
+Definition at line 1260 of file analizer.\+cpp.
 
-\hypertarget{analizer_8h_ab68664ccade14fee45935208d6a19bfc}{\index{analizer.\+h@{analizer.\+h}!do\+Measurements@{do\+Measurements}}
+\hypertarget{analizer_8h_a56ebf1de5d965036365a5a5d042e3244}{\index{analizer.\+h@{analizer.\+h}!do\+Measurements@{do\+Measurements}}
 \index{do\+Measurements@{do\+Measurements}!analizer.\+h@{analizer.\+h}}
 \subsubsection[{do\+Measurements}]{\setlength{\rightskip}{0pt plus 5cm}void do\+Measurements (
 \begin{DoxyParamCaption}
 \item[{uint8\+\_\+t}]{num\+Of\+Etalon = {\ttfamily 0}, }
-\item[{bool}]{calc\+Norm = {\ttfamily false}}
+\item[{bool}]{calc\+Norm = {\ttfamily false}, }
+\item[{bool}]{service\+Mode = {\ttfamily false}}
 \end{DoxyParamCaption}
-)}}\label{analizer_8h_ab68664ccade14fee45935208d6a19bfc}
+)}}\label{analizer_8h_a56ebf1de5d965036365a5a5d042e3244}
 One mode of measurements with option of coeffs calibration Manually choosing preamps parameters Inpulse measurements 
 \begin{DoxyParams}[1]{Parameters}
 \mbox{\tt in}  & {\em num\+Of\+Etalon} & -\/ which etalon we use for fast calibration \\
@@ -377,9 +510,9 @@ One mode of measurements with option of coeffs calibration Manually choosing pre
 \mbox{\tt in}  & {\em calc\+Norm} & -\/ true -\/ calibration, false -\/ measurements \\
 \hline
 \end{DoxyParams}
+repeat pulse few times each pulse adc reads 2 times 
 
-
-Definition at line 568 of file analizer.\+cpp.
+Definition at line 792 of file analizer.\+cpp.
 
 \hypertarget{analizer_8h_a577f03741b4c820e66e0e76a984fa535}{\index{analizer.\+h@{analizer.\+h}!do\+Measurements\+S\+H@{do\+Measurements\+S\+H}}
 \index{do\+Measurements\+S\+H@{do\+Measurements\+S\+H}!analizer.\+h@{analizer.\+h}}
@@ -398,7 +531,7 @@ One mode of measurements with option of coeffs calibration Manually choosing pre
 \end{DoxyParams}
 
 
-Definition at line 648 of file analizer.\+cpp.
+Definition at line 960 of file analizer.\+cpp.
 
 \hypertarget{analizer_8h_aa3800b390098f0c30155a3b4c3629fc4}{\index{analizer.\+h@{analizer.\+h}!do\+Measurements\+S\+H\+\_\+\+Avg@{do\+Measurements\+S\+H\+\_\+\+Avg}}
 \index{do\+Measurements\+S\+H\+\_\+\+Avg@{do\+Measurements\+S\+H\+\_\+\+Avg}!analizer.\+h@{analizer.\+h}}
@@ -414,7 +547,7 @@ One mode of measurements with option of coeffs calibration Series of measurement
 \end{DoxyParams}
 
 
-Definition at line 728 of file analizer.\+cpp.
+Definition at line 1040 of file analizer.\+cpp.
 
 \hypertarget{analizer_8h_a367302e50a423db3a23f1be59a7fd4a2}{\index{analizer.\+h@{analizer.\+h}!do\+One\+Pulse@{do\+One\+Pulse}}
 \index{do\+One\+Pulse@{do\+One\+Pulse}!analizer.\+h@{analizer.\+h}}
@@ -425,7 +558,86 @@ Definition at line 728 of file analizer.\+cpp.
 )}}\label{analizer_8h_a367302e50a423db3a23f1be59a7fd4a2}
 Make one pulse to the L\+E\+D with previously setted current and time of pulse 
 
-Definition at line 915 of file analizer.\+cpp.
+Definition at line 1237 of file analizer.\+cpp.
+
+\hypertarget{analizer_8h_af9b71971d8e56088dd6cdb93a53159ee}{\index{analizer.\+h@{analizer.\+h}!indicator\+Blinc@{indicator\+Blinc}}
+\index{indicator\+Blinc@{indicator\+Blinc}!analizer.\+h@{analizer.\+h}}
+\subsubsection[{indicator\+Blinc}]{\setlength{\rightskip}{0pt plus 5cm}void indicator\+Blinc (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{analizer_8h_af9b71971d8e56088dd6cdb93a53159ee}
+
+
+Definition at line 1371 of file analizer.\+cpp.
+
+\hypertarget{analizer_8h_a54ff76308c2091c11e5aabbc4368a7e7}{\index{analizer.\+h@{analizer.\+h}!indicator\+Register\+First@{indicator\+Register\+First}}
+\index{indicator\+Register\+First@{indicator\+Register\+First}!analizer.\+h@{analizer.\+h}}
+\subsubsection[{indicator\+Register\+First}]{\setlength{\rightskip}{0pt plus 5cm}void indicator\+Register\+First (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{analizer_8h_a54ff76308c2091c11e5aabbc4368a7e7}
+Utility function for work with shift register Select first pair of led 
+
+Definition at line 1359 of file analizer.\+cpp.
+
+\hypertarget{analizer_8h_af0039775f43b8ef810cf6b7bfe84447b}{\index{analizer.\+h@{analizer.\+h}!indicator\+Register\+Next@{indicator\+Register\+Next}}
+\index{indicator\+Register\+Next@{indicator\+Register\+Next}!analizer.\+h@{analizer.\+h}}
+\subsubsection[{indicator\+Register\+Next}]{\setlength{\rightskip}{0pt plus 5cm}void indicator\+Register\+Next (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{analizer_8h_af0039775f43b8ef810cf6b7bfe84447b}
+Utility function for work with shift register Select next led to O\+N 
+
+Definition at line 1348 of file analizer.\+cpp.
+
+\hypertarget{analizer_8h_a193af7bce8a9091fb88fbd1a5bf74713}{\index{analizer.\+h@{analizer.\+h}!indicator\+Register\+Reset@{indicator\+Register\+Reset}}
+\index{indicator\+Register\+Reset@{indicator\+Register\+Reset}!analizer.\+h@{analizer.\+h}}
+\subsubsection[{indicator\+Register\+Reset}]{\setlength{\rightskip}{0pt plus 5cm}void indicator\+Register\+Reset (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{analizer_8h_a193af7bce8a9091fb88fbd1a5bf74713}
+Utility function for work with shift register Set all outputs to High level 
+
+Definition at line 1323 of file analizer.\+cpp.
+
+\hypertarget{analizer_8h_a7b1c9ee396c529915fbf18648d2777f4}{\index{analizer.\+h@{analizer.\+h}!median\+Filter@{median\+Filter}}
+\index{median\+Filter@{median\+Filter}!analizer.\+h@{analizer.\+h}}
+\subsubsection[{median\+Filter}]{\setlength{\rightskip}{0pt plus 5cm}void median\+Filter (
+\begin{DoxyParamCaption}
+\item[{int32\+\_\+t $\ast$}]{arr, }
+\item[{uint8\+\_\+t \&}]{buf\+Size}
+\end{DoxyParamCaption}
+)}}\label{analizer_8h_a7b1c9ee396c529915fbf18648d2777f4}
+
+
+Definition at line 410 of file analizer.\+h.
+
+\hypertarget{analizer_8h_a796d970f5c64ad93353a4c0dcf7fd535}{\index{analizer.\+h@{analizer.\+h}!moving\+Average@{moving\+Average}}
+\index{moving\+Average@{moving\+Average}!analizer.\+h@{analizer.\+h}}
+\subsubsection[{moving\+Average}]{\setlength{\rightskip}{0pt plus 5cm}void moving\+Average (
+\begin{DoxyParamCaption}
+\item[{int32\+\_\+t $\ast$}]{arr, }
+\item[{uint8\+\_\+t}]{buf\+Size}
+\end{DoxyParamCaption}
+)}}\label{analizer_8h_a796d970f5c64ad93353a4c0dcf7fd535}
+
+
+Definition at line 439 of file analizer.\+h.
+
+\hypertarget{analizer_8h_a9a97d561257eead613aebcb2fc24175e}{\index{analizer.\+h@{analizer.\+h}!Print\+Hex\+Byte@{Print\+Hex\+Byte}}
+\index{Print\+Hex\+Byte@{Print\+Hex\+Byte}!analizer.\+h@{analizer.\+h}}
+\subsubsection[{Print\+Hex\+Byte}]{\setlength{\rightskip}{0pt plus 5cm}void Print\+Hex\+Byte (
+\begin{DoxyParamCaption}
+\item[{uint8\+\_\+t}]{data}
+\end{DoxyParamCaption}
+)}}\label{analizer_8h_a9a97d561257eead613aebcb2fc24175e}
+
+
+Definition at line 546 of file analizer.\+h.
 
 \hypertarget{analizer_8h_a4c374c3ab214a99569f29979606a8679}{\index{analizer.\+h@{analizer.\+h}!read\+A\+D\+C@{read\+A\+D\+C}}
 \index{read\+A\+D\+C@{read\+A\+D\+C}!analizer.\+h@{analizer.\+h}}
@@ -441,7 +653,7 @@ Utility function for Sample\&Holde mode of measurements make 16 samples and calc
 \end{DoxyParams}
 
 
-Definition at line 823 of file analizer.\+cpp.
+Definition at line 1135 of file analizer.\+cpp.
 
 \hypertarget{analizer_8h_a7541e761cd601bddb339b3323d6dca81}{\index{analizer.\+h@{analizer.\+h}!read\+A\+D\+C\+One\+Time@{read\+A\+D\+C\+One\+Time}}
 \index{read\+A\+D\+C\+One\+Time@{read\+A\+D\+C\+One\+Time}!analizer.\+h@{analizer.\+h}}
@@ -457,7 +669,30 @@ Utility function for inpulse mode of measurements
 \end{DoxyParams}
 
 
-Definition at line 814 of file analizer.\+cpp.
+Definition at line 1126 of file analizer.\+cpp.
+
+\hypertarget{analizer_8h_ab3741687bcbb6b335697a98771f85679}{\index{analizer.\+h@{analizer.\+h}!re\+Average@{re\+Average}}
+\index{re\+Average@{re\+Average}!analizer.\+h@{analizer.\+h}}
+\subsubsection[{re\+Average}]{\setlength{\rightskip}{0pt plus 5cm}int32\+\_\+t re\+Average (
+\begin{DoxyParamCaption}
+\item[{int32\+\_\+t $\ast$}]{arr, }
+\item[{uint8\+\_\+t \&}]{buf\+Size}
+\end{DoxyParamCaption}
+)}}\label{analizer_8h_ab3741687bcbb6b335697a98771f85679}
+
+
+Definition at line 480 of file analizer.\+h.
+
+\hypertarget{analizer_8h_ada2730fc8b42995bba8630b7c7bde8a8}{\index{analizer.\+h@{analizer.\+h}!send\+Identity@{send\+Identity}}
+\index{send\+Identity@{send\+Identity}!analizer.\+h@{analizer.\+h}}
+\subsubsection[{send\+Identity}]{\setlength{\rightskip}{0pt plus 5cm}void send\+Identity (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{analizer_8h_ada2730fc8b42995bba8630b7c7bde8a8}
+Send to com port I\+D, s/n etc... 
+
+Definition at line 1513 of file analizer.\+cpp.
 
 \hypertarget{analizer_8h_a5997158c293a908f361bed8d45f3fbf3}{\index{analizer.\+h@{analizer.\+h}!Serial\+Clean@{Serial\+Clean}}
 \index{Serial\+Clean@{Serial\+Clean}!analizer.\+h@{analizer.\+h}}
@@ -468,7 +703,18 @@ Definition at line 814 of file analizer.\+cpp.
 )}}\label{analizer_8h_a5997158c293a908f361bed8d45f3fbf3}
 Utility function for cleanserial port buffer 
 
-Definition at line 991 of file analizer.\+cpp.
+Definition at line 1406 of file analizer.\+cpp.
+
+\hypertarget{analizer_8h_a6717207a79a2ea94ee3868bec1664b6e}{\index{analizer.\+h@{analizer.\+h}!Set\+\_\+\+O\+C\+R3\+A@{Set\+\_\+\+O\+C\+R3\+A}}
+\index{Set\+\_\+\+O\+C\+R3\+A@{Set\+\_\+\+O\+C\+R3\+A}!analizer.\+h@{analizer.\+h}}
+\subsubsection[{Set\+\_\+\+O\+C\+R3\+A}]{\setlength{\rightskip}{0pt plus 5cm}void Set\+\_\+\+O\+C\+R3\+A (
+\begin{DoxyParamCaption}
+\item[{float}]{Pulse\+Width}
+\end{DoxyParamCaption}
+)}}\label{analizer_8h_a6717207a79a2ea94ee3868bec1664b6e}
+
+
+Definition at line 389 of file analizer.\+h.
 
 \hypertarget{analizer_8h_a9d89d31f162632847065a02672f9b7e0}{\index{analizer.\+h@{analizer.\+h}!set\+C\+\_\+\+R@{set\+C\+\_\+\+R}}
 \index{set\+C\+\_\+\+R@{set\+C\+\_\+\+R}!analizer.\+h@{analizer.\+h}}
@@ -484,7 +730,7 @@ Save to eeprom value of input resistanse of second Op\+Amp
 \end{DoxyParams}
 
 
-Definition at line 910 of file analizer.\+cpp.
+Definition at line 1228 of file analizer.\+cpp.
 
 \hypertarget{analizer_8h_aae376c2e319f44189128b3b2889b4030}{\index{analizer.\+h@{analizer.\+h}!set\+Current@{set\+Current}}
 \index{set\+Current@{set\+Current}!analizer.\+h@{analizer.\+h}}
@@ -503,7 +749,7 @@ This function set currents for L\+E\+D in channel channel\+N Control D\+A\+C Max
 \end{DoxyParams}
 
 
-Definition at line 1044 of file analizer.\+cpp.
+Definition at line 1463 of file analizer.\+cpp.
 
 \hypertarget{analizer_8h_aa856f479273cf2e67fc85279c8b53ce5}{\index{analizer.\+h@{analizer.\+h}!set\+Pre\+Amp@{set\+Pre\+Amp}}
 \index{set\+Pre\+Amp@{set\+Pre\+Amp}!analizer.\+h@{analizer.\+h}}
@@ -522,7 +768,7 @@ This function set coeffs of Op\+Amp Control digital potentiometers ad5141 Max va
 \end{DoxyParams}
 
 
-Definition at line 1004 of file analizer.\+cpp.
+Definition at line 1419 of file analizer.\+cpp.
 
 \hypertarget{analizer_8h_a7028e4cbf9b5159558440a1fd4228149}{\index{analizer.\+h@{analizer.\+h}!set\+Pulse\+Width@{set\+Pulse\+Width}}
 \index{set\+Pulse\+Width@{set\+Pulse\+Width}!analizer.\+h@{analizer.\+h}}
@@ -538,7 +784,7 @@ Set width of impulse in microseconds step is 1us, max 200us
 \end{DoxyParams}
 
 
-Definition at line 1089 of file analizer.\+cpp.
+Definition at line 1507 of file analizer.\+cpp.
 
 \hypertarget{analizer_8h_a4fc01d736fe50cf5b977f755b675f11d}{\index{analizer.\+h@{analizer.\+h}!setup@{setup}}
 \index{setup@{setup}!analizer.\+h@{analizer.\+h}}
@@ -549,7 +795,7 @@ Definition at line 1089 of file analizer.\+cpp.
 )}}\label{analizer_8h_a4fc01d736fe50cf5b977f755b675f11d}
 Main initialization of M\+C\+U 
 
-Definition at line 27 of file analizer.\+cpp.
+Definition at line 105 of file analizer.\+cpp.
 
 \hypertarget{analizer_8h_a630003ae387b30a0811665c6887fba7d}{\index{analizer.\+h@{analizer.\+h}!shift\+Register\+First@{shift\+Register\+First}}
 \index{shift\+Register\+First@{shift\+Register\+First}!analizer.\+h@{analizer.\+h}}
@@ -560,7 +806,7 @@ Definition at line 27 of file analizer.\+cpp.
 )}}\label{analizer_8h_a630003ae387b30a0811665c6887fba7d}
 Utility function for work with shift register Select first pair of led 
 
-Definition at line 970 of file analizer.\+cpp.
+Definition at line 1307 of file analizer.\+cpp.
 
 \hypertarget{analizer_8h_a97373a5239e1af8b6e6be8d4b63663e4}{\index{analizer.\+h@{analizer.\+h}!shift\+Register\+Next@{shift\+Register\+Next}}
 \index{shift\+Register\+Next@{shift\+Register\+Next}!analizer.\+h@{analizer.\+h}}
@@ -571,7 +817,7 @@ Definition at line 970 of file analizer.\+cpp.
 )}}\label{analizer_8h_a97373a5239e1af8b6e6be8d4b63663e4}
 Utility function for work with shift register Select next led to O\+N 
 
-Definition at line 959 of file analizer.\+cpp.
+Definition at line 1296 of file analizer.\+cpp.
 
 \hypertarget{analizer_8h_a8d1f3576892bbeffb58ea18abfc2b823}{\index{analizer.\+h@{analizer.\+h}!shift\+Register\+Reset@{shift\+Register\+Reset}}
 \index{shift\+Register\+Reset@{shift\+Register\+Reset}!analizer.\+h@{analizer.\+h}}
@@ -582,7 +828,53 @@ Definition at line 959 of file analizer.\+cpp.
 )}}\label{analizer_8h_a8d1f3576892bbeffb58ea18abfc2b823}
 Utility function for work with shift register Set all outputs to High level 
 
-Definition at line 934 of file analizer.\+cpp.
+Definition at line 1271 of file analizer.\+cpp.
+
+\hypertarget{analizer_8h_a94b48a3d4f5207db26a78b4a28bfeb32}{\index{analizer.\+h@{analizer.\+h}!single\+L\+E\+D\+Blinc@{single\+L\+E\+D\+Blinc}}
+\index{single\+L\+E\+D\+Blinc@{single\+L\+E\+D\+Blinc}!analizer.\+h@{analizer.\+h}}
+\subsubsection[{single\+L\+E\+D\+Blinc}]{\setlength{\rightskip}{0pt plus 5cm}void single\+L\+E\+D\+Blinc (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{analizer_8h_a94b48a3d4f5207db26a78b4a28bfeb32}
+
+
+Definition at line 1387 of file analizer.\+cpp.
+
+\hypertarget{analizer_8h_acad4e24432f2b7ab656042503e4afa56}{\index{analizer.\+h@{analizer.\+h}!Sort@{Sort}}
+\index{Sort@{Sort}!analizer.\+h@{analizer.\+h}}
+\subsubsection[{Sort}]{\setlength{\rightskip}{0pt plus 5cm}void Sort (
+\begin{DoxyParamCaption}
+\item[{int32\+\_\+t $\ast$}]{arr}
+\end{DoxyParamCaption}
+)}}\label{analizer_8h_acad4e24432f2b7ab656042503e4afa56}
+
+
+Definition at line 404 of file analizer.\+h.
+
+\hypertarget{analizer_8h_a47da859e3c5c815cbf0b0b7aa9e965c5}{\index{analizer.\+h@{analizer.\+h}!std\+\_\+var@{std\+\_\+var}}
+\index{std\+\_\+var@{std\+\_\+var}!analizer.\+h@{analizer.\+h}}
+\subsubsection[{std\+\_\+var}]{\setlength{\rightskip}{0pt plus 5cm}int32\+\_\+t std\+\_\+var (
+\begin{DoxyParamCaption}
+\item[{int32\+\_\+t $\ast$}]{arr, }
+\item[{uint8\+\_\+t \&}]{buf\+Size}
+\end{DoxyParamCaption}
+)}}\label{analizer_8h_a47da859e3c5c815cbf0b0b7aa9e965c5}
+
+
+Definition at line 465 of file analizer.\+h.
+
+\hypertarget{analizer_8h_aee48b3c20e91c0a264040f00eac40f05}{\index{analizer.\+h@{analizer.\+h}!Swap@{Swap}}
+\index{Swap@{Swap}!analizer.\+h@{analizer.\+h}}
+\subsubsection[{Swap}]{\setlength{\rightskip}{0pt plus 5cm}void Swap (
+\begin{DoxyParamCaption}
+\item[{int32\+\_\+t \&}]{a, }
+\item[{int32\+\_\+t \&}]{b}
+\end{DoxyParamCaption}
+)}}\label{analizer_8h_aee48b3c20e91c0a264040f00eac40f05}
+
+
+Definition at line 396 of file analizer.\+h.
 
 \hypertarget{analizer_8h_a542beaf8dd30073f60ea105068373ec4}{\index{analizer.\+h@{analizer.\+h}!write\+Config\+To\+Uart@{write\+Config\+To\+Uart}}
 \index{write\+Config\+To\+Uart@{write\+Config\+To\+Uart}!analizer.\+h@{analizer.\+h}}
@@ -593,78 +885,115 @@ Definition at line 934 of file analizer.\+cpp.
 )}}\label{analizer_8h_a542beaf8dd30073f60ea105068373ec4}
 Print all saved to eeprom data to serial port 
 
-Definition at line 843 of file analizer.\+cpp.
+Definition at line 1155 of file analizer.\+cpp.
 
 
 
 \subsection{Variable Documentation}
 \hypertarget{analizer_8h_abb91ab54bac51c395a0960a0577adda9}{\index{analizer.\+h@{analizer.\+h}!\+\_\+c\+\_\+\+R@{\+\_\+c\+\_\+\+R}}
 \index{\+\_\+c\+\_\+\+R@{\+\_\+c\+\_\+\+R}!analizer.\+h@{analizer.\+h}}
-\subsubsection[{\+\_\+c\+\_\+\+R}]{\setlength{\rightskip}{0pt plus 5cm}float E\+E\+M\+E\+M \+\_\+c\+\_\+\+R = 3.\+9}}\label{analizer_8h_abb91ab54bac51c395a0960a0577adda9}
+\subsubsection[{\+\_\+c\+\_\+\+R}]{\setlength{\rightskip}{0pt plus 5cm}float {\bf E\+E\+M\+E\+M} \+\_\+c\+\_\+\+R = 3.\+9}}\label{analizer_8h_abb91ab54bac51c395a0960a0577adda9}
 
 
-Definition at line 76 of file analizer.\+h.
+Definition at line 104 of file analizer.\+h.
 
 \hypertarget{analizer_8h_a9fdedfdc8da3f95ebe79a42bb0f85f10}{\index{analizer.\+h@{analizer.\+h}!\+\_\+coefficients@{\+\_\+coefficients}}
 \index{\+\_\+coefficients@{\+\_\+coefficients}!analizer.\+h@{analizer.\+h}}
-\subsubsection[{\+\_\+coefficients}]{\setlength{\rightskip}{0pt plus 5cm}float E\+E\+M\+E\+M \+\_\+coefficients\mbox{[}{\bf N\+U\+M\+\_\+\+O\+F\+\_\+\+L\+E\+D}\mbox{]}}}\label{analizer_8h_a9fdedfdc8da3f95ebe79a42bb0f85f10}
+\subsubsection[{\+\_\+coefficients}]{\setlength{\rightskip}{0pt plus 5cm}float {\bf E\+E\+M\+E\+M} \+\_\+coefficients\mbox{[}{\bf N\+U\+M\+\_\+\+O\+F\+\_\+\+L\+E\+D}\mbox{]} = \{1,1,1,1,1,1,1,1,1,1,1,1\}}}\label{analizer_8h_a9fdedfdc8da3f95ebe79a42bb0f85f10}
 
 
-Definition at line 79 of file analizer.\+h.
+Definition at line 157 of file analizer.\+h.
 
 \hypertarget{analizer_8h_af63de6e867db6fde11d360f92bc5ec5b}{\index{analizer.\+h@{analizer.\+h}!\+\_\+empty@{\+\_\+empty}}
 \index{\+\_\+empty@{\+\_\+empty}!analizer.\+h@{analizer.\+h}}
-\subsubsection[{\+\_\+empty}]{\setlength{\rightskip}{0pt plus 5cm}uint8\+\_\+t E\+E\+M\+E\+M \+\_\+empty\mbox{[}20\mbox{]} = \{0x\+F\}}}\label{analizer_8h_af63de6e867db6fde11d360f92bc5ec5b}
+\subsubsection[{\+\_\+empty}]{\setlength{\rightskip}{0pt plus 5cm}uint8\+\_\+t {\bf E\+E\+M\+E\+M} \+\_\+empty\mbox{[}20\mbox{]} = \{0x\+F\}}}\label{analizer_8h_af63de6e867db6fde11d360f92bc5ec5b}
 allocate eeprom variable 
 
-Definition at line 74 of file analizer.\+h.
+Definition at line 102 of file analizer.\+h.
 
 \hypertarget{analizer_8h_a66d5735c5e0542432b55d57d57955b5b}{\index{analizer.\+h@{analizer.\+h}!\+\_\+etalons@{\+\_\+etalons}}
 \index{\+\_\+etalons@{\+\_\+etalons}!analizer.\+h@{analizer.\+h}}
-\subsubsection[{\+\_\+etalons}]{\setlength{\rightskip}{0pt plus 5cm}{\bf etalon\+\_\+t} E\+E\+M\+E\+M \+\_\+etalons\mbox{[}{\bf N\+U\+M\+\_\+\+O\+F\+\_\+\+E\+T\+A\+L\+O\+N}\mbox{]}}}\label{analizer_8h_a66d5735c5e0542432b55d57d57955b5b}
+\subsubsection[{\+\_\+etalons}]{\setlength{\rightskip}{0pt plus 5cm}{\bf etalon\+\_\+t} {\bf E\+E\+M\+E\+M} \+\_\+etalons\mbox{[}{\bf N\+U\+M\+\_\+\+O\+F\+\_\+\+E\+T\+A\+L\+O\+N}\mbox{]}}}\label{analizer_8h_a66d5735c5e0542432b55d57d57955b5b}
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+= \{50,    10,       30,      10,
+                                                                    1,1,1,1,1,1,1,1,1,1,1,1\}
+\end{DoxyCode}
 
 
-Definition at line 78 of file analizer.\+h.
+Definition at line 155 of file analizer.\+h.
 
 \hypertarget{analizer_8h_a213d55f7dee81b5d04640c2eeaf623b7}{\index{analizer.\+h@{analizer.\+h}!\+\_\+pairs\+Of\+Current@{\+\_\+pairs\+Of\+Current}}
 \index{\+\_\+pairs\+Of\+Current@{\+\_\+pairs\+Of\+Current}!analizer.\+h@{analizer.\+h}}
-\subsubsection[{\+\_\+pairs\+Of\+Current}]{\setlength{\rightskip}{0pt plus 5cm}{\bf current\+\_\+t} E\+E\+M\+E\+M \+\_\+pairs\+Of\+Current\mbox{[}{\bf N\+U\+M\+\_\+\+O\+F\+\_\+\+L\+E\+D}\mbox{]}}}\label{analizer_8h_a213d55f7dee81b5d04640c2eeaf623b7}
+\subsubsection[{\+\_\+pairs\+Of\+Current}]{\setlength{\rightskip}{0pt plus 5cm}{\bf current\+\_\+t} {\bf E\+E\+M\+E\+M} \+\_\+pairs\+Of\+Current\mbox{[}{\bf N\+U\+M\+\_\+\+O\+F\+\_\+\+L\+E\+D}\mbox{]}}}\label{analizer_8h_a213d55f7dee81b5d04640c2eeaf623b7}
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+= \{
+        250, 0, 
+        0, 350,  
+        160, 0,  
+        0, 140,  
+        200, 0,  
+        0, 290,     
+
+        26, 0,  
+        0, 53,  
+        56, 0,      
+        0, 58,  
+        63, 0,      
+        0, 73   
+\}
+\end{DoxyCode}
 
 
-Definition at line 77 of file analizer.\+h.
+Definition at line 124 of file analizer.\+h.
 
 \hypertarget{analizer_8h_ad966df199c19df74f4d7a58be19e203d}{\index{analizer.\+h@{analizer.\+h}!\+\_\+pulse\+Width@{\+\_\+pulse\+Width}}
 \index{\+\_\+pulse\+Width@{\+\_\+pulse\+Width}!analizer.\+h@{analizer.\+h}}
-\subsubsection[{\+\_\+pulse\+Width}]{\setlength{\rightskip}{0pt plus 5cm}uint16\+\_\+t E\+E\+M\+E\+M \+\_\+pulse\+Width = 80}}\label{analizer_8h_ad966df199c19df74f4d7a58be19e203d}
+\subsubsection[{\+\_\+pulse\+Width}]{\setlength{\rightskip}{0pt plus 5cm}uint16\+\_\+t {\bf E\+E\+M\+E\+M} \+\_\+pulse\+Width = 120}}\label{analizer_8h_ad966df199c19df74f4d7a58be19e203d}
 
 
-Definition at line 75 of file analizer.\+h.
+Definition at line 103 of file analizer.\+h.
 
 \hypertarget{analizer_8h_a515bd80a2008b8ce4477be6f8f4fa692}{\index{analizer.\+h@{analizer.\+h}!coeffs@{coeffs}}
 \index{coeffs@{coeffs}!analizer.\+h@{analizer.\+h}}
 \subsubsection[{coeffs}]{\setlength{\rightskip}{0pt plus 5cm}volatile float coeffs\mbox{[}{\bf N\+U\+M\+\_\+\+O\+F\+\_\+\+L\+E\+D}\mbox{]}}}\label{analizer_8h_a515bd80a2008b8ce4477be6f8f4fa692}
 
 
-Definition at line 84 of file analizer.\+h.
+Definition at line 231 of file analizer.\+h.
 
 \hypertarget{analizer_8h_a6bccd06c6f4cd5703f2aad7e7bf19d8a}{\index{analizer.\+h@{analizer.\+h}!cur4\+All\+Led@{cur4\+All\+Led}}
 \index{cur4\+All\+Led@{cur4\+All\+Led}!analizer.\+h@{analizer.\+h}}
 \subsubsection[{cur4\+All\+Led}]{\setlength{\rightskip}{0pt plus 5cm}volatile {\bf current\+\_\+t} cur4\+All\+Led\mbox{[}{\bf N\+U\+M\+\_\+\+O\+F\+\_\+\+L\+E\+D}\mbox{]}}}\label{analizer_8h_a6bccd06c6f4cd5703f2aad7e7bf19d8a}
 
 
-Definition at line 83 of file analizer.\+h.
+Definition at line 230 of file analizer.\+h.
+
+\hypertarget{analizer_8h_a54cfbfc730c345ef7ce24e671239903b}{\index{analizer.\+h@{analizer.\+h}!E\+E\+M\+E\+M@{E\+E\+M\+E\+M}}
+\index{E\+E\+M\+E\+M@{E\+E\+M\+E\+M}!analizer.\+h@{analizer.\+h}}
+\subsubsection[{E\+E\+M\+E\+M}]{\setlength{\rightskip}{0pt plus 5cm}uint8\+\_\+t \+\_\+serial\+Number E\+E\+M\+E\+M = 0x01}}\label{analizer_8h_a54cfbfc730c345ef7ce24e671239903b}
+
+
+Definition at line 98 of file analizer.\+h.
 
 \hypertarget{analizer_8h_ab7bf7e4c38fa1ebbfe16fe17b09be01f}{\index{analizer.\+h@{analizer.\+h}!one\+Times@{one\+Times}}
 \index{one\+Times@{one\+Times}!analizer.\+h@{analizer.\+h}}
 \subsubsection[{one\+Times}]{\setlength{\rightskip}{0pt plus 5cm}volatile bool one\+Times = false}}\label{analizer_8h_ab7bf7e4c38fa1ebbfe16fe17b09be01f}
 
 
-Definition at line 85 of file analizer.\+h.
+Definition at line 232 of file analizer.\+h.
+
+\hypertarget{analizer_8h_a3bc666ac3434ea6736654de0ccabe403}{\index{analizer.\+h@{analizer.\+h}!P\+R\+O\+G\+M\+E\+M@{P\+R\+O\+G\+M\+E\+M}}
+\index{P\+R\+O\+G\+M\+E\+M@{P\+R\+O\+G\+M\+E\+M}!analizer.\+h@{analizer.\+h}}
+\subsubsection[{P\+R\+O\+G\+M\+E\+M}]{\setlength{\rightskip}{0pt plus 5cm}const float wavelenght \mbox{[}{\bf N\+U\+M\+\_\+\+O\+F\+\_\+\+L\+E\+D}\mbox{]} P\+R\+O\+G\+M\+E\+M = 0x01}}\label{analizer_8h_a3bc666ac3434ea6736654de0ccabe403}
+
+
+Definition at line 97 of file analizer.\+h.
 
 \hypertarget{analizer_8h_a81eef57f3f8c19b296ef1c12a59b66a8}{\index{analizer.\+h@{analizer.\+h}!pulse\+End@{pulse\+End}}
 \index{pulse\+End@{pulse\+End}!analizer.\+h@{analizer.\+h}}
 \subsubsection[{pulse\+End}]{\setlength{\rightskip}{0pt plus 5cm}volatile bool pulse\+End =false}}\label{analizer_8h_a81eef57f3f8c19b296ef1c12a59b66a8}
 
 
-Definition at line 86 of file analizer.\+h.
+Definition at line 233 of file analizer.\+h.
 

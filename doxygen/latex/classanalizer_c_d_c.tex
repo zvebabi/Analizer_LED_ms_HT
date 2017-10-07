@@ -1,0 +1,319 @@
+\hypertarget{classanalizer_c_d_c}{\section{analizer\+C\+D\+C Class Reference}
+\label{classanalizer_c_d_c}\index{analizer\+C\+D\+C@{analizer\+C\+D\+C}}
+}
+
+
+{\ttfamily \#include $<$analizer\+C\+D\+C.\+h$>$}
+
+
+
+Inherits Q\+Object.
+
+\subsection*{Public Slots}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{classanalizer_c_d_c_a37a970cbbe83fbbcb6a5c6911ae62482}{cpp\+Slot} (const Q\+String \&msg)
+\item 
+void \hyperlink{classanalizer_c_d_c_a2dd04223ab9a2b1fcba6613daaa6f5d0}{init\+Device} (Q\+String port)
+\item 
+void \hyperlink{classanalizer_c_d_c_ad6bd9895f4f3f7af828dc3432c5e71ae}{get\+List\+Of\+Port} ()
+\item 
+Q\+String \hyperlink{classanalizer_c_d_c_a6835d5f6b7829a7a5fa2e45a3e32a5fd}{get\+Data\+Path} ()
+\item 
+void \hyperlink{classanalizer_c_d_c_a5dc2a2c9a8cec98073d4515973b5d12d}{read\+Data} ()
+\item 
+void \hyperlink{classanalizer_c_d_c_a6a3303d24c7980599908952ff1320380}{draw\+Series} (bool \+\_\+draw)
+\item 
+void \hyperlink{classanalizer_c_d_c_a9b6c52556f80aa50920896d662909afa}{enable\+A\+A\+Manual} (bool \+\_\+aa)
+\item 
+void \hyperlink{classanalizer_c_d_c_a697801c5bd4ea10dcde743399f87c118}{values\+From\+M\+C\+U} (bool \+\_\+values)
+\item 
+void \hyperlink{classanalizer_c_d_c_ad4f2a796bf9cebdc4b67463cb0a3e17b}{set\+Service\+Mode} (bool \+\_\+values)
+\item 
+void \hyperlink{classanalizer_c_d_c_abe52cb00acf6e9e3d94421db72fc8975}{set\+Relative\+Mode} (bool \+\_\+values)
+\item 
+void \hyperlink{classanalizer_c_d_c_a43a83766b6d61871713a6dc8fc481761}{do\+Measurements} (Qt\+Charts\+::\+Q\+Abstract\+Series $\ast$series, bool \+\_\+etalon=false)
+\item 
+void \hyperlink{classanalizer_c_d_c_a23be8fe38ad721fbc69c98215f9eb773}{save\+Data\+To\+C\+S\+V} (Q\+String filename)
+\item 
+void \hyperlink{classanalizer_c_d_c_ae02b912494f97620416d0065d237ffa0}{delete\+Series} (Qt\+Charts\+::\+Q\+Abstract\+Series $\ast$series)
+\end{DoxyCompactItemize}
+\subsection*{Signals}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{classanalizer_c_d_c_a7965494015282fce03472e6689ae94cb}{send\+Port\+Name} (Q\+String port)
+\item 
+void \hyperlink{classanalizer_c_d_c_aa599eb23f4963cf03ab4a144e98c9082}{send\+Debug\+Info} (Q\+String data, int time=700)
+\item 
+void \hyperlink{classanalizer_c_d_c_ab7c585d83e9a58e528a4aa97c3089bf4}{adjust\+Axis} (Q\+Point\+F min\+Rng, Q\+Point\+F max\+Rng)
+\item 
+void \hyperlink{classanalizer_c_d_c_a37e681c3d7303e1fb4a5158e32190a5a}{update\+Bar\+Series} (Q\+String \+\_\+label, Q\+Variant\+List \+\_\+data, Q\+Color \+\_\+color, Q\+String\+List \+\_\+axis)
+\item 
+void \hyperlink{classanalizer_c_d_c_a132b531865b1693e14b75882c8a9b7ee}{make\+Series} ()
+\item 
+void \hyperlink{classanalizer_c_d_c_a530498433b5c1d80d8fce61d2b5c0931}{send\+Axis\+Name} (Q\+String data)
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classanalizer_c_d_c_aa688dbe61f982d00a744d0bbf5e6f167}{analizer\+C\+D\+C} (Q\+Object $\ast$parent=0)
+\item 
+\hyperlink{classanalizer_c_d_c_a4c740159d20989db81fec1c4893c8fd5}{$\sim$analizer\+C\+D\+C} ()
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 32 of file analizer\+C\+D\+C.\+h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classanalizer_c_d_c_aa688dbe61f982d00a744d0bbf5e6f167}{\index{analizer\+C\+D\+C@{analizer\+C\+D\+C}!analizer\+C\+D\+C@{analizer\+C\+D\+C}}
+\index{analizer\+C\+D\+C@{analizer\+C\+D\+C}!analizer\+C\+D\+C@{analizer\+C\+D\+C}}
+\subsubsection[{analizer\+C\+D\+C}]{\setlength{\rightskip}{0pt plus 5cm}analizer\+C\+D\+C\+::analizer\+C\+D\+C (
+\begin{DoxyParamCaption}
+\item[{Q\+Object $\ast$}]{parent = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [explicit]}}}\label{classanalizer_c_d_c_aa688dbe61f982d00a744d0bbf5e6f167}
+
+
+Definition at line 4 of file analizer\+C\+D\+C.\+cpp.
+
+\hypertarget{classanalizer_c_d_c_a4c740159d20989db81fec1c4893c8fd5}{\index{analizer\+C\+D\+C@{analizer\+C\+D\+C}!````~analizer\+C\+D\+C@{$\sim$analizer\+C\+D\+C}}
+\index{````~analizer\+C\+D\+C@{$\sim$analizer\+C\+D\+C}!analizer\+C\+D\+C@{analizer\+C\+D\+C}}
+\subsubsection[{$\sim$analizer\+C\+D\+C}]{\setlength{\rightskip}{0pt plus 5cm}analizer\+C\+D\+C\+::$\sim$analizer\+C\+D\+C (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classanalizer_c_d_c_a4c740159d20989db81fec1c4893c8fd5}
+
+
+Definition at line 25 of file analizer\+C\+D\+C.\+cpp.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classanalizer_c_d_c_ab7c585d83e9a58e528a4aa97c3089bf4}{\index{analizer\+C\+D\+C@{analizer\+C\+D\+C}!adjust\+Axis@{adjust\+Axis}}
+\index{adjust\+Axis@{adjust\+Axis}!analizer\+C\+D\+C@{analizer\+C\+D\+C}}
+\subsubsection[{adjust\+Axis}]{\setlength{\rightskip}{0pt plus 5cm}void analizer\+C\+D\+C\+::adjust\+Axis (
+\begin{DoxyParamCaption}
+\item[{Q\+Point\+F}]{min\+Rng, }
+\item[{Q\+Point\+F}]{max\+Rng}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [signal]}}}\label{classanalizer_c_d_c_ab7c585d83e9a58e528a4aa97c3089bf4}
+
+
+Definition at line 258 of file moc\+\_\+analizer\+C\+D\+C.\+cpp.
+
+\hypertarget{classanalizer_c_d_c_a37a970cbbe83fbbcb6a5c6911ae62482}{\index{analizer\+C\+D\+C@{analizer\+C\+D\+C}!cpp\+Slot@{cpp\+Slot}}
+\index{cpp\+Slot@{cpp\+Slot}!analizer\+C\+D\+C@{analizer\+C\+D\+C}}
+\subsubsection[{cpp\+Slot}]{\setlength{\rightskip}{0pt plus 5cm}void analizer\+C\+D\+C\+::cpp\+Slot (
+\begin{DoxyParamCaption}
+\item[{const Q\+String \&}]{msg}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [slot]}}}\label{classanalizer_c_d_c_a37a970cbbe83fbbcb6a5c6911ae62482}
+
+
+Definition at line 43 of file analizer\+C\+D\+C.\+cpp.
+
+\hypertarget{classanalizer_c_d_c_ae02b912494f97620416d0065d237ffa0}{\index{analizer\+C\+D\+C@{analizer\+C\+D\+C}!delete\+Series@{delete\+Series}}
+\index{delete\+Series@{delete\+Series}!analizer\+C\+D\+C@{analizer\+C\+D\+C}}
+\subsubsection[{delete\+Series}]{\setlength{\rightskip}{0pt plus 5cm}void analizer\+C\+D\+C\+::delete\+Series (
+\begin{DoxyParamCaption}
+\item[{Qt\+Charts\+::\+Q\+Abstract\+Series $\ast$}]{series}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [slot]}}}\label{classanalizer_c_d_c_ae02b912494f97620416d0065d237ffa0}
+
+
+Definition at line 261 of file analizer\+C\+D\+C.\+cpp.
+
+\hypertarget{classanalizer_c_d_c_a43a83766b6d61871713a6dc8fc481761}{\index{analizer\+C\+D\+C@{analizer\+C\+D\+C}!do\+Measurements@{do\+Measurements}}
+\index{do\+Measurements@{do\+Measurements}!analizer\+C\+D\+C@{analizer\+C\+D\+C}}
+\subsubsection[{do\+Measurements}]{\setlength{\rightskip}{0pt plus 5cm}void analizer\+C\+D\+C\+::do\+Measurements (
+\begin{DoxyParamCaption}
+\item[{Qt\+Charts\+::\+Q\+Abstract\+Series $\ast$}]{series, }
+\item[{bool}]{\+\_\+etalon = {\ttfamily false}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [slot]}}}\label{classanalizer_c_d_c_a43a83766b6d61871713a6dc8fc481761}
+
+
+Definition at line 124 of file analizer\+C\+D\+C.\+cpp.
+
+\hypertarget{classanalizer_c_d_c_a6a3303d24c7980599908952ff1320380}{\index{analizer\+C\+D\+C@{analizer\+C\+D\+C}!draw\+Series@{draw\+Series}}
+\index{draw\+Series@{draw\+Series}!analizer\+C\+D\+C@{analizer\+C\+D\+C}}
+\subsubsection[{draw\+Series}]{\setlength{\rightskip}{0pt plus 5cm}void analizer\+C\+D\+C\+::draw\+Series (
+\begin{DoxyParamCaption}
+\item[{bool}]{\+\_\+draw}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [slot]}}}\label{classanalizer_c_d_c_a6a3303d24c7980599908952ff1320380}
+
+
+Definition at line 45 of file analizer\+C\+D\+C.\+h.
+
+\hypertarget{classanalizer_c_d_c_a9b6c52556f80aa50920896d662909afa}{\index{analizer\+C\+D\+C@{analizer\+C\+D\+C}!enable\+A\+A\+Manual@{enable\+A\+A\+Manual}}
+\index{enable\+A\+A\+Manual@{enable\+A\+A\+Manual}!analizer\+C\+D\+C@{analizer\+C\+D\+C}}
+\subsubsection[{enable\+A\+A\+Manual}]{\setlength{\rightskip}{0pt plus 5cm}void analizer\+C\+D\+C\+::enable\+A\+A\+Manual (
+\begin{DoxyParamCaption}
+\item[{bool}]{\+\_\+aa}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [slot]}}}\label{classanalizer_c_d_c_a9b6c52556f80aa50920896d662909afa}
+
+
+Definition at line 46 of file analizer\+C\+D\+C.\+h.
+
+\hypertarget{classanalizer_c_d_c_a6835d5f6b7829a7a5fa2e45a3e32a5fd}{\index{analizer\+C\+D\+C@{analizer\+C\+D\+C}!get\+Data\+Path@{get\+Data\+Path}}
+\index{get\+Data\+Path@{get\+Data\+Path}!analizer\+C\+D\+C@{analizer\+C\+D\+C}}
+\subsubsection[{get\+Data\+Path}]{\setlength{\rightskip}{0pt plus 5cm}Q\+String analizer\+C\+D\+C\+::get\+Data\+Path (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [slot]}}}\label{classanalizer_c_d_c_a6835d5f6b7829a7a5fa2e45a3e32a5fd}
+
+
+Definition at line 43 of file analizer\+C\+D\+C.\+h.
+
+\hypertarget{classanalizer_c_d_c_ad6bd9895f4f3f7af828dc3432c5e71ae}{\index{analizer\+C\+D\+C@{analizer\+C\+D\+C}!get\+List\+Of\+Port@{get\+List\+Of\+Port}}
+\index{get\+List\+Of\+Port@{get\+List\+Of\+Port}!analizer\+C\+D\+C@{analizer\+C\+D\+C}}
+\subsubsection[{get\+List\+Of\+Port}]{\setlength{\rightskip}{0pt plus 5cm}void analizer\+C\+D\+C\+::get\+List\+Of\+Port (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [slot]}}}\label{classanalizer_c_d_c_ad6bd9895f4f3f7af828dc3432c5e71ae}
+
+
+Definition at line 107 of file analizer\+C\+D\+C.\+cpp.
+
+\hypertarget{classanalizer_c_d_c_a2dd04223ab9a2b1fcba6613daaa6f5d0}{\index{analizer\+C\+D\+C@{analizer\+C\+D\+C}!init\+Device@{init\+Device}}
+\index{init\+Device@{init\+Device}!analizer\+C\+D\+C@{analizer\+C\+D\+C}}
+\subsubsection[{init\+Device}]{\setlength{\rightskip}{0pt plus 5cm}void analizer\+C\+D\+C\+::init\+Device (
+\begin{DoxyParamCaption}
+\item[{Q\+String}]{port}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [slot]}}}\label{classanalizer_c_d_c_a2dd04223ab9a2b1fcba6613daaa6f5d0}
+
+
+Definition at line 66 of file analizer\+C\+D\+C.\+cpp.
+
+\hypertarget{classanalizer_c_d_c_a132b531865b1693e14b75882c8a9b7ee}{\index{analizer\+C\+D\+C@{analizer\+C\+D\+C}!make\+Series@{make\+Series}}
+\index{make\+Series@{make\+Series}!analizer\+C\+D\+C@{analizer\+C\+D\+C}}
+\subsubsection[{make\+Series}]{\setlength{\rightskip}{0pt plus 5cm}void analizer\+C\+D\+C\+::make\+Series (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [signal]}}}\label{classanalizer_c_d_c_a132b531865b1693e14b75882c8a9b7ee}
+
+
+Definition at line 265 of file moc\+\_\+analizer\+C\+D\+C.\+cpp.
+
+\hypertarget{classanalizer_c_d_c_a5dc2a2c9a8cec98073d4515973b5d12d}{\index{analizer\+C\+D\+C@{analizer\+C\+D\+C}!read\+Data@{read\+Data}}
+\index{read\+Data@{read\+Data}!analizer\+C\+D\+C@{analizer\+C\+D\+C}}
+\subsubsection[{read\+Data}]{\setlength{\rightskip}{0pt plus 5cm}void analizer\+C\+D\+C\+::read\+Data (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [slot]}}}\label{classanalizer_c_d_c_a5dc2a2c9a8cec98073d4515973b5d12d}
+
+
+Definition at line 119 of file analizer\+C\+D\+C.\+cpp.
+
+\hypertarget{classanalizer_c_d_c_a23be8fe38ad721fbc69c98215f9eb773}{\index{analizer\+C\+D\+C@{analizer\+C\+D\+C}!save\+Data\+To\+C\+S\+V@{save\+Data\+To\+C\+S\+V}}
+\index{save\+Data\+To\+C\+S\+V@{save\+Data\+To\+C\+S\+V}!analizer\+C\+D\+C@{analizer\+C\+D\+C}}
+\subsubsection[{save\+Data\+To\+C\+S\+V}]{\setlength{\rightskip}{0pt plus 5cm}void analizer\+C\+D\+C\+::save\+Data\+To\+C\+S\+V (
+\begin{DoxyParamCaption}
+\item[{Q\+String}]{filename = {\ttfamily \char`\"{}data.csv\char`\"{}}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [slot]}}}\label{classanalizer_c_d_c_a23be8fe38ad721fbc69c98215f9eb773}
+
+
+Definition at line 235 of file analizer\+C\+D\+C.\+cpp.
+
+\hypertarget{classanalizer_c_d_c_a530498433b5c1d80d8fce61d2b5c0931}{\index{analizer\+C\+D\+C@{analizer\+C\+D\+C}!send\+Axis\+Name@{send\+Axis\+Name}}
+\index{send\+Axis\+Name@{send\+Axis\+Name}!analizer\+C\+D\+C@{analizer\+C\+D\+C}}
+\subsubsection[{send\+Axis\+Name}]{\setlength{\rightskip}{0pt plus 5cm}void analizer\+C\+D\+C\+::send\+Axis\+Name (
+\begin{DoxyParamCaption}
+\item[{Q\+String}]{data}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [signal]}}}\label{classanalizer_c_d_c_a530498433b5c1d80d8fce61d2b5c0931}
+
+
+Definition at line 329 of file moc\+\_\+analizer\+C\+D\+C.\+cpp.
+
+\hypertarget{classanalizer_c_d_c_aa599eb23f4963cf03ab4a144e98c9082}{\index{analizer\+C\+D\+C@{analizer\+C\+D\+C}!send\+Debug\+Info@{send\+Debug\+Info}}
+\index{send\+Debug\+Info@{send\+Debug\+Info}!analizer\+C\+D\+C@{analizer\+C\+D\+C}}
+\subsubsection[{send\+Debug\+Info}]{\setlength{\rightskip}{0pt plus 5cm}void analizer\+C\+D\+C\+::send\+Debug\+Info (
+\begin{DoxyParamCaption}
+\item[{Q\+String}]{data, }
+\item[{int}]{time = {\ttfamily 700}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [signal]}}}\label{classanalizer_c_d_c_aa599eb23f4963cf03ab4a144e98c9082}
+
+
+Definition at line 251 of file moc\+\_\+analizer\+C\+D\+C.\+cpp.
+
+\hypertarget{classanalizer_c_d_c_a7965494015282fce03472e6689ae94cb}{\index{analizer\+C\+D\+C@{analizer\+C\+D\+C}!send\+Port\+Name@{send\+Port\+Name}}
+\index{send\+Port\+Name@{send\+Port\+Name}!analizer\+C\+D\+C@{analizer\+C\+D\+C}}
+\subsubsection[{send\+Port\+Name}]{\setlength{\rightskip}{0pt plus 5cm}void analizer\+C\+D\+C\+::send\+Port\+Name (
+\begin{DoxyParamCaption}
+\item[{Q\+String}]{port}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [signal]}}}\label{classanalizer_c_d_c_a7965494015282fce03472e6689ae94cb}
+
+
+Definition at line 244 of file moc\+\_\+analizer\+C\+D\+C.\+cpp.
+
+\hypertarget{classanalizer_c_d_c_abe52cb00acf6e9e3d94421db72fc8975}{\index{analizer\+C\+D\+C@{analizer\+C\+D\+C}!set\+Relative\+Mode@{set\+Relative\+Mode}}
+\index{set\+Relative\+Mode@{set\+Relative\+Mode}!analizer\+C\+D\+C@{analizer\+C\+D\+C}}
+\subsubsection[{set\+Relative\+Mode}]{\setlength{\rightskip}{0pt plus 5cm}void analizer\+C\+D\+C\+::set\+Relative\+Mode (
+\begin{DoxyParamCaption}
+\item[{bool}]{\+\_\+values}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [slot]}}}\label{classanalizer_c_d_c_abe52cb00acf6e9e3d94421db72fc8975}
+
+
+Definition at line 50 of file analizer\+C\+D\+C.\+h.
+
+\hypertarget{classanalizer_c_d_c_ad4f2a796bf9cebdc4b67463cb0a3e17b}{\index{analizer\+C\+D\+C@{analizer\+C\+D\+C}!set\+Service\+Mode@{set\+Service\+Mode}}
+\index{set\+Service\+Mode@{set\+Service\+Mode}!analizer\+C\+D\+C@{analizer\+C\+D\+C}}
+\subsubsection[{set\+Service\+Mode}]{\setlength{\rightskip}{0pt plus 5cm}void analizer\+C\+D\+C\+::set\+Service\+Mode (
+\begin{DoxyParamCaption}
+\item[{bool}]{\+\_\+values}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [slot]}}}\label{classanalizer_c_d_c_ad4f2a796bf9cebdc4b67463cb0a3e17b}
+
+
+Definition at line 49 of file analizer\+C\+D\+C.\+h.
+
+\hypertarget{classanalizer_c_d_c_a37e681c3d7303e1fb4a5158e32190a5a}{\index{analizer\+C\+D\+C@{analizer\+C\+D\+C}!update\+Bar\+Series@{update\+Bar\+Series}}
+\index{update\+Bar\+Series@{update\+Bar\+Series}!analizer\+C\+D\+C@{analizer\+C\+D\+C}}
+\subsubsection[{update\+Bar\+Series}]{\setlength{\rightskip}{0pt plus 5cm}void analizer\+C\+D\+C\+::update\+Bar\+Series (
+\begin{DoxyParamCaption}
+\item[{Q\+String}]{\+\_\+label, }
+\item[{Q\+Variant\+List}]{\+\_\+data, }
+\item[{Q\+Color}]{\+\_\+color, }
+\item[{Q\+String\+List}]{\+\_\+axis}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [signal]}}}\label{classanalizer_c_d_c_a37e681c3d7303e1fb4a5158e32190a5a}
+
+
+Definition at line 316 of file moc\+\_\+analizer\+C\+D\+C.\+cpp.
+
+\hypertarget{classanalizer_c_d_c_a697801c5bd4ea10dcde743399f87c118}{\index{analizer\+C\+D\+C@{analizer\+C\+D\+C}!values\+From\+M\+C\+U@{values\+From\+M\+C\+U}}
+\index{values\+From\+M\+C\+U@{values\+From\+M\+C\+U}!analizer\+C\+D\+C@{analizer\+C\+D\+C}}
+\subsubsection[{values\+From\+M\+C\+U}]{\setlength{\rightskip}{0pt plus 5cm}void analizer\+C\+D\+C\+::values\+From\+M\+C\+U (
+\begin{DoxyParamCaption}
+\item[{bool}]{\+\_\+values}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [slot]}}}\label{classanalizer_c_d_c_a697801c5bd4ea10dcde743399f87c118}
+
+
+Definition at line 48 of file analizer\+C\+D\+C.\+h.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/home/zvebabi/\+Documents/workspace/\+L\+E\+D\+Microsensor\+\_\+project0/analizer/host/analizer\+\_\+host/\hyperlink{analizer_c_d_c_8h}{analizer\+C\+D\+C.\+h}\item 
+/home/zvebabi/\+Documents/workspace/\+L\+E\+D\+Microsensor\+\_\+project0/analizer/host/analizer\+\_\+host/\hyperlink{analizer_c_d_c_8cpp}{analizer\+C\+D\+C.\+cpp}\item 
+/home/zvebabi/\+Documents/workspace/\+L\+E\+D\+Microsensor\+\_\+project0/analizer/host/build-\/analizer\+\_\+host-\/\+Desktop\+\_\+\+Qt\+\_\+5\+\_\+9\+\_\+0\+\_\+\+G\+C\+C\+\_\+64bit-\/debug/\hyperlink{build-analizer__host-_desktop___qt__5__9__0___g_c_c__64bit-debug_2moc__analizer_c_d_c_8cpp}{moc\+\_\+analizer\+C\+D\+C.\+cpp}\end{DoxyCompactItemize}

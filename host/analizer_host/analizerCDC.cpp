@@ -295,153 +295,17 @@ void analizerCDC::processLine(const QByteArray &_line)
     }
 //identity
     if( line.first().compare("x=i") ==0)
-    {
-        qDebug() << "identity is "<< line.at(1);
-        if (line.at(1).toInt() == 42 )
-        {
-            emit sendAxisName("Absorbance");
-            emit sendDebugInfo("Connected to absorbance minispectrometer");
-        }
-        else
-        {
-            emit sendAxisName("Transmittance");
-            emit sendDebugInfo("Connected to transmittance minispectrometer");
-        }
-    }
+        identityHandler(line);
 //service mode parser
     if( line.first().compare("x=s") == 0)
-    {
         serviceModeHandler(line);   //parse all comands here
-    }
 //measure mode
     if( line.first().compare("x=m\n") == 0)
-    {
-        emit makeSeries();
-        qDebug() << "signal from button";
-    }
+        buttonPressHandler(line);
     if( line.first().compare("x=d") ==0)
-    {
-        if (line.size() == 4)
-        {
-            //        qDebug() << "data " << line.at(1).toFloat() <<" "
-            //                 <<line.at(3).toFloat();
-            auto x = line.at(1).toFloat();
-            auto y = line.at(3).toFloat() < 6600 ? line.at(3).toFloat() :
-                                                   line.at(3).toFloat()-6600;
-            currentPoints->append(QPointF(x, y));
-            if (etalon && drawLines)
-            {
-                if ( rangeVal[0].x() > x )
-                    rangeVal[0].setX(x);
-                if ( rangeVal[1].x() < x )
-                    rangeVal[1].setX(x);
-                if ( rangeVal[0].y() > y )
-                    rangeVal[0].setY(y);
-                if ( rangeVal[1].y() < y )
-                    rangeVal[1].setY(y);
-            }
-        }
-    }
+        dataAquisitionHandler(line);
     if( line.first().compare("x=e\n") ==0)
-    {
-        if (currentPoints->rbegin()->y() == -1.0)
-            emit sendDebugInfo("Bad data", 5000);
-        //save series and data for future
-        if (etalon)
-        {
-            etalonPoints = new QVector<QPointF>;//(*currentPoints);
-            for (int i=0; i < currentPoints->size(); i++)
-            {
-//                auto xVal = axisValueFromMCU ?
-//                            currentPoints->at(i).x() : micrometers[i];
-                auto xVal = currentPoints->at(i).x();
-                auto yVal = relativeMode ?
-                                currentPoints->at(i).y() :
-                                currentPoints->at(i).y() * calibratorData[i];
-                etalonPoints->append(QPointF( xVal, yVal ) );
-            }
-            qDebug() << "set etalon";
-        }
-        else
-        {
-            ///calibrate and antialiasing
-            QVector<QPointF> calibratedSeries;
-            ///calibrate
-            for (int i=0; i < currentPoints->size(); i++)
-            {
-//                auto xVal = axisValueFromMCU ?
-//                            currentPoints->at(i).x() : micrometers[i];
-                calibratedSeries.append(
-                    QPointF(currentPoints->at(i).x(),
-                     currentPoints->at(i).y() / etalonPoints->at(i).y()*100.0));
-            }
-            ///antialiasing
-            if(aaManual)
-                for(int i=0; i < calibratedSeries.size(); i++)
-                {
-                    //koeffs
-                    int k,l,m,n,o,p;
-                    o = (i-3 >= 0) ? i-3: 0;
-                    k = (i-2 >= 0) ? i-2: 0;
-                    l = (i-1 >= 0) ? i-1: 0;
-                    m = (i+1 < calibratedSeries.size()) ? (i+1) : (calibratedSeries.size()-1);
-                    n = (i+2 < calibratedSeries.size()) ? (i+2) : (calibratedSeries.size()-1);
-                    p = (i+3 < calibratedSeries.size()) ? (i+3) : (calibratedSeries.size()-1);
-
-                    calibratedSeries[i].ry() =
-                                (calibratedSeries[k].y() + calibratedSeries[l].y() +
-                                 calibratedSeries[m].y() + calibratedSeries[i].y() +
-                                 calibratedSeries[n].y() + calibratedSeries[o].y() +
-                                 calibratedSeries[p].y())/7;
-                }
-
-
-//            delete currentPoints;
-            *currentPoints = calibratedSeries;
-            //adjust borders
-            qreal xMin = std::numeric_limits<qreal>::max(); // everything is <= this
-            qreal xMax = std::numeric_limits<qreal>::min(); // everything is >= this
-            qreal yMin = std::numeric_limits<qreal>::max();
-            qreal yMax = std::numeric_limits<qreal>::min();
-            foreach (QPointF p,  *currentPoints) {
-                xMin = qMin(xMin, p.x());
-                xMax = qMax(xMax, p.x());
-                yMin = qMin(yMin, p.y());
-                yMax = qMax(yMax, p.y());
-            }
-            if(firstLine)
-            {
-                firstLine = false;
-                rangeVal[0].setX(xMin);
-                rangeVal[1].setX(xMax);
-                rangeVal[0].setY(yMin);
-                rangeVal[1].setY(yMax);
-            }
-            //find borders
-            if ( rangeVal[0].x() > xMin )
-                rangeVal[0].setX(xMin);
-            if ( rangeVal[1].x() < xMax )
-                rangeVal[1].setX(xMax);
-            if ( rangeVal[0].y() > yMin )
-                rangeVal[0].setY(yMin);
-            if ( rangeVal[1].y() < yMax )
-                rangeVal[1].setY(yMax);
-        }
-//        qDebug() << rangeVal[0] << rangeVal[1];
-//        m_data.append(*currentPoints);
-//        lines.insert(currentSeries, m_data.back());
-//        emit adjustAxis(rangeVal[0], rangeVal[1]);
-//        update(currentSeries);
-//        qDebug() << "end";// << *currentPoints;
-
-        if (!etalon || (etalon && drawLines))
-        {
-            m_data.append(*currentPoints);
-            lines.insert(currentSeries, m_data.back()); //save series and data pointers for future
-            emit adjustAxis(rangeVal[0], rangeVal[1]);
-            update(currentSeries);
-        }
-    }
+        dataProcessingHandler(line);
 }
 
 void analizerCDC::serviceModeHandler(const QStringList &line)
@@ -480,6 +344,161 @@ void analizerCDC::serviceModeHandler(const QStringList &line)
                       << std::fixed << line.at(3).toFloat() << "\n";
         qDebug() << "signal: "<<line.at(2) << ", bgd: " <<line.at(3);
     }
+}
+
+void analizerCDC::identityHandler(const QStringList &line)
+{
+    if (line.at(1).compare("SERIAL") == 0 )
+        qDebug() << "Serial# " << line.at(2).toInt();
+    if(line.at(1).compare("TYPE") ==0 )
+    {
+        /// 0x01 - absorbance, 0x81 - transmittance
+        if (line.at(2).toInt() == 0x01 )
+        {
+            emit sendAxisName("Absorbance");
+            emit sendDebugInfo("Connected to absorbance minispectrometer");
+        }
+        else if (line.at(2).toInt() == 0x81 )
+        {
+            emit sendAxisName("Transmittance");
+            emit sendDebugInfo("Connected to transmittance minispectrometer");
+        }
+        else
+            emit sendDebugInfo("Undefined device type. Check connection",
+                               10000);
+    }
+}
+
+void analizerCDC::dataAquisitionHandler(const QStringList &line)
+{
+    if (line.size() == 4)
+    {
+        //        qDebug() << "data " << line.at(1).toFloat() <<" "
+        //                 <<line.at(3).toFloat();
+        auto x = line.at(1).toFloat();
+        auto y = line.at(3).toFloat() < 6600 ? line.at(3).toFloat() :
+                                               line.at(3).toFloat()-6600;
+        currentPoints->append(QPointF(x, y));
+        if (etalon && drawLines)
+        {
+            if ( rangeVal[0].x() > x )
+                rangeVal[0].setX(x);
+            if ( rangeVal[1].x() < x )
+                rangeVal[1].setX(x);
+            if ( rangeVal[0].y() > y )
+                rangeVal[0].setY(y);
+            if ( rangeVal[1].y() < y )
+                rangeVal[1].setY(y);
+        }
+    }
+}
+
+void analizerCDC::dataProcessingHandler(const QStringList &line)
+{
+
+    if (currentPoints->rbegin()->y() == -1.0)
+        emit sendDebugInfo("Bad data", 5000);
+    //save series and data for future
+    if (etalon)
+    {
+        etalonPoints = new QVector<QPointF>;//(*currentPoints);
+        for (int i=0; i < currentPoints->size(); i++)
+        {
+//                auto xVal = axisValueFromMCU ?
+//                            currentPoints->at(i).x() : micrometers[i];
+            auto xVal = currentPoints->at(i).x();
+            auto yVal = relativeMode ?
+                            currentPoints->at(i).y() :
+                            currentPoints->at(i).y() * calibratorData[i];
+            etalonPoints->append(QPointF( xVal, yVal ) );
+        }
+        qDebug() << "set etalon";
+    }
+    else
+    {
+        ///calibrate and antialiasing
+        QVector<QPointF> calibratedSeries;
+        ///calibrate
+        for (int i=0; i < currentPoints->size(); i++)
+        {
+//                auto xVal = axisValueFromMCU ?
+//                            currentPoints->at(i).x() : micrometers[i];
+            calibratedSeries.append(
+                QPointF(currentPoints->at(i).x(),
+                 currentPoints->at(i).y() / etalonPoints->at(i).y()*100.0));
+        }
+        ///antialiasing
+        if(aaManual)
+            for(int i=0; i < calibratedSeries.size(); i++)
+            {
+                //koeffs
+                int k,l,m,n,o,p;
+                o = (i-3 >= 0) ? i-3: 0;
+                k = (i-2 >= 0) ? i-2: 0;
+                l = (i-1 >= 0) ? i-1: 0;
+                m = (i+1 < calibratedSeries.size()) ? (i+1) : (calibratedSeries.size()-1);
+                n = (i+2 < calibratedSeries.size()) ? (i+2) : (calibratedSeries.size()-1);
+                p = (i+3 < calibratedSeries.size()) ? (i+3) : (calibratedSeries.size()-1);
+
+                calibratedSeries[i].ry() =
+                            (calibratedSeries[k].y() + calibratedSeries[l].y() +
+                             calibratedSeries[m].y() + calibratedSeries[i].y() +
+                             calibratedSeries[n].y() + calibratedSeries[o].y() +
+                             calibratedSeries[p].y())/7;
+            }
+
+
+//            delete currentPoints;
+        *currentPoints = calibratedSeries;
+        //adjust borders
+        qreal xMin = std::numeric_limits<qreal>::max(); // everything is <= this
+        qreal xMax = std::numeric_limits<qreal>::min(); // everything is >= this
+        qreal yMin = std::numeric_limits<qreal>::max();
+        qreal yMax = std::numeric_limits<qreal>::min();
+        foreach (QPointF p,  *currentPoints) {
+            xMin = qMin(xMin, p.x());
+            xMax = qMax(xMax, p.x());
+            yMin = qMin(yMin, p.y());
+            yMax = qMax(yMax, p.y());
+        }
+        if(firstLine)
+        {
+            firstLine = false;
+            rangeVal[0].setX(xMin);
+            rangeVal[1].setX(xMax);
+            rangeVal[0].setY(yMin);
+            rangeVal[1].setY(yMax);
+        }
+        //find borders
+        if ( rangeVal[0].x() > xMin )
+            rangeVal[0].setX(xMin);
+        if ( rangeVal[1].x() < xMax )
+            rangeVal[1].setX(xMax);
+        if ( rangeVal[0].y() > yMin )
+            rangeVal[0].setY(yMin);
+        if ( rangeVal[1].y() < yMax )
+            rangeVal[1].setY(yMax);
+    }
+//        qDebug() << rangeVal[0] << rangeVal[1];
+//        m_data.append(*currentPoints);
+//        lines.insert(currentSeries, m_data.back());
+//        emit adjustAxis(rangeVal[0], rangeVal[1]);
+//        update(currentSeries);
+//        qDebug() << "end";// << *currentPoints;
+
+    if (!etalon || (etalon && drawLines))
+    {
+        m_data.append(*currentPoints);
+        lines.insert(currentSeries, m_data.back()); //save series and data pointers for future
+        emit adjustAxis(rangeVal[0], rangeVal[1]);
+        update(currentSeries);
+    }
+}
+
+void analizerCDC::buttonPressHandler(const QStringList &line)
+{
+    emit makeSeries();
+    qDebug() << "signal from button";
 }
 
 
