@@ -383,7 +383,7 @@ void factoryCalibr()
 					/// - 	\b a \n
 					/// Set currents for LED in channel \b 1\n
 					/// Max value is 1000mA, with step 1mA
-					uint8_t curValue = 0;
+					uint16_t curValue = 0;
 					curValue = Serial.parseInt(SKIP_WHITESPACE);
 					cur4AllLed[numLed].curr1 = curValue;
 					setCurrent(1, curValue);
@@ -394,7 +394,7 @@ void factoryCalibr()
 					/// - 	\b b \n
 					/// Set currents for LED in channel \b 2\n
 					/// Max value is 1000mA, with step 1mA
-					uint8_t curValue = 0;
+					uint16_t curValue = 0;
 					curValue = Serial.parseInt(SKIP_WHITESPACE);
 					cur4AllLed[numLed].curr2 = curValue;
 					setCurrent(2, curValue);
@@ -454,7 +454,13 @@ void factoryCalibr()
 					for(uint8_t i=0; i<10; ++i)
 					{
 						doOnePulse(pulseW);
-						Serial.println(( ( Data_ADC >> 1) + ( 0xFFFF - ( Data_ADC_bgnd >> 1 ) ) ) * 3300.0 / 32767.0);
+						Data_ADC >>= 1;          //averaging
+						Data_ADC_bgnd >>= 1; //--//--//--
+						if (Data_ADC > 32767)
+							Data_ADC =  Data_ADC - 0xFFFF;
+						if (Data_ADC_bgnd > 32767)
+							Data_ADC_bgnd = Data_ADC_bgnd - 0xFFFF;
+						Serial.println( ( Data_ADC -  Data_ADC_bgnd ) * 3300.0 / 32767.0);
 						Data_ADC=0;
 						Data_ADC_bgnd =0;
 						_delay_ms(150);
@@ -466,7 +472,13 @@ void factoryCalibr()
 					/// - 	\b p \n
 					/// Make one pulse to LED\n
 					doOnePulse(pulseW);
-					Serial.println(( ( Data_ADC >> 1) + ( 0xFFFF - ( Data_ADC_bgnd >> 1 ) ) ) * 3300.0 / 32767.0);
+					Data_ADC >>= 1;          //averaging
+					Data_ADC_bgnd >>= 1; //--//--//--
+					if (Data_ADC > 32767)
+						Data_ADC =  Data_ADC - 0xFFFF;
+					if (Data_ADC_bgnd > 32767)
+						Data_ADC_bgnd = Data_ADC_bgnd - 0xFFFF;
+					Serial.println( ( Data_ADC -  Data_ADC_bgnd ) * 3300.0 / 32767.0);
 					Data_ADC=0;
 					Data_ADC_bgnd =0;
 					break;

@@ -223,7 +223,7 @@ void analizerCDC::doMeasurements(QtCharts::QAbstractSeries *series,
     if (!etalon || (etalon && drawLines))
     {
         m_data.append(*currentPoints);
-        lines.insert(series, m_data.back()); //save series and data pointers for future
+        lines.insert(series, m_data.back()); //save series
         emit adjustAxis(rangeVal[0], rangeVal[1]);
         update(series);
     }
@@ -262,6 +262,26 @@ void analizerCDC::deleteSeries(QtCharts::QAbstractSeries *series)
 {
     if (lines.contains(series))
         lines.remove(series);
+    //recalc axis
+    std::vector<float> xVals;
+    std::vector<float> yVals;
+    for (auto series : lines.keys())
+    {
+        for ( auto& points : lines.value(series))
+        {
+            xVals.push_back(points.x());
+            yVals.push_back(points.y());
+        }
+    }
+    std::sort(xVals.begin(),xVals.end());
+    std::sort(yVals.begin(),yVals.end());
+//    qDebug() << "start " << *(xVals.begin()) << " stop " << *(xVals.rbegin());
+//    qDebug() << "start " << *(yVals.begin()) << " stop " << *(yVals.rbegin());
+    rangeVal[0].setX( *(xVals.begin() ) );
+    rangeVal[1].setX( *(xVals.rbegin()) );
+    rangeVal[0].setY( *(yVals.begin() ) );
+    rangeVal[1].setY( *(yVals.rbegin()) );
+    emit adjustAxis(rangeVal[0], rangeVal[1]);
 }
 
 void analizerCDC::update(QtCharts::QAbstractSeries *series)
@@ -352,6 +372,7 @@ void analizerCDC::identityHandler(const QStringList &line)
         qDebug() << "Serial# " << line.at(2).toInt();
     if(line.at(1).compare("TYPE") ==0 )
     {
+        qDebug() << "Type: " << line.at(2).toInt();
         /// 0x01 - absorbance, 0x81 - transmittance
         if (line.at(2).toInt() == 0x01 )
         {
@@ -489,7 +510,7 @@ void analizerCDC::dataProcessingHandler(const QStringList &line)
     if (!etalon || (etalon && drawLines))
     {
         m_data.append(*currentPoints);
-        lines.insert(currentSeries, m_data.back()); //save series and data pointers for future
+        lines.insert(currentSeries, m_data.back()); //save series
         emit adjustAxis(rangeVal[0], rangeVal[1]);
         update(currentSeries);
     }
