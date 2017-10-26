@@ -21,9 +21,13 @@ ApplicationWindow {
     minimumWidth: 960
     title: appTitle
     property bool drawEt: false //etalon draw or not
-    property bool aaManual: true //Enable antialiasing
+    property bool aaManual: false //Enable antialiasing
     property string yAxisName: qsTr("Absorbance") //Legends from mcu
-    property bool valuesFromMCU: false //Values from mcu
+    property bool valuesFromMCU: true //Values from mcu
+    property bool serviceMode: false //write raw data to file
+    property bool relativeMode: false   //compare with calibration data or with
+                                        //previous sample
+    property bool cumulativeMode: false
 
     Material.theme: Material.Light
     Material.primary: Material.BlueGrey
@@ -208,6 +212,7 @@ ApplicationWindow {
 //        height: 300
 //        modal: true
         focus: true
+        dim: true
         property string showedText: qsTr("text in popup")
         Text {
             id: textInPopup

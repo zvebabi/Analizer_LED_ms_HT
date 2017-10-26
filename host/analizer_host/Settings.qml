@@ -11,10 +11,23 @@ Item {
             availablePorts.append({"text": port});
             console.log(port)
         }
-        onSendDebugIngo: {
-            tipsWithPath.showedText = qsTr("data is: " + data)
+        onSendDebugInfo: {
+            tipsWithPath.showedText = qsTr(data)
             tipsWithPath.open()
+            delay(time, tipsWithPath.close)
         }
+        onSendAxisName: {
+            app.yAxisName = qsTr(data)
+        }
+    }
+    Timer {
+        id: timer
+    }
+    function delay(delayTime, cb) {
+        timer.interval = delayTime;
+        timer.repeat = false;
+        timer.triggered.connect(cb);
+        timer.start();
     }
     Grid{
         columns: 2
@@ -72,40 +85,58 @@ Item {
                     app.drawEt = checked
                 }
             }
+//            CheckBox {
+//                id:antialiasingManual
+//                text: qsTr("Enable antialiasing")
+//                checked: app.aaManual
+//                onClicked: {
+//                    reciever.enableAAManual(checked)
+//                    app.aaManual = checked
+//                }
+//            }
             CheckBox {
-                id:antialiasingManual
-                text: qsTr("Enable antialiasing")
-                checked: app.aaManual
+                id:serviceMode
+                text: qsTr("Save raw data")
+                checked: app.serviceMode
                 onClicked: {
-                    reciever.enableAAManual(checked)
-                    app.aaManual = checked
+                    reciever.setServiceMode(checked)
+                    app.serviceMode = checked
                 }
             }
             CheckBox {
-                id:valuesFromMcu
-                text: qsTr("Values from mcu")
-                checked: app.valuesFromMCU
+                id:relativeMeasurements
+                text: qsTr("Relative mode")
+                checked: app.relativeMode
                 onClicked: {
-                    reciever.valuesFromMCU(checked)
-                    app.valuesFromMCU = checked
+                    reciever.setRelativeMode(checked)
+                    app.relativeMode = checked
                 }
             }
-            RadioButton {
-                id:name1
-                checked: true
-                text: qsTr("Absorbance")
+            CheckBox {
+                id:cumulativeMeasurements
+                text: qsTr("Cumulative mode")
+                checked: app.cumulativeMode
                 onClicked: {
-                    app.yAxisName = name1.text
+                    reciever.setCumulativeMode(checked)
+                    app.cumulativeMode = checked
                 }
             }
-            RadioButton {
-                id:name2
-                checked: false
-                text: qsTr("Transmittance")
-                onClicked: {
-                    app.yAxisName = name2.text
-                }
-            }
+//            RadioButton {
+//                id:name1
+//                checked: true
+//                text: qsTr("Absorbance")
+//                onClicked: {
+//                    app.yAxisName = name1.text
+//                }
+//            }
+//            RadioButton {
+//                id:name2
+//                checked: false
+//                text: qsTr("Transmittance")
+//                onClicked: {
+//                    app.yAxisName = name2.text
+//                }
+//            }
         }
 
 //        //implement hystogram/lines

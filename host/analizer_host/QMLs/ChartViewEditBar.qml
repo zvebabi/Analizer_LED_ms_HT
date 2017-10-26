@@ -87,7 +87,7 @@ Column {
                 height: 1.6*48*app.dp
                 width: height
                 ToolTip.visible: hovered
-                    ToolTip.text: qsTr("Run " +app.appTitle)
+                    ToolTip.text: qsTr("Measurement")
                 Image {
                     id: rAa
                     anchors.centerIn: parent
@@ -111,7 +111,8 @@ Column {
                 height: 1.6*48*app.dp
                 width: height
                 ToolTip.visible: hovered
-                    ToolTip.text: qsTr("Calibration")
+                    ToolTip.text: app.relativeMode ?
+                                      qsTr("Relative mode calibration") : qsTr("Absolute mode calibration")
                 Image {
                     id: rAe
                     anchors.centerIn: parent
@@ -240,6 +241,32 @@ Column {
 //                    graphs.zoomIn(Qt.rect(0, 0, graphs.plotArea.width, graphs.plotArea.height/2))
 //                    console.log(graphs.minRngY)
 //                    console.log(graphs.maxRngY)
+                    var minRngYY =0;
+                    var maxRngYY =0;
+                    for(var i = tableOfSeries.count-1; i >= 0; i--) {
+                      tableOfSeries.currentIndex = i;
+                      if (tableOfSeries.currentItem.checked) {
+                        graphs.series(tableOfSeries.currentItem.text
+                                      ).visible = true;
+                        console.log("Series: " +
+                                  tableOfSeries.currentItem.text + " is off.");
+                      //recalc range
+                        for(var j = 0; j < graphs.series(tableOfSeries.currentItem.text
+                                                         ).count; j ++ ){
+                          if (graphs.series(tableOfSeries.currentItem.text).at(j).y < minRngYY || minRngYY ==0){
+                            minRngYY = graphs.series(tableOfSeries.currentItem.text).at(j).y;
+                          }
+                          if (graphs.series(tableOfSeries.currentItem.text).at(j).y > maxRngYY || maxRngYY ==0){
+                            maxRngYY = graphs.series(tableOfSeries.currentItem.text).at(j).y;
+                          }
+                        }
+                      } else {
+                        graphs.series(tableOfSeries.currentItem.text).visible =
+                                                                          false;}
+                    }
+                    redrawHistogram()
+                    graphs.minRngY = minRngYY
+                    graphs.maxRngY = maxRngYY
                     axisX.min = graphs.minRngX
                     axisX.max = graphs.maxRngX
                     axisY.min = graphs.minRngY*0.97
@@ -264,7 +291,7 @@ Column {
                     axisY.min = 0;
                     axisX.min = graphs.minRngX
                     axisX.max = graphs.maxRngX
-                    axisY.max = graphs.maxRngY*1.1
+                    axisY.max = graphs.maxRngY*1.03
                 }
             }
             ToolButton {
@@ -358,6 +385,22 @@ Column {
         }
     }
     function createSeries() {
+        //in cumulative mode delete previous series, if not first
+//        if(graphs.numSeries !=0 && app.cumulativeMode)
+//        {
+//            tableOfSeries.currentIndex = tableOfSeries.count-1;
+//            reciever.deleteSeries(
+//                        graphs.series(
+//                           tableOfSeries.currentItem.text));
+//            graphs.removeSeries(
+//                        graphs.series(
+//                           tableOfSeries.currentItem.text));
+//            tableModel.remove(tableOfSeries.currentIndex);
+//            console.log("Series: " +
+//                        tableOfSeries.currentItem.text +
+//                        " deleted.");
+//        }
+
         graphs.numSeries++;
         var seriesName = qsTr(lineLabel.text + "_"
                               + graphs.numSeries)

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['loop',['loop',['../group__main__menu.html#gafe461d27b9c48d5921c00d521181f12f',1,'loop():&#160;analizer.cpp'],['../group__main__menu.html#gafe461d27b9c48d5921c00d521181f12f',1,'loop():&#160;analizer.cpp']]]
+  ['enableaamanual',['enableAAManual',['../classanalizer_c_d_c.html#a9b6c52556f80aa50920896d662909afa',1,'analizerCDC']]]
 ];

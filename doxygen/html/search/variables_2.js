@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['g1',['g1',['../structetalon__t.html#ab4214655b89793479404ebecceba1532',1,'etalon_t']]],
-  ['g2max',['g2max',['../structetalon__t.html#aa305307c0910629f044451f2ffcf8f5e',1,'etalon_t']]],
-  ['g2mid',['g2mid',['../structetalon__t.html#ab1abc2cac2f88d6e47df1ded10ce0837',1,'etalon_t']]],
-  ['g2min',['g2min',['../structetalon__t.html#a1b997b8d360ed62c4b49d5d30e53f64b',1,'etalon_t']]]
+  ['coeffs',['coeffs',['../analizer_8h.html#a515bd80a2008b8ce4477be6f8f4fa692',1,'analizer.h']]],
+  ['cur4allled',['cur4AllLed',['../analizer_8h.html#a6bccd06c6f4cd5703f2aad7e7bf19d8a',1,'analizer.h']]],
+  ['curr1',['curr1',['../structcurrent__t.html#a67184c6cc4a6cc7d301880214965518b',1,'current_t']]],
+  ['curr2',['curr2',['../structcurrent__t.html#aa9880547f852fd6b213265f267da44c8',1,'current_t']]]
 ];

@@ -1,11 +1,13 @@
-\hypertarget{analizer_8cpp}{\section{/home/zvebabi/\+Documents/workspace/\+L\+E\+D\+Microsensor\+\_\+project0/analizer/analizer.cpp File Reference}
-\label{analizer_8cpp}\index{/home/zvebabi/\+Documents/workspace/\+L\+E\+D\+Microsensor\+\_\+project0/analizer/analizer.\+cpp@{/home/zvebabi/\+Documents/workspace/\+L\+E\+D\+Microsensor\+\_\+project0/analizer/analizer.\+cpp}}
+\hypertarget{analizer_8cpp}{\section{/home/zvebabi/\+Documents/workspace/\+L\+E\+D\+Microsensor\+\_\+project0/analizer/mcu/analizer.cpp File Reference}
+\label{analizer_8cpp}\index{/home/zvebabi/\+Documents/workspace/\+L\+E\+D\+Microsensor\+\_\+project0/analizer/mcu/analizer.\+cpp@{/home/zvebabi/\+Documents/workspace/\+L\+E\+D\+Microsensor\+\_\+project0/analizer/mcu/analizer.\+cpp}}
 }
 {\ttfamily \#include \char`\"{}analizer.\+h\char`\"{}}\\*
 \subsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
 \hyperlink{analizer_8cpp_ad39420cdd896dd12c68e36313139d0a5}{I\+S\+R} (T\+I\+M\+E\+R1\+\_\+\+C\+O\+M\+P\+A\+\_\+vect)
+\item 
+\hyperlink{analizer_8cpp_aec43762dc86e029b395d4e5819192c2d}{I\+S\+R} (T\+I\+M\+E\+R0\+\_\+\+C\+O\+M\+P\+A\+\_\+vect)
 \item 
 int \hyperlink{analizer_8cpp_a840291bc02cba5474a4cb46a9b9566fe}{main} (void)
 \item 
@@ -17,7 +19,7 @@ void \hyperlink{group__factory_calibr_ga4de3eaa8535f5742d479408203b3a0c8}{factor
 \item 
 void \hyperlink{group__pre_amp_calibr_ga083340ccd4aa08b8263fec04221bb0d5}{pre\+Amp\+Calibr} ()
 \item 
-void \hyperlink{analizer_8cpp_a27a63ca1875269459f73d3d42c96e69d}{do\+Measurements} (uint8\+\_\+t num\+Of\+Etalon, bool calc\+Norm)
+void \hyperlink{analizer_8cpp_a3e781e8598c3f9d3ca898b69a0c7fa52}{do\+Measurements} (uint8\+\_\+t num\+Of\+Etalon, bool calc\+Norm, bool service\+Mode)
 \item 
 void \hyperlink{analizer_8cpp_a2a1145e3b9b91ff3a4285fdd1a7e12c7}{do\+Measurements\+S\+H} (uint8\+\_\+t num\+Of\+Etalon, bool calc\+Norm)
 \item 
@@ -41,6 +43,16 @@ void \hyperlink{analizer_8cpp_a97373a5239e1af8b6e6be8d4b63663e4}{shift\+Register
 \item 
 void \hyperlink{analizer_8cpp_a630003ae387b30a0811665c6887fba7d}{shift\+Register\+First} ()
 \item 
+void \hyperlink{analizer_8cpp_a193af7bce8a9091fb88fbd1a5bf74713}{indicator\+Register\+Reset} ()
+\item 
+void \hyperlink{analizer_8cpp_af0039775f43b8ef810cf6b7bfe84447b}{indicator\+Register\+Next} ()
+\item 
+void \hyperlink{analizer_8cpp_a54ff76308c2091c11e5aabbc4368a7e7}{indicator\+Register\+First} ()
+\item 
+void \hyperlink{analizer_8cpp_af9b71971d8e56088dd6cdb93a53159ee}{indicator\+Blinc} ()
+\item 
+void \hyperlink{analizer_8cpp_a94b48a3d4f5207db26a78b4a28bfeb32}{single\+L\+E\+D\+Blinc} ()
+\item 
 void \hyperlink{analizer_8cpp_a9383278dce0daeb3cec5424679c5b815}{disable\+L\+E\+D} ()
 \item 
 void \hyperlink{analizer_8cpp_a5997158c293a908f361bed8d45f3fbf3}{Serial\+Clean} ()
@@ -50,6 +62,25 @@ void \hyperlink{analizer_8cpp_aa856f479273cf2e67fc85279c8b53ce5}{set\+Pre\+Amp} 
 void \hyperlink{analizer_8cpp_a8563e0a3c9ecbe8ddfbcd9830835f1e6}{set\+Current} (uint8\+\_\+t channel\+N, uint16\+\_\+t cur\+Value)
 \item 
 void \hyperlink{analizer_8cpp_a7028e4cbf9b5159558440a1fd4228149}{set\+Pulse\+Width} (uint16\+\_\+t width)
+\item 
+void \hyperlink{analizer_8cpp_ada2730fc8b42995bba8630b7c7bde8a8}{send\+Identity} ()
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+volatile boolean \hyperlink{analizer_8cpp_a3d5252698f7171280bbb48657b72483d}{Reg\+Val} = 0
+\item 
+volatile uint16\+\_\+t \hyperlink{analizer_8cpp_af7e51cf48d83156831619944c56bb01c}{pulse\+W} = 1116
+\item 
+volatile boolean \hyperlink{analizer_8cpp_a53132aaec48d44e7533d58fb9224e677}{Stage\+Val\+Measure} = 0
+\item 
+volatile uint8\+\_\+t \hyperlink{analizer_8cpp_a4530f9e42e16ad1544841399e4440a7a}{adc\+Stop} =0
+\item 
+int32\+\_\+t \hyperlink{analizer_8cpp_a471c0f80a2cc58b9f1bc0f433af60d29}{Data\+\_\+\+A\+D\+C} = 0
+\item 
+int32\+\_\+t \hyperlink{analizer_8cpp_ae646fbd355beb282a70ae70c8e011852}{Data\+\_\+\+A\+D\+C\+\_\+bgnd} = 0
+\item 
+int32\+\_\+t \hyperlink{analizer_8cpp_ad8a4df589300a696d829791bce636d4f}{Data\+\_\+\+A\+D\+C\+\_\+array} \mbox{[}\hyperlink{analizer_8h_a864b43588aed04ef9d694ec60ef7a9f1}{N\+U\+M\+\_\+\+O\+F\+\_\+\+P\+O\+I\+N\+T\+S}\mbox{]} =\{0\}
 \end{DoxyCompactItemize}
 
 
@@ -63,7 +94,7 @@ void \hyperlink{analizer_8cpp_a7028e4cbf9b5159558440a1fd4228149}{set\+Pulse\+Wid
 )}}\label{analizer_8cpp_a9383278dce0daeb3cec5424679c5b815}
 Utility function for calibration mode 
 
-Definition at line 983 of file analizer.\+cpp.
+Definition at line 1398 of file analizer.\+cpp.
 
 \hypertarget{analizer_8cpp_a5bb74041e7d0fa1c5edbd3dce87f5048}{\index{analizer.\+cpp@{analizer.\+cpp}!discharge\+Sample\+Hold@{discharge\+Sample\+Hold}}
 \index{discharge\+Sample\+Hold@{discharge\+Sample\+Hold}!analizer.\+cpp@{analizer.\+cpp}}
@@ -74,16 +105,17 @@ Definition at line 983 of file analizer.\+cpp.
 )}}\label{analizer_8cpp_a5bb74041e7d0fa1c5edbd3dce87f5048}
 Discharge capasitor, while measurements going in Sample\&Hold mode 
 
-Definition at line 923 of file analizer.\+cpp.
+Definition at line 1260 of file analizer.\+cpp.
 
-\hypertarget{analizer_8cpp_a27a63ca1875269459f73d3d42c96e69d}{\index{analizer.\+cpp@{analizer.\+cpp}!do\+Measurements@{do\+Measurements}}
+\hypertarget{analizer_8cpp_a3e781e8598c3f9d3ca898b69a0c7fa52}{\index{analizer.\+cpp@{analizer.\+cpp}!do\+Measurements@{do\+Measurements}}
 \index{do\+Measurements@{do\+Measurements}!analizer.\+cpp@{analizer.\+cpp}}
 \subsubsection[{do\+Measurements}]{\setlength{\rightskip}{0pt plus 5cm}void do\+Measurements (
 \begin{DoxyParamCaption}
 \item[{uint8\+\_\+t}]{num\+Of\+Etalon = {\ttfamily 0}, }
-\item[{bool}]{calc\+Norm = {\ttfamily false}}
+\item[{bool}]{calc\+Norm = {\ttfamily false}, }
+\item[{bool}]{service\+Mode = {\ttfamily false}}
 \end{DoxyParamCaption}
-)}}\label{analizer_8cpp_a27a63ca1875269459f73d3d42c96e69d}
+)}}\label{analizer_8cpp_a3e781e8598c3f9d3ca898b69a0c7fa52}
 One mode of measurements with option of coeffs calibration Manually choosing preamps parameters Inpulse measurements 
 \begin{DoxyParams}[1]{Parameters}
 \mbox{\tt in}  & {\em num\+Of\+Etalon} & -\/ which etalon we use for fast calibration \\
@@ -91,9 +123,9 @@ One mode of measurements with option of coeffs calibration Manually choosing pre
 \mbox{\tt in}  & {\em calc\+Norm} & -\/ true -\/ calibration, false -\/ measurements \\
 \hline
 \end{DoxyParams}
+repeat pulse few times each pulse adc reads 2 times 
 
-
-Definition at line 568 of file analizer.\+cpp.
+Definition at line 792 of file analizer.\+cpp.
 
 \hypertarget{analizer_8cpp_a2a1145e3b9b91ff3a4285fdd1a7e12c7}{\index{analizer.\+cpp@{analizer.\+cpp}!do\+Measurements\+S\+H@{do\+Measurements\+S\+H}}
 \index{do\+Measurements\+S\+H@{do\+Measurements\+S\+H}!analizer.\+cpp@{analizer.\+cpp}}
@@ -112,7 +144,7 @@ One mode of measurements with option of coeffs calibration Manually choosing pre
 \end{DoxyParams}
 
 
-Definition at line 648 of file analizer.\+cpp.
+Definition at line 960 of file analizer.\+cpp.
 
 \hypertarget{analizer_8cpp_a9f60d86f45cad8d26b1af473247570b8}{\index{analizer.\+cpp@{analizer.\+cpp}!do\+Measurements\+S\+H\+\_\+\+Avg@{do\+Measurements\+S\+H\+\_\+\+Avg}}
 \index{do\+Measurements\+S\+H\+\_\+\+Avg@{do\+Measurements\+S\+H\+\_\+\+Avg}!analizer.\+cpp@{analizer.\+cpp}}
@@ -128,7 +160,7 @@ One mode of measurements with option of coeffs calibration Series of measurement
 \end{DoxyParams}
 
 
-Definition at line 728 of file analizer.\+cpp.
+Definition at line 1040 of file analizer.\+cpp.
 
 \hypertarget{analizer_8cpp_a367302e50a423db3a23f1be59a7fd4a2}{\index{analizer.\+cpp@{analizer.\+cpp}!do\+One\+Pulse@{do\+One\+Pulse}}
 \index{do\+One\+Pulse@{do\+One\+Pulse}!analizer.\+cpp@{analizer.\+cpp}}
@@ -139,7 +171,51 @@ Definition at line 728 of file analizer.\+cpp.
 )}}\label{analizer_8cpp_a367302e50a423db3a23f1be59a7fd4a2}
 Make one pulse to the L\+E\+D with previously setted current and time of pulse 
 
-Definition at line 915 of file analizer.\+cpp.
+Definition at line 1237 of file analizer.\+cpp.
+
+\hypertarget{analizer_8cpp_af9b71971d8e56088dd6cdb93a53159ee}{\index{analizer.\+cpp@{analizer.\+cpp}!indicator\+Blinc@{indicator\+Blinc}}
+\index{indicator\+Blinc@{indicator\+Blinc}!analizer.\+cpp@{analizer.\+cpp}}
+\subsubsection[{indicator\+Blinc}]{\setlength{\rightskip}{0pt plus 5cm}void indicator\+Blinc (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{analizer_8cpp_af9b71971d8e56088dd6cdb93a53159ee}
+
+
+Definition at line 1371 of file analizer.\+cpp.
+
+\hypertarget{analizer_8cpp_a54ff76308c2091c11e5aabbc4368a7e7}{\index{analizer.\+cpp@{analizer.\+cpp}!indicator\+Register\+First@{indicator\+Register\+First}}
+\index{indicator\+Register\+First@{indicator\+Register\+First}!analizer.\+cpp@{analizer.\+cpp}}
+\subsubsection[{indicator\+Register\+First}]{\setlength{\rightskip}{0pt plus 5cm}void indicator\+Register\+First (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{analizer_8cpp_a54ff76308c2091c11e5aabbc4368a7e7}
+Utility function for work with shift register Select first pair of led 
+
+Definition at line 1359 of file analizer.\+cpp.
+
+\hypertarget{analizer_8cpp_af0039775f43b8ef810cf6b7bfe84447b}{\index{analizer.\+cpp@{analizer.\+cpp}!indicator\+Register\+Next@{indicator\+Register\+Next}}
+\index{indicator\+Register\+Next@{indicator\+Register\+Next}!analizer.\+cpp@{analizer.\+cpp}}
+\subsubsection[{indicator\+Register\+Next}]{\setlength{\rightskip}{0pt plus 5cm}void indicator\+Register\+Next (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{analizer_8cpp_af0039775f43b8ef810cf6b7bfe84447b}
+Utility function for work with shift register Select next led to O\+N 
+
+Definition at line 1348 of file analizer.\+cpp.
+
+\hypertarget{analizer_8cpp_a193af7bce8a9091fb88fbd1a5bf74713}{\index{analizer.\+cpp@{analizer.\+cpp}!indicator\+Register\+Reset@{indicator\+Register\+Reset}}
+\index{indicator\+Register\+Reset@{indicator\+Register\+Reset}!analizer.\+cpp@{analizer.\+cpp}}
+\subsubsection[{indicator\+Register\+Reset}]{\setlength{\rightskip}{0pt plus 5cm}void indicator\+Register\+Reset (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{analizer_8cpp_a193af7bce8a9091fb88fbd1a5bf74713}
+Utility function for work with shift register Set all outputs to High level 
+
+Definition at line 1323 of file analizer.\+cpp.
 
 \hypertarget{analizer_8cpp_ad39420cdd896dd12c68e36313139d0a5}{\index{analizer.\+cpp@{analizer.\+cpp}!I\+S\+R@{I\+S\+R}}
 \index{I\+S\+R@{I\+S\+R}!analizer.\+cpp@{analizer.\+cpp}}
@@ -148,12 +224,20 @@ Definition at line 915 of file analizer.\+cpp.
 \item[{T\+I\+M\+E\+R1\+\_\+\+C\+O\+M\+P\+A\+\_\+vect}]{}
 \end{DoxyParamCaption}
 )}}\label{analizer_8cpp_ad39420cdd896dd12c68e36313139d0a5}
-Analizer.\+cpp \begin{DoxyAuthor}{Author}
-L\+E\+D Microsensor 
-\end{DoxyAuthor}
 
 
-Definition at line 8 of file analizer.\+cpp.
+Definition at line 25 of file analizer.\+cpp.
+
+\hypertarget{analizer_8cpp_aec43762dc86e029b395d4e5819192c2d}{\index{analizer.\+cpp@{analizer.\+cpp}!I\+S\+R@{I\+S\+R}}
+\index{I\+S\+R@{I\+S\+R}!analizer.\+cpp@{analizer.\+cpp}}
+\subsubsection[{I\+S\+R}]{\setlength{\rightskip}{0pt plus 5cm}I\+S\+R (
+\begin{DoxyParamCaption}
+\item[{T\+I\+M\+E\+R0\+\_\+\+C\+O\+M\+P\+A\+\_\+vect}]{}
+\end{DoxyParamCaption}
+)}}\label{analizer_8cpp_aec43762dc86e029b395d4e5819192c2d}
+
+
+Definition at line 59 of file analizer.\+cpp.
 
 \hypertarget{analizer_8cpp_a840291bc02cba5474a4cb46a9b9566fe}{\index{analizer.\+cpp@{analizer.\+cpp}!main@{main}}
 \index{main@{main}!analizer.\+cpp@{analizer.\+cpp}}
@@ -164,7 +248,7 @@ Definition at line 8 of file analizer.\+cpp.
 )}}\label{analizer_8cpp_a840291bc02cba5474a4cb46a9b9566fe}
 
 
-Definition at line 15 of file analizer.\+cpp.
+Definition at line 93 of file analizer.\+cpp.
 
 \hypertarget{analizer_8cpp_a4c374c3ab214a99569f29979606a8679}{\index{analizer.\+cpp@{analizer.\+cpp}!read\+A\+D\+C@{read\+A\+D\+C}}
 \index{read\+A\+D\+C@{read\+A\+D\+C}!analizer.\+cpp@{analizer.\+cpp}}
@@ -180,7 +264,7 @@ Utility function for Sample\&Holde mode of measurements make 16 samples and calc
 \end{DoxyParams}
 
 
-Definition at line 823 of file analizer.\+cpp.
+Definition at line 1135 of file analizer.\+cpp.
 
 \hypertarget{analizer_8cpp_a7541e761cd601bddb339b3323d6dca81}{\index{analizer.\+cpp@{analizer.\+cpp}!read\+A\+D\+C\+One\+Time@{read\+A\+D\+C\+One\+Time}}
 \index{read\+A\+D\+C\+One\+Time@{read\+A\+D\+C\+One\+Time}!analizer.\+cpp@{analizer.\+cpp}}
@@ -196,7 +280,18 @@ Utility function for inpulse mode of measurements
 \end{DoxyParams}
 
 
-Definition at line 814 of file analizer.\+cpp.
+Definition at line 1126 of file analizer.\+cpp.
+
+\hypertarget{analizer_8cpp_ada2730fc8b42995bba8630b7c7bde8a8}{\index{analizer.\+cpp@{analizer.\+cpp}!send\+Identity@{send\+Identity}}
+\index{send\+Identity@{send\+Identity}!analizer.\+cpp@{analizer.\+cpp}}
+\subsubsection[{send\+Identity}]{\setlength{\rightskip}{0pt plus 5cm}void send\+Identity (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{analizer_8cpp_ada2730fc8b42995bba8630b7c7bde8a8}
+Send to com port I\+D, s/n etc... 
+
+Definition at line 1513 of file analizer.\+cpp.
 
 \hypertarget{analizer_8cpp_a5997158c293a908f361bed8d45f3fbf3}{\index{analizer.\+cpp@{analizer.\+cpp}!Serial\+Clean@{Serial\+Clean}}
 \index{Serial\+Clean@{Serial\+Clean}!analizer.\+cpp@{analizer.\+cpp}}
@@ -207,7 +302,7 @@ Definition at line 814 of file analizer.\+cpp.
 )}}\label{analizer_8cpp_a5997158c293a908f361bed8d45f3fbf3}
 Utility function for cleanserial port buffer 
 
-Definition at line 991 of file analizer.\+cpp.
+Definition at line 1406 of file analizer.\+cpp.
 
 \hypertarget{analizer_8cpp_a9d89d31f162632847065a02672f9b7e0}{\index{analizer.\+cpp@{analizer.\+cpp}!set\+C\+\_\+\+R@{set\+C\+\_\+\+R}}
 \index{set\+C\+\_\+\+R@{set\+C\+\_\+\+R}!analizer.\+cpp@{analizer.\+cpp}}
@@ -223,7 +318,7 @@ Save to eeprom value of input resistanse of second Op\+Amp
 \end{DoxyParams}
 
 
-Definition at line 910 of file analizer.\+cpp.
+Definition at line 1228 of file analizer.\+cpp.
 
 \hypertarget{analizer_8cpp_a8563e0a3c9ecbe8ddfbcd9830835f1e6}{\index{analizer.\+cpp@{analizer.\+cpp}!set\+Current@{set\+Current}}
 \index{set\+Current@{set\+Current}!analizer.\+cpp@{analizer.\+cpp}}
@@ -242,7 +337,7 @@ This function set currents for L\+E\+D in channel channel\+N Control D\+A\+C Max
 \end{DoxyParams}
 
 
-Definition at line 1044 of file analizer.\+cpp.
+Definition at line 1463 of file analizer.\+cpp.
 
 \hypertarget{analizer_8cpp_aa856f479273cf2e67fc85279c8b53ce5}{\index{analizer.\+cpp@{analizer.\+cpp}!set\+Pre\+Amp@{set\+Pre\+Amp}}
 \index{set\+Pre\+Amp@{set\+Pre\+Amp}!analizer.\+cpp@{analizer.\+cpp}}
@@ -261,7 +356,7 @@ This function set coeffs of Op\+Amp Control digital potentiometers ad5141 Max va
 \end{DoxyParams}
 
 
-Definition at line 1004 of file analizer.\+cpp.
+Definition at line 1419 of file analizer.\+cpp.
 
 \hypertarget{analizer_8cpp_a7028e4cbf9b5159558440a1fd4228149}{\index{analizer.\+cpp@{analizer.\+cpp}!set\+Pulse\+Width@{set\+Pulse\+Width}}
 \index{set\+Pulse\+Width@{set\+Pulse\+Width}!analizer.\+cpp@{analizer.\+cpp}}
@@ -277,7 +372,7 @@ Set width of impulse in microseconds step is 1us, max 200us
 \end{DoxyParams}
 
 
-Definition at line 1089 of file analizer.\+cpp.
+Definition at line 1507 of file analizer.\+cpp.
 
 \hypertarget{analizer_8cpp_a4fc01d736fe50cf5b977f755b675f11d}{\index{analizer.\+cpp@{analizer.\+cpp}!setup@{setup}}
 \index{setup@{setup}!analizer.\+cpp@{analizer.\+cpp}}
@@ -288,7 +383,7 @@ Definition at line 1089 of file analizer.\+cpp.
 )}}\label{analizer_8cpp_a4fc01d736fe50cf5b977f755b675f11d}
 Main initialization of M\+C\+U 
 
-Definition at line 27 of file analizer.\+cpp.
+Definition at line 105 of file analizer.\+cpp.
 
 \hypertarget{analizer_8cpp_a630003ae387b30a0811665c6887fba7d}{\index{analizer.\+cpp@{analizer.\+cpp}!shift\+Register\+First@{shift\+Register\+First}}
 \index{shift\+Register\+First@{shift\+Register\+First}!analizer.\+cpp@{analizer.\+cpp}}
@@ -299,7 +394,7 @@ Definition at line 27 of file analizer.\+cpp.
 )}}\label{analizer_8cpp_a630003ae387b30a0811665c6887fba7d}
 Utility function for work with shift register Select first pair of led 
 
-Definition at line 970 of file analizer.\+cpp.
+Definition at line 1307 of file analizer.\+cpp.
 
 \hypertarget{analizer_8cpp_a97373a5239e1af8b6e6be8d4b63663e4}{\index{analizer.\+cpp@{analizer.\+cpp}!shift\+Register\+Next@{shift\+Register\+Next}}
 \index{shift\+Register\+Next@{shift\+Register\+Next}!analizer.\+cpp@{analizer.\+cpp}}
@@ -310,7 +405,7 @@ Definition at line 970 of file analizer.\+cpp.
 )}}\label{analizer_8cpp_a97373a5239e1af8b6e6be8d4b63663e4}
 Utility function for work with shift register Select next led to O\+N 
 
-Definition at line 959 of file analizer.\+cpp.
+Definition at line 1296 of file analizer.\+cpp.
 
 \hypertarget{analizer_8cpp_a8d1f3576892bbeffb58ea18abfc2b823}{\index{analizer.\+cpp@{analizer.\+cpp}!shift\+Register\+Reset@{shift\+Register\+Reset}}
 \index{shift\+Register\+Reset@{shift\+Register\+Reset}!analizer.\+cpp@{analizer.\+cpp}}
@@ -321,7 +416,18 @@ Definition at line 959 of file analizer.\+cpp.
 )}}\label{analizer_8cpp_a8d1f3576892bbeffb58ea18abfc2b823}
 Utility function for work with shift register Set all outputs to High level 
 
-Definition at line 934 of file analizer.\+cpp.
+Definition at line 1271 of file analizer.\+cpp.
+
+\hypertarget{analizer_8cpp_a94b48a3d4f5207db26a78b4a28bfeb32}{\index{analizer.\+cpp@{analizer.\+cpp}!single\+L\+E\+D\+Blinc@{single\+L\+E\+D\+Blinc}}
+\index{single\+L\+E\+D\+Blinc@{single\+L\+E\+D\+Blinc}!analizer.\+cpp@{analizer.\+cpp}}
+\subsubsection[{single\+L\+E\+D\+Blinc}]{\setlength{\rightskip}{0pt plus 5cm}void single\+L\+E\+D\+Blinc (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{analizer_8cpp_a94b48a3d4f5207db26a78b4a28bfeb32}
+
+
+Definition at line 1387 of file analizer.\+cpp.
 
 \hypertarget{analizer_8cpp_a542beaf8dd30073f60ea105068373ec4}{\index{analizer.\+cpp@{analizer.\+cpp}!write\+Config\+To\+Uart@{write\+Config\+To\+Uart}}
 \index{write\+Config\+To\+Uart@{write\+Config\+To\+Uart}!analizer.\+cpp@{analizer.\+cpp}}
@@ -332,5 +438,60 @@ Definition at line 934 of file analizer.\+cpp.
 )}}\label{analizer_8cpp_a542beaf8dd30073f60ea105068373ec4}
 Print all saved to eeprom data to serial port 
 
-Definition at line 843 of file analizer.\+cpp.
+Definition at line 1155 of file analizer.\+cpp.
+
+
+
+\subsection{Variable Documentation}
+\hypertarget{analizer_8cpp_a4530f9e42e16ad1544841399e4440a7a}{\index{analizer.\+cpp@{analizer.\+cpp}!adc\+Stop@{adc\+Stop}}
+\index{adc\+Stop@{adc\+Stop}!analizer.\+cpp@{analizer.\+cpp}}
+\subsubsection[{adc\+Stop}]{\setlength{\rightskip}{0pt plus 5cm}volatile uint8\+\_\+t adc\+Stop =0}}\label{analizer_8cpp_a4530f9e42e16ad1544841399e4440a7a}
+
+
+Definition at line 17 of file analizer.\+cpp.
+
+\hypertarget{analizer_8cpp_a471c0f80a2cc58b9f1bc0f433af60d29}{\index{analizer.\+cpp@{analizer.\+cpp}!Data\+\_\+\+A\+D\+C@{Data\+\_\+\+A\+D\+C}}
+\index{Data\+\_\+\+A\+D\+C@{Data\+\_\+\+A\+D\+C}!analizer.\+cpp@{analizer.\+cpp}}
+\subsubsection[{Data\+\_\+\+A\+D\+C}]{\setlength{\rightskip}{0pt plus 5cm}int32\+\_\+t Data\+\_\+\+A\+D\+C = 0}}\label{analizer_8cpp_a471c0f80a2cc58b9f1bc0f433af60d29}
+
+
+Definition at line 18 of file analizer.\+cpp.
+
+\hypertarget{analizer_8cpp_ad8a4df589300a696d829791bce636d4f}{\index{analizer.\+cpp@{analizer.\+cpp}!Data\+\_\+\+A\+D\+C\+\_\+array@{Data\+\_\+\+A\+D\+C\+\_\+array}}
+\index{Data\+\_\+\+A\+D\+C\+\_\+array@{Data\+\_\+\+A\+D\+C\+\_\+array}!analizer.\+cpp@{analizer.\+cpp}}
+\subsubsection[{Data\+\_\+\+A\+D\+C\+\_\+array}]{\setlength{\rightskip}{0pt plus 5cm}int32\+\_\+t Data\+\_\+\+A\+D\+C\+\_\+array\mbox{[}{\bf N\+U\+M\+\_\+\+O\+F\+\_\+\+P\+O\+I\+N\+T\+S}\mbox{]} =\{0\}}}\label{analizer_8cpp_ad8a4df589300a696d829791bce636d4f}
+
+
+Definition at line 22 of file analizer.\+cpp.
+
+\hypertarget{analizer_8cpp_ae646fbd355beb282a70ae70c8e011852}{\index{analizer.\+cpp@{analizer.\+cpp}!Data\+\_\+\+A\+D\+C\+\_\+bgnd@{Data\+\_\+\+A\+D\+C\+\_\+bgnd}}
+\index{Data\+\_\+\+A\+D\+C\+\_\+bgnd@{Data\+\_\+\+A\+D\+C\+\_\+bgnd}!analizer.\+cpp@{analizer.\+cpp}}
+\subsubsection[{Data\+\_\+\+A\+D\+C\+\_\+bgnd}]{\setlength{\rightskip}{0pt plus 5cm}int32\+\_\+t Data\+\_\+\+A\+D\+C\+\_\+bgnd = 0}}\label{analizer_8cpp_ae646fbd355beb282a70ae70c8e011852}
+
+
+Definition at line 19 of file analizer.\+cpp.
+
+\hypertarget{analizer_8cpp_af7e51cf48d83156831619944c56bb01c}{\index{analizer.\+cpp@{analizer.\+cpp}!pulse\+W@{pulse\+W}}
+\index{pulse\+W@{pulse\+W}!analizer.\+cpp@{analizer.\+cpp}}
+\subsubsection[{pulse\+W}]{\setlength{\rightskip}{0pt plus 5cm}volatile uint16\+\_\+t pulse\+W = 1116}}\label{analizer_8cpp_af7e51cf48d83156831619944c56bb01c}
+
+
+Definition at line 15 of file analizer.\+cpp.
+
+\hypertarget{analizer_8cpp_a3d5252698f7171280bbb48657b72483d}{\index{analizer.\+cpp@{analizer.\+cpp}!Reg\+Val@{Reg\+Val}}
+\index{Reg\+Val@{Reg\+Val}!analizer.\+cpp@{analizer.\+cpp}}
+\subsubsection[{Reg\+Val}]{\setlength{\rightskip}{0pt plus 5cm}volatile boolean Reg\+Val = 0}}\label{analizer_8cpp_a3d5252698f7171280bbb48657b72483d}
+Analizer.\+cpp \begin{DoxyAuthor}{Author}
+L\+E\+D Microsensor 
+\end{DoxyAuthor}
+
+
+Definition at line 14 of file analizer.\+cpp.
+
+\hypertarget{analizer_8cpp_a53132aaec48d44e7533d58fb9224e677}{\index{analizer.\+cpp@{analizer.\+cpp}!Stage\+Val\+Measure@{Stage\+Val\+Measure}}
+\index{Stage\+Val\+Measure@{Stage\+Val\+Measure}!analizer.\+cpp@{analizer.\+cpp}}
+\subsubsection[{Stage\+Val\+Measure}]{\setlength{\rightskip}{0pt plus 5cm}volatile boolean Stage\+Val\+Measure = 0}}\label{analizer_8cpp_a53132aaec48d44e7533d58fb9224e677}
+
+
+Definition at line 16 of file analizer.\+cpp.
 

@@ -1,7 +1,5 @@
 var searchData=
 [
-  ['main',['main',['../analizer_8cpp.html#a840291bc02cba5474a4cb46a9b9566fe',1,'analizer.cpp']]],
-  ['main_20menu',['Main menu',['../group__main__menu.html',1,'']]],
-  ['max_5fcurrent',['MAX_CURRENT',['../analizer_8h.html#a2989837a37d6d63b59c6dd541b785435',1,'analizer.h']]],
-  ['max_5fpulse_5fwidth',['MAX_PULSE_WIDTH',['../analizer_8h.html#a57a10261e6511f97317cee9076692315',1,'analizer.h']]]
+  ['linux',['linux',['../build-analizer__host-_desktop___qt__5__9__0___g_c_c__64bit-debug_2moc__predefs_8h.html#aa092b0d4c1d4d4407b97024f6cb2820c',1,'linux():&#160;moc_predefs.h'],['../build-analizer__host-_desktop___qt__5__9__0___g_c_c__64bit-_release_2moc__predefs_8h.html#aa092b0d4c1d4d4407b97024f6cb2820c',1,'linux():&#160;moc_predefs.h']]],
+  ['loop',['loop',['../group__main__menu.html#gafe461d27b9c48d5921c00d521181f12f',1,'loop():&#160;analizer.cpp'],['../group__main__menu.html#gafe461d27b9c48d5921c00d521181f12f',1,'loop():&#160;analizer.cpp']]]
 ];
