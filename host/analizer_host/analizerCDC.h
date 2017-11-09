@@ -25,7 +25,7 @@
 #include <sstream>
 #include <ctime>
 
-#ifdef _WIN32 //winapi comport
+#ifdef _WIN322222 //winapi comport
 #include "WinSerialPort.h"
 #endif
 
@@ -75,7 +75,7 @@ private:
     void buttonPressHandler(const QStringList& line);
 
     std::vector<QString> ports;
-#ifdef _WIN32
+#ifdef _WIN322222
     WinSerialPort* device = NULL;
 #else
     QSerialPort* device = NULL;

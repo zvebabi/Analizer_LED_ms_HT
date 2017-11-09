@@ -42,6 +42,7 @@ MyDevice::MyDevice(QObject *parent) : QObject(parent)
 
 MyDevice::~MyDevice()
 {
+    qDebug() << "mydevice destructor";
 }
 
 

@@ -77,14 +77,42 @@ Item {
                 onClicked: reciever.initDevice(portsComboList.currentText)
             }
             CheckBox {
-                id:drawSeries
-                text: qsTr("Draw etalon data")
-                checked: app.drawEt
+                id:relativeMeasurements
+                text: qsTr("Relative mode")
+                checked: app.relativeMode
                 onClicked: {
-                    reciever.drawSeries(checked)
-                    app.drawEt = checked
+                    reciever.setRelativeMode(checked)
+                    app.relativeMode = checked
                 }
             }
+//            CheckBox {
+//                id:drawSeries
+//                text: qsTr("Draw etalon data")
+//                checked: app.drawEt
+//                onClicked: {
+//                    reciever.drawSeries(checked)
+//                    app.drawEt = checked
+//                }
+//            }
+
+//            CheckBox {
+//                id:serviceMode
+//                text: qsTr("Save raw data")
+//                checked: app.serviceMode
+//                onClicked: {
+//                    reciever.setServiceMode(checked)
+//                    app.serviceMode = checked
+//                }
+//            }
+//            CheckBox {
+//                id:cumulativeMeasurements
+//                text: qsTr("Cumulative mode")
+//                checked: app.cumulativeMode
+//                onClicked: {
+//                    reciever.setCumulativeMode(checked)
+//                    app.cumulativeMode = checked
+//                }
+//            }
 //            CheckBox {
 //                id:antialiasingManual
 //                text: qsTr("Enable antialiasing")
@@ -94,33 +122,6 @@ Item {
 //                    app.aaManual = checked
 //                }
 //            }
-            CheckBox {
-                id:serviceMode
-                text: qsTr("Save raw data")
-                checked: app.serviceMode
-                onClicked: {
-                    reciever.setServiceMode(checked)
-                    app.serviceMode = checked
-                }
-            }
-            CheckBox {
-                id:relativeMeasurements
-                text: qsTr("Relative mode")
-                checked: app.relativeMode
-                onClicked: {
-                    reciever.setRelativeMode(checked)
-                    app.relativeMode = checked
-                }
-            }
-            CheckBox {
-                id:cumulativeMeasurements
-                text: qsTr("Cumulative mode")
-                checked: app.cumulativeMode
-                onClicked: {
-                    reciever.setCumulativeMode(checked)
-                    app.cumulativeMode = checked
-                }
-            }
 //            RadioButton {
 //                id:name1
 //                checked: true
