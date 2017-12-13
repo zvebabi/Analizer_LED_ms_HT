@@ -15,5 +15,6 @@
         <file>images/runAnalizer.png</file>
         <file>images/delete.png</file>
         <file>images/setVisible.png</file>
+        <file>HistogramView.qml</file>
     </qresource>
 </RCC>

@@ -1,11 +1,12 @@
 #include "WinSerialPort.h"
 
 WinSerialPort::WinSerialPort(QObject *parent) : QObject(parent), b_canReadLine(false),
-    b_stop(false),finished(false), hSerial(INVALID_HANDLE_VALUE), st(NULL)
+    b_stop(false),finished(true), hSerial(INVALID_HANDLE_VALUE), st(NULL)
 {}
 
 WinSerialPort::~WinSerialPort()
 {
+    qDebug() << "serial port destructor";
     while(!finished)
         std::this_thread::yield();
     CloseHandle(hSerial);
@@ -102,17 +103,21 @@ void WinSerialPort::start()
 
 void WinSerialPort::stop()
 {
+    qDebug() << "stop";
     b_stop = true;
     if(st)
         st->join();
+    qDebug() << "stop2";
 }
 
 void WinSerialPort::run()
 {
+    qDebug() << "into run";
     finished = false;
     std::thread reader([&](){runReader();});
     reader.join();
     finished = true;
+    qDebug() << "exit run()";
 }
 
 void WinSerialPort::runReader()
@@ -124,6 +129,7 @@ void WinSerialPort::runReader()
     //start main reader loop
     while(!b_stop)
     {
+//        qDebug() << b_stop;
         if (!b_Write)
         {
             ReadFile(hSerial, &sReceivedChar, 1, &iSize,
@@ -149,5 +155,5 @@ void WinSerialPort::runReader()
             }
         }
     }
-
+    qDebug() << "exit runreader";
 }

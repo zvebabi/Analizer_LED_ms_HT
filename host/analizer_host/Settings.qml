@@ -39,8 +39,8 @@ Item {
         Column {
             id: deviceSetter
             spacing: 5*app.dp
-            anchors.right: chartStyle.left
-            anchors.top: chartStyle.top
+//            anchors.right: chartStyle.left
+//            anchors.top: chartStyle.top
             anchors.rightMargin: 50*app.dp
             property int itemsWidth: 250*app.dp
             Button {
@@ -77,33 +77,6 @@ Item {
                 onClicked: reciever.initDevice(portsComboList.currentText)
             }
             CheckBox {
-                id:drawSeries
-                text: qsTr("Draw etalon data")
-                checked: app.drawEt
-                onClicked: {
-                    reciever.drawSeries(checked)
-                    app.drawEt = checked
-                }
-            }
-            CheckBox {
-                id:antialiasingManual
-                text: qsTr("Enable antialiasing")
-                checked: app.aaManual
-                onClicked: {
-                    reciever.enableAAManual(checked)
-                    app.aaManual = checked
-                }
-            }
-            CheckBox {
-                id:serviceMode
-                text: qsTr("Save raw data")
-                checked: app.serviceMode
-                onClicked: {
-                    reciever.setServiceMode(checked)
-                    app.serviceMode = checked
-                }
-            }
-            CheckBox {
                 id:relativeMeasurements
                 text: qsTr("Relative mode")
                 checked: app.relativeMode
@@ -112,15 +85,43 @@ Item {
                     app.relativeMode = checked
                 }
             }
-            CheckBox {
-                id:cumulativeMeasurements
-                text: qsTr("Cumulative mode")
-                checked: app.cumulativeMode
-                onClicked: {
-                    reciever.setCumulativeMode(checked)
-                    app.cumulativeMode = checked
-                }
-            }
+//            CheckBox {
+//                id:drawSeries
+//                text: qsTr("Draw etalon data")
+//                checked: app.drawEt
+//                onClicked: {
+//                    reciever.drawSeries(checked)
+//                    app.drawEt = checked
+//                }
+//            }
+
+//            CheckBox {
+//                id:serviceMode
+//                text: qsTr("Save raw data")
+//                checked: app.serviceMode
+//                onClicked: {
+//                    reciever.setServiceMode(checked)
+//                    app.serviceMode = checked
+//                }
+//            }
+//            CheckBox {
+//                id:cumulativeMeasurements
+//                text: qsTr("Cumulative mode")
+//                checked: app.cumulativeMode
+//                onClicked: {
+//                    reciever.setCumulativeMode(checked)
+//                    app.cumulativeMode = checked
+//                }
+//            }
+//            CheckBox {
+//                id:antialiasingManual
+//                text: qsTr("Enable antialiasing")
+//                checked: app.aaManual
+//                onClicked: {
+//                    reciever.enableAAManual(checked)
+//                    app.aaManual = checked
+//                }
+//            }
 //            RadioButton {
 //                id:name1
 //                checked: true

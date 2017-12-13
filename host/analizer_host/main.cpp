@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication app(argc, argv);
-
+    qApp->setQuitOnLastWindowClosed(true);
     QQuickStyle::setStyle("Material");
     qmlRegisterType<MyDevice>("mydevice", 1, 0, "MyDevice");
 

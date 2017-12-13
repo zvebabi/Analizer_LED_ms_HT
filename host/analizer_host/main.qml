@@ -21,7 +21,7 @@ ApplicationWindow {
     minimumWidth: 960
     title: appTitle
     property bool drawEt: false //etalon draw or not
-    property bool aaManual: true //Enable antialiasing
+    property bool aaManual: false //Enable antialiasing
     property string yAxisName: qsTr("Absorbance") //Legends from mcu
     property bool valuesFromMCU: true //Values from mcu
     property bool serviceMode: false //write raw data to file

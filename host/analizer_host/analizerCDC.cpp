@@ -11,7 +11,7 @@ analizerCDC::analizerCDC(QObject *parent) : QObject(parent),
     rangeVal.append(QPointF(0,0));
     rangeVal.append(QPointF(0,0));
 //    isPortOpen=false;
-#ifdef _WIN32
+#ifdef _WIN322222
     device = new WinSerialPort(this);
     connect(device, &WinSerialPort::readyRead, this, &analizerCDC::readData);
 #else
@@ -25,17 +25,20 @@ analizerCDC::analizerCDC(QObject *parent) : QObject(parent),
 
 analizerCDC::~analizerCDC()
 {
+    qDebug() << "analizer destructor";
     if (device != NULL)
     {
-#ifdef _WIN32
-        if (isPortOpen)
+#ifdef _WIN322222
+//        if (isPortOpen)
         {
             device->disconnectPort();
             delete device;
+            qDebug() << "call disconnect port";
         }
 #else
         device->disconnect();
         delete device;
+        qDebug() << "call disconnect port";
 #endif
 
     }
@@ -66,7 +69,7 @@ void analizerCDC::cppSlot(const QString &msg)
 
 void analizerCDC::initDevice(QString port)
 {
-#ifdef _WIN32 //windows compatibility
+#ifdef _WIN322222 //windows compatibility
     device->setPortName(port);
     isPortOpen = device->open();
     if(isPortOpen){
@@ -87,7 +90,9 @@ void analizerCDC::initDevice(QString port)
     if(device->open(QIODevice::ReadWrite)){
         qDebug() << "Connected to: " << device->portName();
         device->write("i");
-//        emit sendDebugInfo("Connected to: " + device->portName());
+        emit sendDebugInfo("Connected to: " + device->portName());
+        device->setDataTerminalReady(true);
+        device->setRequestToSend(false);
     }
     else {
         qDebug() << "Can't open port" << port;
@@ -96,13 +101,14 @@ void analizerCDC::initDevice(QString port)
 #endif
     //read calibration file
     float k;
-    std::ifstream f("calibrator");
+    std::ifstream f(QDir::currentPath().toStdString()+"/calibrator");
     if(!f.is_open())
         emit sendDebugInfo("Can't read calibration parameters", 10000);
     while(f >> k)
     {
         calibratorData.push_back(k);
     }
+
 }
 
 void analizerCDC::getListOfPort()
@@ -119,6 +125,7 @@ void analizerCDC::getListOfPort()
 
 void analizerCDC::readData()
 {
+    qDebug() << "in readdata";
     while (device->canReadLine()) processLine(device->readLine());
 }
 
@@ -311,7 +318,7 @@ void analizerCDC::update(QtCharts::QAbstractSeries *series)
 void analizerCDC::processLine(const QByteArray &_line)
 {
 //    QByteArray line = device->readAll();
-//    qDebug() << _line;
+    qDebug() << _line;
     QStringList line;//(_line);
     for (auto w : _line.split(','))
     {
