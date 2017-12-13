@@ -876,6 +876,7 @@ void doMeasurements(uint8_t numOfEtalon, bool calcNorm, bool serviceMode)
 			setPreAmp(etalonForCalc.g1_1, etalonForCalc.g2_1);
 		else //second chain of led
 			setPreAmp(etalonForCalc.g1_2, etalonForCalc.g2_2);
+		_delay_ms(5);
 #endif
 		setCurrent(1, cur4AllLed[i].curr1);
 		setCurrent(2, cur4AllLed[i].curr2);
