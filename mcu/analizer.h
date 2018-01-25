@@ -320,7 +320,7 @@ void doMeasurements(uint8_t numOfEtalon=0, bool calcNorm=false, bool serviceMode
  * Utility function for inpulse mode of measurements
  * @param[out] value buffer for reading adc value (w/o convert to mV)
  */
-inline void readADCOneTime(uint16_t& value);
+inline void readADCOneTime(int32_t& value);
 
 /**
  * Utility function for Sample&Holde mode of measurements

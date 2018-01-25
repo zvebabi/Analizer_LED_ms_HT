@@ -821,6 +821,7 @@ void doMeasurements(uint8_t numOfEtalon, bool calcNorm, bool serviceMode)
 	for (uint8_t l=0;l<NUM_OF_LED;l++) { measuredU[l]=0; }
 	float k=0; // norm coeefs or result
 	uint8_t index;
+	uint16_t bckrnd_counter = 0;
 //	Serial.print(F("You are in measurements mode!\r\n"));
 	if (!calcNorm)
 		index = 0;
@@ -875,8 +876,20 @@ void doMeasurements(uint8_t numOfEtalon, bool calcNorm, bool serviceMode)
 //		if ( i < 7) //first chain of led
 //			setPreAmp(etalonForCalc.g1_1, etalonForCalc.g2_1);
 //		else //second chain of led
-		if ( i==6)
+		if ( i == 6 )
+		{
 			setPreAmp(etalonForCalc.g1_2, etalonForCalc.g2_2);
+			while(++bckrnd_counter < 1000)
+			{
+				readADCOneTime(Data_ADC_bgnd);
+				if (Data_ADC_bgnd < 3000)
+				{
+					Serial.print(F("bgnd\n"));
+					break;
+				}
+				_delay_ms(1);
+			}
+		}
 //		_delay_ms(5);
 #endif
 		setCurrent(1, cur4AllLed[i].curr1);
@@ -1151,7 +1164,7 @@ void doMeasurementsSH_Avg(bool calcNorm)
 	}
 }
 
-void readADCOneTime(uint16_t& value)
+void readADCOneTime(int32_t & value)
 {
 	ADC_PORT |= (1 << SS_ADC); //start conversion
 	_delay_us(3);
