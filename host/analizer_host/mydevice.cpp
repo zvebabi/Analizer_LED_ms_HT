@@ -34,7 +34,7 @@ MyDevice::MyDevice(QObject *parent) : QObject(parent)
     // standard dpi
     m_dpi = m_screen->logicalDotsPerInch() * m_screen->devicePixelRatio();
 #endif
-    m_dp = m_dpi / 160.f;
+    m_dp = m_dpi / 130.f;
     emit dpChanged(m_dp);
     emit isMobileChanged(m_isMobile);
     qDebug() << "*** dp:"<<m_dp<<" dpi:"<<m_dpi;

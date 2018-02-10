@@ -140,7 +140,6 @@ Item {
                     axisY: barAxisY
 
                 }
-
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 Layout.minimumWidth: 320

@@ -15,8 +15,96 @@ Column {
         onMakeSeries: {
             createSeries()
         }
+        onActivateEditBar: {
+            runAnalizer.enabled      = true
+            saveData.enabled         = true
+            saveImage.enabled        = true
+            zoomIn.enabled           = true
+            zoomOut.enabled          = true
+            setSeriesVisible.enabled = true
+            deleteSeries.enabled     = true
+        }
     }
+    Rectangle
+    {
+        id: mainBtnHolder
+        width: ctrlPane.itemWidth
+        height: 120*app.dp
+        anchors.top:  parent.top - app.menuBarHeight
+        color: "transparent"
+        Grid {
+            id : chartEditMenu2
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            columns: 2
+            spacing: 0
+            ToolButton {
+                id: runAnalizer
+                enabled: false
+                height: 2.3*48*app.dp
+                width: height
+                ToolTip.visible: hovered
+                    ToolTip.text: qsTr("Measurement")
+                Image {
+                    id: rAa
+                    anchors.centerIn: parent
+                    width: parent.width
+                    height: width
+                    source: "qrc:/images/runAnalizer.png"
+                    antialiasing: true
+                    smooth: true
+                }
+                ColorOverlay {
+                    anchors.fill: rAa
+                    source: rAa
+                    color: "#d000ff00"
+                }
+                onClicked: {
+                    createSeries()
+                }
+            }
+            ToolButton {
+                id: runAnalizerExpress
+                height: 2.3*48*app.dp
+                width: height
+                ToolTip.visible: hovered
+                    ToolTip.text: app.relativeMode ?
+                                      qsTr("Relative mode calibration") : qsTr("Absolute mode calibration")
+                Image {
+                    id: rAe
+                    anchors.centerIn: parent
+                    width: parent.width
+                    height: width
+                    source: "qrc:/images/runAnalizer.png"
+                    antialiasing: true
+                    smooth: true
+                }
 
+                ColorOverlay {
+                    anchors.fill: rAe
+                    source: rAe
+                    color: "#80ff0000"
+                }
+                onClicked: {
+                    if (drawEt === true) {
+                        graphs.numSeries++;
+                        var seriesName = qsTr("calibration_"
+                                              + graphs.numSeries)
+                        graphs.createSeries(ChartView.SeriesTypeLine,
+                                            seriesName,
+                                            axisX, axisY);
+                        tableModel.append({
+                           "name": seriesName,
+                           "isChecked": true,
+                           "seriesColor":
+                                   graphs.series(seriesName).color.toString() })
+                        }
+                    reciever.doMeasurements(graphs.series(seriesName), true);
+                }
+            }
+        }
+
+    }
     TextField {
         id: lineLabel
 //        text: qsTr("sample")
@@ -83,70 +171,8 @@ Column {
             columns: 1
             spacing: 0
             ToolButton {
-                id: runAnalizer
-                height: 1.6*48*app.dp
-                width: height
-                ToolTip.visible: hovered
-                    ToolTip.text: qsTr("Measurement")
-                Image {
-                    id: rAa
-                    anchors.centerIn: parent
-                    width: parent.width
-                    height: width
-                    source: "qrc:/images/runAnalizer.png"
-                    antialiasing: true
-                    smooth: true
-                }
-                ColorOverlay {
-                    anchors.fill: rAa
-                    source: rAa
-                    color: "#d000ff00"
-                }
-                onClicked: {
-                    createSeries()
-                }
-            }
-            ToolButton {
-                id: runAnalizerExpress
-                height: 1.6*48*app.dp
-                width: height
-                ToolTip.visible: hovered
-                    ToolTip.text: app.relativeMode ?
-                                      qsTr("Relative mode calibration") : qsTr("Absolute mode calibration")
-                Image {
-                    id: rAe
-                    anchors.centerIn: parent
-                    width: parent.width
-                    height: width
-                    source: "qrc:/images/runAnalizer.png"
-                    antialiasing: true
-                    smooth: true
-                }
-
-                ColorOverlay {
-                    anchors.fill: rAe
-                    source: rAe
-                    color: "#80ff0000"
-                }
-                onClicked: {
-                    if (drawEt === true) {
-                        graphs.numSeries++;
-                        var seriesName = qsTr("calibration_"
-                                              + graphs.numSeries)
-                        graphs.createSeries(ChartView.SeriesTypeLine,
-                                            seriesName,
-                                            axisX, axisY);
-                        tableModel.append({
-                           "name": seriesName,
-                           "isChecked": true,
-                           "seriesColor":
-                                   graphs.series(seriesName).color.toString() })
-                        }
-                    reciever.doMeasurements(graphs.series(seriesName), true);
-                }
-            }
-            ToolButton {
                 id: saveData
+                enabled: false
                 height: 1.5*48*app.dp
                 width: height
                 ToolTip.visible: hovered
@@ -183,6 +209,7 @@ Column {
             }
             ToolButton {
                 id: saveImage
+                enabled: false
                 height: 1.5*48*app.dp
                 width: height
                 ToolTip.visible: hovered
@@ -225,6 +252,7 @@ Column {
             }
             ToolButton {
                 id: zoomIn
+                enabled: false
                 height: 1.5*48*app.dp
                 width: height
                 ToolTip.visible: hovered
@@ -275,6 +303,7 @@ Column {
             }
             ToolButton {
                 id: zoomOut
+                enabled: false
                 height: 1.5*48*app.dp
                 width: height
                 ToolTip.visible: hovered
@@ -296,6 +325,7 @@ Column {
             }
             ToolButton {
                 id: setSeriesVisible
+                enabled: false
                 height: 1.5*48*app.dp
                 width: height
                 ToolTip.visible: hovered
@@ -339,6 +369,7 @@ Column {
             }
             ToolButton {
                 id: deleteSeries
+                enabled: false
                 height: 1.5*48*app.dp
                 width: height
     //                anchors.left: titleText.right

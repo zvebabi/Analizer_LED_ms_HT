@@ -19,6 +19,16 @@ Item {
         onSendAxisName: {
             app.yAxisName = qsTr(data)
         }
+        onDisableButton: {
+            connectBTN.enabled = false
+            listDeviceBTN.enabled = false
+            portsComboList.enabled =false
+        }
+        onActivateRelativeMod: {
+            relativeMeasurements.checked = true
+            app.relativeMode = true
+            reciever.setRelativeMode(true)
+        }
     }
     Timer {
         id: timer
@@ -45,12 +55,13 @@ Item {
             property int itemsWidth: 250*app.dp
             Button {
                 id: listDeviceBTN
-                contentItem: ButtonLabel {text: qsTr("ListDevice")}
+                contentItem: ButtonLabel {text: qsTr("Select Device")}
                 width: deviceSetter.itemsWidth
                 onClicked: {//getPorts()
                     availablePorts.clear()
                     reciever.getListOfPort()
                 }
+//                height: 150*app.dp
             }
 
             ComboBox{
@@ -61,6 +72,7 @@ Item {
                 ListModel{
                     id: availablePorts
                 }
+
             }
 
 //            ComboBox {
