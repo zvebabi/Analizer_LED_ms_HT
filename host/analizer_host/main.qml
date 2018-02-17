@@ -190,11 +190,13 @@ ApplicationWindow {
         interactive: false
         ///index fix because line and histigram viewer on same page,
         ///and nmenu numering is different.
-        //indexes: 0 - line      - ChartView.qml
-        //         1 - histogram - ChartView.qml
-        //         2 - settings  - Settings.qml
+        //indexes: 1 - line      - ChartView.qml
+        //         2 - histogram - ChartView.qml
+        //         0 - settings  - Settings.qml
         //         3 - about     - empty item
-        currentIndex: mainMenu.currentItem < 2 ? 0 : mainMenu.currentItem -1
+                currentIndex: mainMenu.currentItem < 2 ? 0 : mainMenu.currentItem - 1
+        //        currentIndex: mainMenu.currentItem > 0 && mainMenu.currentItem < 3 ?
+        //                          1 : mainMenu.currentItem == 0 ? 0 : mainMenu.currentItem - 1
         anchors.fill: parent
         anchors.top: menuBar.Bottom
         ChartView {
@@ -202,8 +204,18 @@ ApplicationWindow {
         Settings {
         }
         Item {
+            Rectangle{
+                color: red
+            }
         }
     }
+    Label {
+        id: statusBar
+        text: tipsWithPath.showedText
+        color: "steelblue"
+        anchors.bottom: parent.bottom
+    }
+
     Popup {
         id: tipsWithPath
         x: app.width/2 - width/2
@@ -213,7 +225,7 @@ ApplicationWindow {
 //        modal: true
         focus: true
         dim: true
-        property string showedText: qsTr("text in popup")
+        property string showedText: qsTr("")
         Text {
             id: textInPopup
             anchors.centerIn: tipsWithPath.Center

@@ -103,21 +103,31 @@ void analizerCDC::initDevice(QString port)
     float k;
     std::ifstream f(QDir::currentPath().toStdString()+"/calibrator");
     if(!f.is_open())
-        emit sendDebugInfo("Can't read calibration parameters", 10000);
-    while(f >> k)
     {
-        calibratorData.push_back(k);
+        emit sendDebugInfo("Can't read calibration parameters", 3000);
+        emit activateRelativeMod();
+        emit sendDebugInfo("Run application in relative mode");
     }
-
+    else
+    {
+        while(f >> k)
+        {
+            calibratorData.push_back(k);
+        }
+    }
 }
 
 void analizerCDC::getListOfPort()
 {
+    ports.clear();
     foreach(const QSerialPortInfo &info, QSerialPortInfo::availablePorts()){
         ports.push_back(info.portName());
         emit sendPortName(info.portName());
         qDebug() << info.portName();
     }
+    std::stringstream ss;
+    ss << "Found " << ports.size() << " ports";
+    emit sendDebugInfo(QString(ss.str().c_str()), 100);
 //    emit sendPortName(QString("teststr"));
 //    QObject* comboBox = this->parent()->findChild<QObject*>("availablePorts");
     //    comboBox->setProperty("append", info.portName());
@@ -132,6 +142,7 @@ void analizerCDC::readData()
 void analizerCDC::doMeasurements(QtCharts::QAbstractSeries *series,
                                  bool _etalon)
 {
+    emit sendDebugInfo("Start measurement");
     qDebug() << "doMeasurements";
     currentPoints = new QVector<QPointF> ;
     etalon = _etalon;
@@ -254,6 +265,7 @@ void analizerCDC::saveDataToCSV(QString filename="data.csv")
                    std::fstream::out);
     if (!f.is_open())
         qDebug() << "can't open file\n";
+#if 0
     int i = 1;
     for (auto series : lines.keys())
     {
@@ -262,8 +274,36 @@ void analizerCDC::saveDataToCSV(QString filename="data.csv")
             f << p.x() << ", " << p.y() << "\n";
         ++i;
     }
+#else
+    //header
+    f << "um" ;
+    for(auto series : lines.keys())
+    {
+        f  << ", " << series->name().toStdString();
+    }
+    f << "\n";
+    //main
+    for(int i = 0; i < 12; i++ )
+    {
+        for(auto series : lines.keys())
+        {
+            f << lines.value(series)[i].x() << ", ";
+            break;
+        }
+        for(auto series : lines.keys())
+        {
+            f << lines.value(series)[i].y() << ", ";
+        }
+        f << "\n";
+    }
+
+#endif
     f.close();
     qDebug() << ".done";
+    std::stringstream ss;
+    ss << "Saved to " << documentsPath.toStdString()
+       << "/" << filename.toStdString();
+    emit sendDebugInfo(QString(ss.str().c_str()));
 }
 
 void analizerCDC::deleteSeries(QtCharts::QAbstractSeries *series)
@@ -293,6 +333,9 @@ void analizerCDC::deleteSeries(QtCharts::QAbstractSeries *series)
     rangeVal[0].setY( *(yVals.begin() ) );
     rangeVal[1].setY( *(yVals.rbegin()) );
     emit adjustAxis(rangeVal[0], rangeVal[1]);
+    std::stringstream ss;
+    ss << "Measurement " << series->name().toStdString() << " deleted";
+    emit sendDebugInfo(QString(ss.str().c_str()));
 }
 
 void analizerCDC::update(QtCharts::QAbstractSeries *series)
@@ -307,12 +350,15 @@ void analizerCDC::update(QtCharts::QAbstractSeries *series)
     //fill barSeries
         QVariantList barData;
         QStringList barAxis;
-        foreach (auto p, lines.value(series)) {
-            barData.append(p.y());
-            barAxis.append(QString::number(p.x()));
+        for (auto p = lines.value(series).rbegin();
+             p !=lines.value(series).rend(); p++)
+        {
+            barData.append(p->y());
+            barAxis.append(QString::number(p->x()));
         }
         updateBarSeries(xySeries->name(),barData, xySeries->color(), barAxis);
     }
+    emit sendDebugInfo("Done");
 }
 
 void analizerCDC::processLine(const QByteArray &_line)
@@ -387,18 +433,21 @@ void analizerCDC::identityHandler(const QStringList &line)
         /// 0x01 - absorbance, 0x81 - transmittance
         if (line.at(2).toInt() == 0x01 )
         {
-            emit sendAxisName("Absorbance");
-            emit sendDebugInfo("Connected to absorbance minispectrometer");
+            emit sendAxisName("Reflected signal");
+            emit sendDebugInfo("Connection of LMS-R minispectrometer completed!");
+            emit disableButton();
         }
         else if (line.at(2).toInt() == 0x81 )
         {
-            emit sendAxisName("Transmittance");
-            emit sendDebugInfo("Connected to transmittance minispectrometer");
+            emit sendAxisName("Transmitted signal");
+            emit sendDebugInfo("Connection of LMS-T minispectrometer completed!");
+            emit disableButton();
         }
         else
             emit sendDebugInfo("Undefined device type. Check connection",
                                10000);
     }
+    emit sendDebugInfo(QString("Click “Calibrate” button to perform device calibration"));
 }
 
 void analizerCDC::dataAquisitionHandler(const QStringList &line)
@@ -408,8 +457,8 @@ void analizerCDC::dataAquisitionHandler(const QStringList &line)
         //        qDebug() << "data " << line.at(1).toFloat() <<" "
         //                 <<line.at(3).toFloat();
         auto x = line.at(1).toFloat();
-        auto y = line.at(3).toFloat() < 6600 ? line.at(3).toFloat() :
-                                               line.at(3).toFloat()-6600;
+        auto y = line.at(3).toFloat();// < 6600 ? line.at(3).toFloat() :
+                                        //       line.at(3).toFloat()-6600;
         currentPoints->append(QPointF(x, y));
         if (etalon && drawLines)
         {
@@ -445,6 +494,7 @@ void analizerCDC::dataProcessingHandler(const QStringList &line)
             etalonPoints->append(QPointF( xVal, yVal ) );
         }
         qDebug() << "set etalon";
+        emit activateEditBar();
     }
     else
     {

@@ -63,6 +63,9 @@ signals:
     void adjustAxis(QPointF minRng, QPointF maxRng);
     void updateBarSeries(QString _label, QVariantList _data, QColor _color,
                          QStringList _axis);
+    void disableButton();
+    void activateEditBar();
+    void activateRelativeMod();
     void makeSeries();
     void sendAxisName(QString data);
 private:

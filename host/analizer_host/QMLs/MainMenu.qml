@@ -43,10 +43,10 @@ Item {
         var textReturn = ""
         switch( item ) {
         case "chart_view":
-            textReturn = qsTr("GraphView")
+            textReturn = qsTr("Graph View")
             break;
         case "histogram_view":
-            textReturn = qsTr("HistogramView")
+            textReturn = qsTr("Histogram View")
             break;
         case "settings":
             textReturn = qsTr("Settings")
