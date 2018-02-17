@@ -265,6 +265,7 @@ void analizerCDC::saveDataToCSV(QString filename="data.csv")
                    std::fstream::out);
     if (!f.is_open())
         qDebug() << "can't open file\n";
+#if 0
     int i = 1;
     for (auto series : lines.keys())
     {
@@ -273,6 +274,30 @@ void analizerCDC::saveDataToCSV(QString filename="data.csv")
             f << p.x() << ", " << p.y() << "\n";
         ++i;
     }
+#else
+    //header
+    f << "um" ;
+    for(auto series : lines.keys())
+    {
+        f  << ", " << series->name().toStdString();
+    }
+    f << "\n";
+    //main
+    for(int i = 0; i < 12; i++ )
+    {
+        for(auto series : lines.keys())
+        {
+            f << lines.value(series)[i].x() << ", ";
+            break;
+        }
+        for(auto series : lines.keys())
+        {
+            f << lines.value(series)[i].y() << ", ";
+        }
+        f << "\n";
+    }
+
+#endif
     f.close();
     qDebug() << ".done";
     std::stringstream ss;
