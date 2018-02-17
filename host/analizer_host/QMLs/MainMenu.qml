@@ -12,11 +12,6 @@ Item {
     ListModel {
         id: modelMenu
         ListElement {
-            item: "settings"
-//            icon: "qrc:/images/icon_settings.png"
-            page: "Settings.qml"
-        }
-        ListElement {
             item: "chart_view"
 //            icon: "qrc:/images/icon_game.png"
             page: "ChartView.qml"
@@ -25,6 +20,11 @@ Item {
             item: "histogram_view"
 //            icon: "qrc:/images/icon_game.png"
             page: "ChartView.qml"
+        }
+        ListElement {
+            item: "settings"
+//            icon: "qrc:/images/icon_settings.png"
+            page: "Settings.qml"
         }
         ListElement {
             item: "about"
@@ -42,14 +42,14 @@ Item {
     {
         var textReturn = ""
         switch( item ) {
-        case "settings":
-            textReturn = qsTr("Settings")
-            break;
         case "chart_view":
             textReturn = qsTr("Graph View")
             break;
         case "histogram_view":
             textReturn = qsTr("Histogram View")
+            break;
+        case "settings":
+            textReturn = qsTr("Settings")
             break;
         case "about":
             textReturn = qsTr("About")

@@ -183,26 +183,30 @@ ApplicationWindow {
 
     Component.onCompleted: {
 //        currentPage = "Settings.qml"
-        mainMenu.currentItem = 0
+        mainMenu.currentItem = 2
     }
     SwipeView {
         id: view
         interactive: false
         ///index fix because line and histigram viewer on same page,
         ///and nmenu numering is different.
-        //indexes: 0 - settings  - Settings.qml
-        //         1 - line      - ChartView.qml
+        //indexes: 1 - line      - ChartView.qml
         //         2 - histogram - ChartView.qml
+        //         0 - settings  - Settings.qml
         //         3 - about     - empty item
-        currentIndex: mainMenu.currentItem > 0 && mainMenu.currentItem < 3 ?
-                          1 : mainMenu.currentItem == 0 ? 0 : mainMenu.currentItem - 1
+                currentIndex: mainMenu.currentItem < 2 ? 0 : mainMenu.currentItem - 1
+        //        currentIndex: mainMenu.currentItem > 0 && mainMenu.currentItem < 3 ?
+        //                          1 : mainMenu.currentItem == 0 ? 0 : mainMenu.currentItem - 1
         anchors.fill: parent
         anchors.top: menuBar.Bottom
-        Settings {
-        }
         ChartView {
         }
+        Settings {
+        }
         Item {
+            Rectangle{
+                color: red
+            }
         }
     }
     Label {

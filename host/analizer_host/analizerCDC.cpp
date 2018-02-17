@@ -325,9 +325,11 @@ void analizerCDC::update(QtCharts::QAbstractSeries *series)
     //fill barSeries
         QVariantList barData;
         QStringList barAxis;
-        foreach (auto p, lines.value(series)) {
-            barData.append(p.y());
-            barAxis.append(QString::number(p.x()));
+        for (auto p = lines.value(series).rbegin();
+             p !=lines.value(series).rend(); p++)
+        {
+            barData.append(p->y());
+            barAxis.append(QString::number(p->x()));
         }
         updateBarSeries(xySeries->name(),barData, xySeries->color(), barAxis);
     }
