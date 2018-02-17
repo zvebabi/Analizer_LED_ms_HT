@@ -94,7 +94,7 @@ typedef struct
     uint16_t curr2;
 } current_t;
 
-const uint8_t deviceType PROGMEM  = 0x01;//0x01 absorbance, 0x81- transmittance
+uint8_t deviceType EEMEM  = 0x01;//0x01 absorbance, 0x81- transmittance
 uint8_t _serialNumber EEMEM = 0x01;
 /**
  * allocate eeprom variable
