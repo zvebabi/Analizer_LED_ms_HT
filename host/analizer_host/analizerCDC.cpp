@@ -432,8 +432,8 @@ void analizerCDC::dataAquisitionHandler(const QStringList &line)
         //        qDebug() << "data " << line.at(1).toFloat() <<" "
         //                 <<line.at(3).toFloat();
         auto x = line.at(1).toFloat();
-        auto y = line.at(3).toFloat() < 6600 ? line.at(3).toFloat() :
-                                               line.at(3).toFloat()-6600;
+        auto y = line.at(3).toFloat();// < 6600 ? line.at(3).toFloat() :
+                                        //       line.at(3).toFloat()-6600;
         currentPoints->append(QPointF(x, y));
         if (etalon && drawLines)
         {
