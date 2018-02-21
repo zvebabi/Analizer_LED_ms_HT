@@ -433,13 +433,13 @@ void analizerCDC::identityHandler(const QStringList &line)
         /// 0x01 - absorbance, 0x81 - transmittance
         if (line.at(2).toInt() == 0x01 )
         {
-            emit sendAxisName("Reflected signal");
+            emit sendAxisName("Reflection, %");
             emit sendDebugInfo("Connection of LMS-R minispectrometer completed!");
             emit disableButton();
         }
         else if (line.at(2).toInt() == 0x81 )
         {
-            emit sendAxisName("Transmitted signal");
+            emit sendAxisName("Transmission, %");
             emit sendDebugInfo("Connection of LMS-T minispectrometer completed!");
             emit disableButton();
         }
@@ -476,9 +476,15 @@ void analizerCDC::dataAquisitionHandler(const QStringList &line)
 
 void analizerCDC::dataProcessingHandler(const QStringList &line)
 {
-
-    if (currentPoints->rbegin()->y() == -1.0)
-        emit sendDebugInfo("Bad data", 5000);
+    for (auto point = currentPoints->begin(); point != currentPoints->end(); point++)
+    {
+        if (point->y() == -1.0)
+        {
+            emit sendDebugInfo("Bad data", 5000);
+            emit sendDebugInfo("Weak signal! Press Run button again and redo measurement!", 100);
+            break;
+        }
+    }
     //save series and data for future
     if (etalon)
     {
