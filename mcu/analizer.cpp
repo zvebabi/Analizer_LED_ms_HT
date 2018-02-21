@@ -601,8 +601,12 @@ void factoryCalibr()
 					/// - \b x \n
 					/// set serial number
 					uint8_t serialNum = 0;
+					uint8_t devType =0;
+					devType = Serial.parseInt(SKIP_WHITESPACE);
 					serialNum = Serial.parseInt(SKIP_WHITESPACE);
 					eeprom_write_byte(&_serialNumber, serialNum);
+					eeprom_write_byte(&deviceType, devType);
+
 					break;
 				}
 				default:
@@ -821,6 +825,7 @@ void doMeasurements(uint8_t numOfEtalon, bool calcNorm, bool serviceMode)
 	for (uint8_t l=0;l<NUM_OF_LED;l++) { measuredU[l]=0; }
 	float k=0; // norm coeefs or result
 	uint8_t index;
+	uint16_t bckrnd_counter = 0;
 //	Serial.print(F("You are in measurements mode!\r\n"));
 	if (!calcNorm)
 		index = 0;
@@ -875,8 +880,34 @@ void doMeasurements(uint8_t numOfEtalon, bool calcNorm, bool serviceMode)
 //		if ( i < 7) //first chain of led
 //			setPreAmp(etalonForCalc.g1_1, etalonForCalc.g2_1);
 //		else //second chain of led
-		if ( i==6)
+		if ( i == 6 )
+		{
 			setPreAmp(etalonForCalc.g1_2, etalonForCalc.g2_2);
+			for (bckrnd_counter = 0; bckrnd_counter < 1000; bckrnd_counter++)
+			{
+				readADCOneTime(Data_ADC_bgnd);
+				if (Data_ADC_bgnd > 32767)
+					Data_ADC_bgnd = Data_ADC_bgnd - 0xFFFF;
+				if (Data_ADC_bgnd < 1500)
+				{
+//					Serial.print(F("exit on bgnd, #"));
+//					Serial.print(bckrnd_counter);
+//					Serial.print(F(", ADC: "));
+//					Serial.println(Data_ADC_bgnd);
+					break;
+				}
+//				Serial.print(F("#"));
+//				Serial.print(bckrnd_counter);
+//				Serial.print(F(", ADC: "));
+//				Serial.println(Data_ADC_bgnd);
+				_delay_us(300);
+			}
+			if(bckrnd_counter >= 999)
+			{
+//				Serial.print(F("exit timelimit, #"));
+//				Serial.println(bckrnd_counter);
+			}
+		}
 //		_delay_ms(5);
 #endif
 		setCurrent(1, cur4AllLed[i].curr1);
@@ -896,6 +927,7 @@ void doMeasurements(uint8_t numOfEtalon, bool calcNorm, bool serviceMode)
 		while ( j < NUM_OF_POINTS )
 		{
 			++j;
+			_delay_ms(5);
 			doOnePulse(pulseWidth);
 
 			Data_ADC >>= 1;          //averaging
@@ -913,7 +945,7 @@ void doMeasurements(uint8_t numOfEtalon, bool calcNorm, bool serviceMode)
 				Serial.println(Data_ADC_bgnd);
 			}
 #if 1//check correctness
-			if (Data_ADC_bgnd > 3000  || Data_ADC < Data_ADC_bgnd || Data_ADC < 100)
+			if (Data_ADC_bgnd > 10000  || Data_ADC < Data_ADC_bgnd)
 				continue;
 #endif
 
@@ -929,7 +961,7 @@ void doMeasurements(uint8_t numOfEtalon, bool calcNorm, bool serviceMode)
 
 			Data_ADC=0;
 			Data_ADC_bgnd =0;
-			_delay_ms(5);
+
 		}
 		//median filtration of adc data
 		if (goodPulses !=0)
@@ -1151,7 +1183,7 @@ void doMeasurementsSH_Avg(bool calcNorm)
 	}
 }
 
-void readADCOneTime(uint16_t& value)
+void readADCOneTime(int32_t & value)
 {
 	ADC_PORT |= (1 << SS_ADC); //start conversion
 	_delay_us(3);
@@ -1187,8 +1219,10 @@ void writeConfigToUart()
 	uint8_t sn = eeprom_read_byte(&_serialNumber);
 	Serial.print( F("Serial number: ") );
 	Serial.println(sn);
+
+	sn = eeprom_read_byte(&deviceType);
 	Serial.print( F("Type ") );
-	PrintHexByte(pgm_read_byte(&deviceType));
+	PrintHexByte(sn);
 	//pulse
 	uint16_t pulse_temp = eeprom_read_word(&_pulseWidth);
 	Serial.print(F("\r\nPWidth is: "));
@@ -1335,7 +1369,7 @@ void shiftRegisterNext() {
 void shiftRegisterFirst() {
 	PORTD &= (~(1 << SR_DATA));   //SER-LOW
 	_delay_us(ShiftRegisterDelay);
-	for (uint8_t i = 0; i < 2; i++)
+	for (uint8_t i = 0; i < 1; i++)
 	{
 		PORTD |= (1 << SR_CLK);      //RCLK-HIGH
 		_delay_us(ShiftRegisterDelay);
@@ -1540,10 +1574,10 @@ void setPulseWidth(uint16_t width)
 
 void sendIdentity()
 {
+	uint8_t serialN =	eeprom_read_byte(&deviceType);
 	Serial.print( F( "x=i,TYPE," ) );
-	Serial.println( pgm_read_byte( &deviceType ) );
-
-	uint8_t serialN =	eeprom_read_byte(&_serialNumber);
+	Serial.println( serialN );
+	serialN =	eeprom_read_byte(&_serialNumber);
 	Serial.print(F("x=i,SERIAL,"));
 	Serial.println(serialN);
 }
