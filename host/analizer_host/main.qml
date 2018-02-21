@@ -204,9 +204,6 @@ ApplicationWindow {
         Settings {
         }
         Item {
-            Rectangle{
-                color: red
-            }
         }
     }
     Label {

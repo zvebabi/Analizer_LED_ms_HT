@@ -37,7 +37,7 @@ Column {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             columns: 2
-            spacing: 0
+            spacing: 15
             ToolButton {
                 id: runAnalizer
                 enabled: false
