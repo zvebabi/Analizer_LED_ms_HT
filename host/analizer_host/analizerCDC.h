@@ -3,6 +3,7 @@
 
 #include <QtCore/QObject>
 #include <QVariant>
+#include <QVector>
 #include <QSerialPort>
 #include <QSerialPortInfo>
 #include <QStringList>

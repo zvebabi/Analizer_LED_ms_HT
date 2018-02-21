@@ -94,7 +94,7 @@ typedef struct
     uint16_t curr2;
 } current_t;
 
-const uint8_t deviceType PROGMEM  = 0x01;//0x01 absorbance, 0x81- transmittance
+uint8_t deviceType EEMEM  = 0x01;//0x01 absorbance, 0x81- transmittance
 uint8_t _serialNumber EEMEM = 0x01;
 /**
  * allocate eeprom variable
@@ -320,7 +320,7 @@ void doMeasurements(uint8_t numOfEtalon=0, bool calcNorm=false, bool serviceMode
  * Utility function for inpulse mode of measurements
  * @param[out] value buffer for reading adc value (w/o convert to mV)
  */
-inline void readADCOneTime(uint16_t& value);
+inline void readADCOneTime(int32_t& value);
 
 /**
  * Utility function for Sample&Holde mode of measurements
