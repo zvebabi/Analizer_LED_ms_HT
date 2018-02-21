@@ -2,6 +2,7 @@
 #include <QQmlApplicationEngine>
 #include <QQuickStyle>
 #include <QQmlContext>
+#include <QIcon>
 
 #include "analizerCDC.h"
 #include "mydevice.h"
@@ -18,7 +19,7 @@ int main(int argc, char *argv[])
     engine.load(QUrl(QLatin1String("qrc:/main.qml")));
 
     QObject* root = engine.rootObjects()[0];
-
+    app.setWindowIcon(QIcon(":/images/logo_icon_7.png"));
     analizerCDC *analizer= new analizerCDC(root);
 
     engine.rootContext()->setContextProperty("reciever", analizer);

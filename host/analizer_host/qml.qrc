@@ -16,5 +16,7 @@
         <file>images/delete.png</file>
         <file>images/setVisible.png</file>
         <file>HistogramView.qml</file>
+        <file>images/runCalibration.png</file>
+        <file>images/logo_icon_7.png</file>
     </qresource>
 </RCC>

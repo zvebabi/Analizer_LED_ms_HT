@@ -37,7 +37,7 @@ Column {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             columns: 2
-            spacing: 15
+            spacing: 20
             ToolButton {
                 id: runAnalizer
                 enabled: false
@@ -50,7 +50,7 @@ Column {
                     anchors.centerIn: parent
                     width: parent.width
                     height: width
-                    source: "qrc:/images/runAnalizer.png"
+                    source: "qrc:/images/runCalibration.png"
                     antialiasing: true
                     smooth: true
                 }

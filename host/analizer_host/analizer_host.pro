@@ -25,9 +25,8 @@ HEADERS += \
     WinSerialPort.h
 SOURCES += \
     WinSerialPort.cpp
-
+#RC_FILE += icon.rc
 }
-
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
