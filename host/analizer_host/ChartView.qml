@@ -25,6 +25,16 @@ Item {
 
             barAxisY.min = 0
             barAxisY.max = graphs.maxRngY*1.1
+
+            var srcSeries = graphs.series(graphs.numSeries-1)
+            var scatter = graphs.createSeries(ChartView.SeriesTypeScatter,
+                                   seriesName,
+                                   axisX, axisY);
+            scatter.color = srcSeries.color
+            scatter.name = srcSeries.name
+            for (var p =0; p <  srcSeries.count; p++) {
+                scatter.append(srcSeries.at(p).x, srcSeries.at(p).y)
+            }
         }
         onUpdateBarSeries: {
             mainBarSeries.append(_label, _data)

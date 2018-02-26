@@ -50,7 +50,7 @@ Column {
                     anchors.centerIn: parent
                     width: parent.width
                     height: width
-                    source: "qrc:/images/runCalibration.png"
+                    source: "qrc:/images/runAnalizer.png"
                     antialiasing: true
                     smooth: true
                 }
@@ -75,7 +75,7 @@ Column {
                     anchors.centerIn: parent
                     width: parent.width
                     height: width
-                    source: "qrc:/images/runAnalizer.png"
+                    source: "qrc:/images/runCalibration.png"
                     antialiasing: true
                     smooth: true
                 }
