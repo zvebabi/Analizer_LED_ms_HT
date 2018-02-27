@@ -106,7 +106,12 @@ void analizerCDC::initDevice(QString port)
     {
         emit sendDebugInfo("Can't read calibration parameters", 3000);
         emit activateRelativeMod();
-        emit sendDebugInfo("Run application in relative mode");
+        std::stringstream ss;
+        ss << "Can not read file \'"
+           << QDir::currentPath().toStdString()
+           << "/calibrator\'"
+           << " Run application in relative mode";
+        emit sendDebugInfo(ss.str().c_str());
     }
     else
     {
@@ -261,7 +266,7 @@ void analizerCDC::saveDataToCSV(QString filename="data.csv")
     if (!dataDir.exists())
         dataDir.mkpath(".");
 
-    std::fstream f(QString(documentsPath+"/"+filename).toStdString(),
+    std::ofstream f(QString(documentsPath+"/"+filename).toStdString(),
                    std::fstream::out);
     if (!f.is_open())
         qDebug() << "can't open file\n";
