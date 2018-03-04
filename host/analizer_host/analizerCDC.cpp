@@ -1,5 +1,6 @@
 #include "analizerCDC.h"
 #include <QtMath>
+//#define STL_STREAM
 
 analizerCDC::analizerCDC(QObject *parent) : QObject(parent),
     firstLine(true), aaManual(true), serviceMode(false), isPortOpen(false),
@@ -265,26 +266,36 @@ void analizerCDC::saveDataToCSV(QString filename="data.csv")
     QDir dataDir(documentsPath);
     if (!dataDir.exists())
         dataDir.mkpath(".");
-
+#ifdef STL_STREAM //STL FSTREAM
     std::ofstream f(QString(documentsPath+"/"+filename).toStdString(),
                    std::fstream::out);
     if (!f.is_open())
-        qDebug() << "can't open file\n";
-#if 0
-    int i = 1;
-    for (auto series : lines.keys())
     {
-        f << "Sample: " << series->name().toStdString() << "\n";
-        for ( auto& p : lines.value(series))
-            f << p.x() << ", " << p.y() << "\n";
-        ++i;
+        std::string err = strerror(errno);
+#else //QFILE
+    QFile outfile(QString(documentsPath+"/"+filename));
+    if(!outfile.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        std::string err = outfile.errorString().toStdString();
+#endif
+        qDebug() << "can't open file\n";
+        std::stringstream ss;
+        ss << "Error while writing data: " << err;
+        emit sendDebugInfo(ss.str().c_str(), 3000);
+        return;
     }
-#else
+#ifndef STL_STREAM
+    QTextStream f(&outfile);
+#endif
     //header
     f << "um" ;
     for(auto series : lines.keys())
     {
+#ifdef STL_STREAM
         f  << ", " << series->name().toStdString();
+#else
+        f  << ", " << series->name();
+#endif
     }
     f << "\n";
     //main
@@ -302,8 +313,11 @@ void analizerCDC::saveDataToCSV(QString filename="data.csv")
         f << "\n";
     }
 
-#endif
+#ifdef STL_STREAM
     f.close();
+#else
+    outfile.close();
+#endif
     qDebug() << ".done";
     std::stringstream ss;
     ss << "Saved to " << documentsPath.toStdString()

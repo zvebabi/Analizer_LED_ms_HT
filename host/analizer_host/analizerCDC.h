@@ -18,6 +18,7 @@
 #include <QDebug>
 #include <QDir>
 #include <QPair>
+#include <QFile>
 #include <vector>
 #include <fstream>
 #include <typeinfo>
