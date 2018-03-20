@@ -102,24 +102,41 @@ void analizerCDC::initDevice(QString port)
 #endif
     //read calibration file
     float k;
+
+#ifdef STL_STREAM
     std::ifstream f(QDir::currentPath().toStdString()+"/calibrator");
     if(!f.is_open())
     {
+        std::string err = strerror(errno);
+#else
+    QFile calibfile(QDir::currentPath()+"/calibrator");
+    if(!calibfile.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        std::string err = calibfile.errorString().toStdString();
+#endif
+
         emit sendDebugInfo("Can't read calibration parameters", 3000);
         emit activateRelativeMod();
         std::stringstream ss;
         ss << "Can not read file \'"
            << QDir::currentPath().toStdString()
            << "/calibrator\'"
-           << " Run application in relative mode";
+           << " Run application in relative mode. "
+           << "Error #"
+           << err;
         emit sendDebugInfo(ss.str().c_str());
+        return;
     }
-    else
+#ifdef STL_STREAM
+    while(f >> k)
     {
-        while(f >> k)
-        {
-            calibratorData.push_back(k);
-        }
+#else
+    QTextStream f(&calibfile);
+    while (!f.atEnd())
+    {
+        f >> k;
+#endif
+        calibratorData.push_back(k);
     }
 }
 
