@@ -394,6 +394,10 @@ Column {
                                 reciever.deleteSeries(
                                             graphs.series(
                                                tableOfSeries.currentItem.text));
+                                //dotted series start
+                                graphs.removeSeries(graphs.series(qsTr(graphs.series(
+                                               tableOfSeries.currentItem.text).name+"_dotted")));
+                                //dotted series end
                                 graphs.removeSeries(
                                             graphs.series(
                                                tableOfSeries.currentItem.text));
@@ -435,7 +439,7 @@ Column {
         graphs.numSeries++;
         var seriesName = qsTr(lineLabel.text + "_"
                               + graphs.numSeries)
-        graphs.createSeries(ChartView.SeriesTypeSpline,
+        graphs.createSeries(ChartView.SeriesTypeLine,
                             seriesName,
                             axisX, axisY);
 //        reciever.doMeasurements(graphs.series(seriesName));
