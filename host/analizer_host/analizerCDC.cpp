@@ -163,7 +163,8 @@ void analizerCDC::readData()
 }
 
 void analizerCDC::doMeasurements(QtCharts::QAbstractSeries *series,
-                                 bool _etalon)
+                                 bool _etalon,
+                                 QtCharts::QAbstractSeries *seriesDotted)
 {
     emit sendDebugInfo("Start measurement");
     qDebug() << "doMeasurements";
@@ -175,7 +176,8 @@ void analizerCDC::doMeasurements(QtCharts::QAbstractSeries *series,
         device->write("d");
     else
         device->write("m");
-    currentSeries = series;
+    currentSeries.first = series;
+    currentSeries.second = seriesDotted;
 #else
     auto colCount =10;
     // Append the new data depending on the type
@@ -374,7 +376,8 @@ void analizerCDC::deleteSeries(QtCharts::QAbstractSeries *series)
     emit sendDebugInfo(QString(ss.str().c_str()));
 }
 
-void analizerCDC::update(QtCharts::QAbstractSeries *series)
+void analizerCDC::update(QtCharts::QAbstractSeries *series,
+                         QtCharts::QAbstractSeries *seriesDotted)
 {
     if (series && lines.contains(series)) {
         QtCharts::QXYSeries *xySeries =
@@ -382,7 +385,13 @@ void analizerCDC::update(QtCharts::QAbstractSeries *series)
 //        QVector<QPointF> points = lines.value(series);
         // Use replace instead of clear + append, it's optimized for performance
         xySeries->replace(lines.value(series));
-
+//dotted series start
+        if (seriesDotted) {
+            QtCharts::QXYSeries *xySeriesDotted =
+                static_cast<QtCharts::QXYSeries *>(seriesDotted);
+            xySeriesDotted->replace(lines.value(series));
+        }
+//dotted series end
     //fill barSeries
         QVariantList barData;
         QStringList barAxis;
@@ -635,7 +644,7 @@ void analizerCDC::dataProcessingHandler(const QStringList &line)
         m_data.append(prevData);
         if (prevSeries && lines.contains(prevSeries))
             lines[prevSeries] = m_data.back();
-        update(prevSeries);
+        update(prevSeries, NULL);
     }
     else if(!etalon)
     {
@@ -652,10 +661,10 @@ void analizerCDC::dataProcessingHandler(const QStringList &line)
         m_data.append(*currentPoints);
         vectorLines.push_back(
              QPair<QtCharts::QAbstractSeries*, QVector<QPointF> >(
-                        currentSeries, m_data.back()));
-        lines.insert(currentSeries, m_data.back()); //save series
+                        currentSeries.first, m_data.back()));
+        lines.insert(currentSeries.first, m_data.back()); //save series
         emit adjustAxis(rangeVal[0], rangeVal[1]);
-        update(currentSeries);
+        update(currentSeries.first, currentSeries.second);
     }
 }
 

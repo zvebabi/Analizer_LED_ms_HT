@@ -99,7 +99,7 @@ Column {
                            "seriesColor":
                                    graphs.series(seriesName).color.toString() })
                         }
-                    reciever.doMeasurements(graphs.series(seriesName), true);
+                    reciever.doMeasurements(graphs.series(seriesName),true);
                 }
             }
         }
@@ -438,7 +438,15 @@ Column {
         graphs.createSeries(ChartView.SeriesTypeSpline,
                             seriesName,
                             axisX, axisY);
-        reciever.doMeasurements(graphs.series(seriesName));
+//        reciever.doMeasurements(graphs.series(seriesName));
+//dotted series start
+        var seriesNameDotted = qsTr(seriesName + "_dotted")
+        var series = graphs.createSeries(ChartView.SeriesTypeScatter,
+                            seriesNameDotted,
+                            axisX, axisY);
+        series.color = graphs.series(seriesName).color;
+//dotted series end
+        reciever.doMeasurements(graphs.series(seriesName), false, graphs.series(seriesNameDotted));
         tableModel.append({
            "name": seriesName,
            "isChecked": true,
