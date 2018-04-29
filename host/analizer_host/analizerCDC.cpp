@@ -257,6 +257,14 @@ void analizerCDC::doMeasurements(QtCharts::QAbstractSeries *series,
 
 }
 
+void analizerCDC::selectPath(QString pathForSave)
+{
+    qDebug() << documentsPath;
+    documentsPath = pathForSave;
+    qDebug() << pathForSave;
+    qDebug() << documentsPath;
+}
+
 void analizerCDC::saveDataToCSV(QString filename="data.csv")
 {
     qDebug() << "save to csv..";

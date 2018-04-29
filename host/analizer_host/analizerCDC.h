@@ -56,6 +56,7 @@ public slots:
     void doMeasurements(QtCharts::QAbstractSeries *series,
                         bool _etalon=false);
 //    void doCalibration();
+    void selectPath(QString pathForSave);
     void saveDataToCSV(QString filename);
     void deleteSeries(QtCharts::QAbstractSeries *series);
 

@@ -2,6 +2,7 @@ import QtQuick 2.7
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
 import QtCharts 2.2
+import QtQuick.Dialogs 1.2
 import "QMLs"
 
 Item {
@@ -88,6 +89,57 @@ Item {
                 width: deviceSetter.itemsWidth
                 onClicked: reciever.initDevice(portsComboList.currentText)
             }
+            Label {
+                text: qsTr("Save images and data to: ")
+                font.family: "DejaVu Sans Mono"
+                font.pixelSize: 22*app.dp
+            }
+            TextField {
+                id: filePathText
+                width: deviceSetter.itemsWidth
+                text:reciever.getDataPath()
+                font.family: "DejaVu Sans Mono"
+                font.pixelSize: 22*app.dp
+                readOnly: true
+                selectByMouse: true
+                MouseArea {
+                    anchors.fill: parent
+                    acceptedButtons: Qt.LeftButton | Qt.RightButton
+                    onClicked: {
+                        if(mouse.button == Qt.RightButton) {
+                            filePathText.copy()
+                            tipsWithPath.showedText = qsTr("Path has been copied to clipboard")
+                            tipsWithPath.open()
+                            delay(1500, tipsWithPath.close)
+                            filePathText.deselect()
+                        }
+                        if(mouse.button == Qt.LeftButton) {
+                            filePathText.selectAll()
+                        }
+                    }
+                }
+            }
+            Button
+            {
+                id: selectPath
+                contentItem:  ButtonLabel {text:qsTr("Change path")}
+                width: deviceSetter.itemsWidth
+                FileDialog {
+                    id: fileDialog
+                    title: qsTr("Select directory")
+                    visible: false
+                    folder: "file:///" + reciever.getDataPath()
+                    selectExisting: true
+                    selectFolder: true
+                    selectMultiple: false
+                    onAccepted: {
+                        reciever.selectPath(fileUrl.toString().substring(8))
+                        filePathText.text = reciever.getDataPath()
+                    }
+                }
+                onClicked: fileDialog.open()
+            }
+
             CheckBox {
                 id:relativeMeasurements
                 text: qsTr("Relative mode")

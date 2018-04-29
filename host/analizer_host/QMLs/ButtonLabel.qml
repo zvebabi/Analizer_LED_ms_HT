@@ -9,5 +9,5 @@ Text {
     font.family: "DejaVu Sans Mono"
     font.pixelSize: 30*app.dp
 //    color: "white"
-    text: "Тест"
+    text: "Button"
 }
