@@ -54,7 +54,8 @@ public slots:
     void setCumulativeMode(bool _values) {cumulativeMode = _values;}
 
     void doMeasurements(QtCharts::QAbstractSeries *series,
-                        bool _etalon=false);
+                        bool _etalon=false,
+                        QtCharts::QAbstractSeries *seriesDotted=NULL);
 //    void doCalibration();
     void selectPath(QString pathForSave);
     void saveDataToCSV(QString filename);
@@ -72,7 +73,7 @@ signals:
     void makeSeries();
     void sendAxisName(QString data);
 private:
-    void update(QtCharts::QAbstractSeries *series);
+    void update(QtCharts::QAbstractSeries *series, QtCharts::QAbstractSeries *seriesDotted);
     void processLine(const QByteArray& line);
     void serviceModeHandler(const QStringList& line);
     void identityHandler(const QStringList& line);
@@ -96,7 +97,7 @@ private:
     QVector<QPointF> cumulativePoints;
     int numberCumulativeLines;
     QVector<float> calibratorData;
-    QtCharts::QAbstractSeries* currentSeries;
+    std::pair<QtCharts::QAbstractSeries*,QtCharts::QAbstractSeries*> currentSeries;
     QtCharts::QAbstractSeries* etalonSeries;
     QVector<QPair<QtCharts::QAbstractSeries*, QVector<QPointF> > > vectorLines;
     QMap< QtCharts::QAbstractSeries*, QVector<QPointF> > lines;

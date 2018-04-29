@@ -28,7 +28,7 @@ ApplicationWindow {
     property bool relativeMode: false   //compare with calibration data or with
                                         //previous sample
     property bool cumulativeMode: false
-
+//    property string currentSeriesName: qsTr("")
     Material.theme: Material.Light
     Material.primary: Material.BlueGrey
     Material.accent: Material.Teal

@@ -99,7 +99,7 @@ Column {
                            "seriesColor":
                                    graphs.series(seriesName).color.toString() })
                         }
-                    reciever.doMeasurements(graphs.series(seriesName), true);
+                    reciever.doMeasurements(graphs.series(seriesName),true);
                 }
             }
         }
@@ -159,10 +159,16 @@ Column {
                 standardButtons: StandardButton.OK
                 onAccepted: {
                     console.log(newName.text)
+                    //dotted series start
+                    graphs.series(qsTr(graphs.series(
+                                   tableOfSeries.currentItem.text).name+"_dotted")).name =
+                            qsTr(newName.text + "_dotted");
+                    //dotted series end
                     graphs.series(tableOfSeries.currentItem.text).name =
                             newName.text
                     tableOfSeries.currentItem.text = newName.text
                     newName.text = ""
+
                 }
             }
         }
@@ -346,6 +352,11 @@ Column {
                                     ).visible = true;
                       console.log("Series: " +
                                 tableOfSeries.currentItem.text + " is off.");
+                        //dotted series start
+                        graphs.series( qsTr(graphs.series(tableOfSeries.currentItem.text).name+"_dotted")
+                                        ).visible = true;
+                        //dotted series end
+
                     //recalc range
                       for(var j = 0; j < graphs.series(tableOfSeries.currentItem.text
                                                        ).count; j ++ ){
@@ -358,7 +369,11 @@ Column {
                       }
                     } else {
                       graphs.series(tableOfSeries.currentItem.text).visible =
-                                                                        false;}
+                                                                        false;
+                      //dotted series start
+                      graphs.series(qsTr(graphs.series(tableOfSeries.currentItem.text).name+"_dotted")).visible = false;
+                      //dotted series end
+                    }
                   }
                   redrawHistogram()
                   graphs.minRngY = minRngYY
@@ -394,6 +409,10 @@ Column {
                                 reciever.deleteSeries(
                                             graphs.series(
                                                tableOfSeries.currentItem.text));
+                                //dotted series start
+                                graphs.removeSeries(graphs.series(qsTr(graphs.series(
+                                               tableOfSeries.currentItem.text).name+"_dotted")));
+                                //dotted series end
                                 graphs.removeSeries(
                                             graphs.series(
                                                tableOfSeries.currentItem.text));
@@ -435,10 +454,18 @@ Column {
         graphs.numSeries++;
         var seriesName = qsTr(lineLabel.text + "_"
                               + graphs.numSeries)
-        graphs.createSeries(ChartView.SeriesTypeSpline,
+        graphs.createSeries(ChartView.SeriesTypeLine,
                             seriesName,
                             axisX, axisY);
-        reciever.doMeasurements(graphs.series(seriesName));
+//        reciever.doMeasurements(graphs.series(seriesName));
+//dotted series start
+        var seriesNameDotted = qsTr(seriesName + "_dotted")
+        var series = graphs.createSeries(ChartView.SeriesTypeScatter,
+                            seriesNameDotted,
+                            axisX, axisY);
+        series.color = graphs.series(seriesName).color;
+//dotted series end
+        reciever.doMeasurements(graphs.series(seriesName), false, graphs.series(seriesNameDotted));
         tableModel.append({
            "name": seriesName,
            "isChecked": true,
