@@ -133,7 +133,7 @@ Item {
                     selectFolder: true
                     selectMultiple: false
                     onAccepted: {
-                        reciever.selectPath(fileUrl.toString().substring(8))
+                        reciever.selectPath(fileUrl.toString().substring(8) + "/")
                         filePathText.text = reciever.getDataPath()
                     }
                 }

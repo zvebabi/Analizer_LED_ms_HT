@@ -41,6 +41,7 @@ Item {
             mainBarSeries.append(_label, _data)
             mainBarSeries.at(mainBarSeries.count-1).color = _color
             barAxisX.categories = _axis
+            barAxisX.visible = true
 
         }
         onSendDebugInfo: {
@@ -133,12 +134,13 @@ Item {
                     id: barAxisX
                     objectName: "barAxisX"
                     titleText: qsTr("Wavelength(um)")
+                    visible: false
                 }
 
                 ValueAxis {
                     id: barAxisY
                     objectName: "barAxisY"
-                    titleText: qsTr("Absorbance")
+                    titleText: app.yAxisName
                     min: 0
                     max:0
                     tickCount: 5

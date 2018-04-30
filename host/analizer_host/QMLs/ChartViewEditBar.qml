@@ -452,8 +452,8 @@ Column {
 //        }
 
         graphs.numSeries++;
-        var seriesName = qsTr(lineLabel.text + "_"
-                              + graphs.numSeries)
+        var seriesName = qsTr(graphs.numSeries + "_"
+                            + lineLabel.text)
         graphs.createSeries(ChartView.SeriesTypeLine,
                             seriesName,
                             axisX, axisY);
