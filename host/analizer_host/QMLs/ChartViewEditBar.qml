@@ -454,7 +454,7 @@ Column {
         graphs.numSeries++;
         var seriesName = qsTr(graphs.numSeries + "_"
                             + lineLabel.text)
-        graphs.createSeries(ChartView.SeriesTypeLine,
+        graphs.createSeries(ChartView.SeriesTypeSpline,
                             seriesName,
                             axisX, axisY);
 //        reciever.doMeasurements(graphs.series(seriesName));
@@ -464,6 +464,7 @@ Column {
                             seriesNameDotted,
                             axisX, axisY);
         series.color = graphs.series(seriesName).color;
+        series.markerSize = 7;
 //dotted series end
         reciever.doMeasurements(graphs.series(seriesName), false, graphs.series(seriesNameDotted));
         tableModel.append({

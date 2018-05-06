@@ -31,7 +31,7 @@ Item {
 //            title: "Result"
             anchors.fill: parent
             antialiasing: true
-            legend.visible: false
+            legend: false
             property int numSeries : 0 //current number of graphs
             property real minRngY: 0.0
             property real maxRngY: 0.0
