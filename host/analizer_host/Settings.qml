@@ -106,14 +106,14 @@ Item {
                     anchors.fill: parent
                     acceptedButtons: Qt.LeftButton | Qt.RightButton
                     onClicked: {
-                        if(mouse.button == Qt.RightButton) {
+                        if(mouse.button === Qt.RightButton) {
                             filePathText.copy()
                             tipsWithPath.showedText = qsTr("Path has been copied to clipboard")
                             tipsWithPath.open()
                             delay(1500, tipsWithPath.close)
                             filePathText.deselect()
                         }
-                        if(mouse.button == Qt.LeftButton) {
+                        if(mouse.button === Qt.LeftButton) {
                             filePathText.selectAll()
                         }
                     }
