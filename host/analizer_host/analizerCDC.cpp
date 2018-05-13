@@ -319,9 +319,9 @@ void analizerCDC::saveDataToCSV(QString filename="data.csv")
     for(auto series : lines.keys())
     {
 #ifdef STL_STREAM
-        f  << "\t" << series->name().toStdString();
+        f  << ";" << series->name().toStdString();
 #else
-        f  << "\t" << series->name();
+        f  << ";" << series->name();
 #endif
     }
     f << "\n";
@@ -330,12 +330,14 @@ void analizerCDC::saveDataToCSV(QString filename="data.csv")
     {
         for(auto series : lines.keys())
         {
-            f << lines.value(series)[i].x() << "\t";
+            f << QLocale().toString(lines.value(series)[i].x()) << ";";
             break;
         }
         for(auto series : lines.keys())
         {
-            f << lines.value(series)[i].y() << "\t";
+            f << QLocale().toString(lines.value(series)[i].y());
+            if ( series != *lines.keys().rbegin())
+                f << ";";
         }
         f << "\n";
     }
