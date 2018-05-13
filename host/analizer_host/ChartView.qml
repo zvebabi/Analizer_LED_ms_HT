@@ -62,11 +62,11 @@ Item {
 //            anchors.margins: 10
             Rectangle {
                 width: parent.width - editBar.itemWidth
-                height: app.height - 2*app.menuBarHeight
+                height: app.height - 1.5*app.menuBarHeight
                 anchors.right: editBar.left
                 anchors.left: parent.left
                 anchors.top: parent.top - app.menuBarHeight
-//                anchors.bottom: customLegend.top
+
                 ChartView {
                     id: graphs
                     anchors.fill: parent
@@ -173,8 +173,8 @@ Item {
                 height: app.menuBarHeight
 //                anchors.horizontalCenter: parent.horizontalCenter
                 anchors.right: editBar.left
-//                anchors.left: parent.left
-//                anchors.bottom: parent.bottom
+                anchors.left: parent.left
+                anchors.top: graphs.bottom
 //                onEntered: chartViewSelector.highlightSeries(seriesName);
 //                onExited: chartViewSelector.highlightSeries("");
 //                onSelected: chartViewSelector.selectSeries(seriesName);
