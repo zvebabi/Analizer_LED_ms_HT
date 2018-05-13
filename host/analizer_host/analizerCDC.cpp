@@ -684,6 +684,55 @@ void analizerCDC::buttonPressHandler(const QStringList &line)
     qDebug() << "signal from button";
 }
 
+void analizerCDC::readEtalonParameters(const QString filename)
+{
+    //read calibration file
+    float k;
+#ifdef STL_STREAM
+    std::ifstream f(filename.toStdString());
+    if(!f.is_open())
+    {
+        std::string err = strerror(errno);
+#else
+    QFile calibfile(filename);
+    if(!calibfile.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        std::string err = calibfile.errorString().toStdString();
+#endif
+
+        emit sendDebugInfo("Can't read calibration parameters", 3000);
+        emit activateRelativeMod();
+        std::stringstream ss;
+        ss << "Can not read file \'"
+           << QDir::currentPath().toStdString()
+           << "/calibrator\'"
+           << " Run application in relative mode. "
+           << "Error #"
+           << err;
+        emit sendDebugInfo(ss.str().c_str());
+        return;
+    }
+    calibratorData.clear();
+#ifdef STL_STREAM
+    while(f >> k)
+    {
+#else
+    QTextStream f(&calibfile);
+    QFile calibfileNew(QDir::currentPath()+"/calibrator");
+    if(!calibfileNew.open(QIODevice::WriteOnly | QIODevice::Text))
+        qDebug()<< "Cannot save new calibrator file";
+    QTextStream f_out(&calibfileNew);
+    while (!f.atEnd())
+    {
+        f >> k;
+        f_out << k;
+#endif
+        calibratorData.push_back(k);
+    }
+
+    emit deActivateRelativeMod();
+}
+
 
 
 

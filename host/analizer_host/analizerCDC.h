@@ -61,6 +61,8 @@ public slots:
     void saveDataToCSV(QString filename);
     void deleteSeries(QtCharts::QAbstractSeries *series);
 
+    void readEtalonParameters(const QString filename);
+
 signals:
     void sendPortName(QString port);
     void sendDebugInfo(QString data, int time=700);
@@ -70,6 +72,7 @@ signals:
     void disableButton();
     void activateEditBar();
     void activateRelativeMod();
+    void deActivateRelativeMod();
     void makeSeries();
     void sendAxisName(QString data);
 private:

@@ -29,6 +29,13 @@ Item {
             relativeMeasurements.checked = true
             app.relativeMode = true
             reciever.setRelativeMode(true)
+            selectEtalonPath.visible = true
+        }
+        onDeActivateRelativeMod: {
+            relativeMeasurements.checked = false
+            app.relativeMode = false
+            reciever.setRelativeMode(false)
+//            selectEtalonPath.background = "green"
         }
     }
     Timer {
@@ -96,9 +103,11 @@ Item {
                 text: qsTr("Save images and data to: ")
                 font.family: "DejaVu Sans Mono"
                 font.pixelSize: 22*app.dp
+                visible: false
             }
             TextField {
                 id: filePathText
+                visible: false
                 width: deviceSetter.itemsWidth
                 text:reciever.getDataPath()
                 font.family: "DejaVu Sans Mono"
@@ -142,7 +151,26 @@ Item {
                 }
                 onClicked: fileDialog.open()
             }
-
+            Button
+            {
+                id: selectEtalonPath
+                contentItem:  ButtonLabel {text:qsTr("Reference data")}
+                width: deviceSetter.itemsWidth
+                visible: false
+                FileDialog {
+                    id: fileDialogCalibr
+                    title: qsTr("Select file with reference data")
+                    visible: false
+                    folder: "file:///" + reciever.getDataPath()
+                    selectExisting: true
+//                    selectFolder: false
+                    selectMultiple: false
+                    onAccepted: {
+                        reciever.readEtalonParameters(fileUrl.toString().substring(8))
+                    }
+                }
+                onClicked: fileDialogCalibr.open()
+            }
             CheckBox {
                 id:relativeMeasurements
                 text: qsTr("Relative mode")
