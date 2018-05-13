@@ -55,109 +55,129 @@ Item {
         spacing: 1
         anchors.fill: parent
         anchors.margins: 10
-        Rectangle {
-            width: parent.width - editBar.itemWidth
-            height: app.height - app.menuBarHeight
-            anchors.right: editBar.left
-            anchors.left: parent.left
-            anchors.bottom: parent.bottom
-            ChartView {
-                id: graphs
-                anchors.fill: parent
-                antialiasing: true
-                legend.visible: false
-                visible: mainMenu.currentItem == 0 ? true : false // 0 - line
-                property int numSeries : 0 //current number of graphs
-                property real minRngX: 0.0
-                property real maxRngX: 0.0
-                property real minRngY: 0.0
-                property real maxRngY: 0.0
-                ValueAxis {
-                    id: axisX
-                    objectName: "axisX"
-                    titleText: qsTr("Wavelength(um)")
-                    min: 0
-                    max: 0
-                    tickCount: 12
-                    minorTickCount: 4
-                }
-                ValueAxis {
-                    id: axisY
-                    objectName: "axisY"
-                    titleText: app.yAxisName
-                    min: 0
-                    max:0
-                    tickCount: 5
-                    minorTickCount: 4
-                }
-                MouseArea {
+        Column {
+            id: colForSnap
+            spacing:0
+            anchors.fill: parent
+//            anchors.margins: 10
+            Rectangle {
+                width: parent.width - editBar.itemWidth
+                height: app.height - 2*app.menuBarHeight
+                anchors.right: editBar.left
+                anchors.left: parent.left
+                anchors.top: parent.top - app.menuBarHeight
+//                anchors.bottom: customLegend.top
+                ChartView {
+                    id: graphs
                     anchors.fill: parent
-                    property int lastX: 0
-                    property int lastY: 0
-                    onPressed: {
-                        lastX = mouse.x
-                        lastY = mouse.y
+                    antialiasing: true
+                    legend.visible: false
+                    visible: mainMenu.currentItem == 0 ? true : false // 0 - line
+                    property int numSeries : 0 //current number of graphs
+                    property real minRngX: 0.0
+                    property real maxRngX: 0.0
+                    property real minRngY: 0.0
+                    property real maxRngY: 0.0
+                    ValueAxis {
+                        id: axisX
+                        objectName: "axisX"
+                        titleText: qsTr("Wavelength(um)")
+                        min: 0
+                        max: 0
+                        tickCount: 12
+                        minorTickCount: 4
                     }
-                    onReleased: {
-    //                    view.interactive : true
+                    ValueAxis {
+                        id: axisY
+                        objectName: "axisY"
+                        titleText: app.yAxisName
+                        min: 0
+                        max:0
+                        tickCount: 5
+                        minorTickCount: 4
                     }
-                    onPositionChanged: {
-                        if (lastX !== mouse.x) {
-                            graphs.scrollRight(lastX - mouse.x)
+                    MouseArea {
+                        anchors.fill: parent
+                        property int lastX: 0
+                        property int lastY: 0
+                        onPressed: {
                             lastX = mouse.x
-                        }
-                        if (lastY !== mouse.y) {
-                            graphs.scrollDown(lastY - mouse.y)
                             lastY = mouse.y
                         }
+                        onReleased: {
+        //                    view.interactive : true
+                        }
+                        onPositionChanged: {
+                            if (lastX !== mouse.x) {
+                                graphs.scrollRight(lastX - mouse.x)
+                                lastX = mouse.x
+                            }
+                            if (lastY !== mouse.y) {
+                                graphs.scrollDown(lastY - mouse.y)
+                                lastY = mouse.y
+                            }
+                        }
                     }
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    Layout.minimumWidth: 320
+                    Layout.minimumHeight: 240
                 }
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                Layout.minimumWidth: 320
-                Layout.minimumHeight: 240
+
+                ChartView {
+                    id: barGraphs
+                    anchors.fill: parent
+        //            title: "Result"
+                    antialiasing: true
+                    legend.visible: false
+                    visible: mainMenu.currentItem == 1 ? true : false //1-histogram
+                    property int numSeries : 0 //current number of graphs
+                    property real minRngX: 0.0
+                    property real maxRngX: 0.0
+                    property real minRngY: 0.0
+                    property real maxRngY: 0.0
+                    BarCategoryAxis {
+                        id: barAxisX
+                        objectName: "barAxisX"
+                        titleText: qsTr("Wavelength(um)")
+                        visible: false
+                    }
+
+                    ValueAxis {
+                        id: barAxisY
+                        objectName: "barAxisY"
+                        titleText: app.yAxisName
+                        min: 0
+                        max:0
+                        tickCount: 5
+                        minorTickCount: 4
+                    }
+                    BarSeries {
+                        id:mainBarSeries
+                        name: "mainBarSeries"
+                        axisX: barAxisX
+                        axisY: barAxisY
+
+                    }
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    Layout.minimumWidth: 320
+                    Layout.minimumHeight: 240
+
+                }
             }
-
-            ChartView {
-                id: barGraphs
-                anchors.fill: parent
-    //            title: "Result"
-                antialiasing: true
-                legend.visible: false
-                visible: mainMenu.currentItem == 1 ? true : false //1-histogram
-                property int numSeries : 0 //current number of graphs
-                property real minRngX: 0.0
-                property real maxRngX: 0.0
-                property real minRngY: 0.0
-                property real maxRngY: 0.0
-                BarCategoryAxis {
-                    id: barAxisX
-                    objectName: "barAxisX"
-                    titleText: qsTr("Wavelength(um)")
-                    visible: false
-                }
-
-                ValueAxis {
-                    id: barAxisY
-                    objectName: "barAxisY"
-                    titleText: app.yAxisName
-                    min: 0
-                    max:0
-                    tickCount: 5
-                    minorTickCount: 4
-                }
-                BarSeries {
-                    id:mainBarSeries
-                    name: "mainBarSeries"
-                    axisX: barAxisX
-                    axisY: barAxisY
-
-                }
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                Layout.minimumWidth: 320
-                Layout.minimumHeight: 240
-
+            CustomLegend {
+                id: customLegend
+//                visible: app.ctmLegendVisibility
+                width: parent.width - editBar.itemWidth
+                height: app.menuBarHeight
+//                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.right: editBar.left
+//                anchors.left: parent.left
+//                anchors.bottom: parent.bottom
+//                onEntered: chartViewSelector.highlightSeries(seriesName);
+//                onExited: chartViewSelector.highlightSeries("");
+//                onSelected: chartViewSelector.selectSeries(seriesName);
             }
         }
         ChartViewEditBar {
@@ -169,6 +189,9 @@ Item {
     }
     Timer {
         id: timer1
+    }
+    Timer {
+        id: timer2
     }
     function delay(delayTime, cb) {
         timer1.interval = delayTime;

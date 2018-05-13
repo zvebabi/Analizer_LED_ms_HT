@@ -241,12 +241,24 @@ Column {
                                 imgNameTF.text + ".png";
                         var pathH = reciever.getDataPath() +
                                 imgNameTF.text + "_hist.png";
-                        graphs.grabToImage(function(result) {
-                            result.saveToFile(path);
-                        });
-                        barGraphs.grabToImage(function(result) {
-                            result.saveToFile(pathH);
-                        });
+
+//                        customLegend.visible = true;
+                        colForSnap.update();
+
+//                        timer2.interval = 100;
+//                        timer2.repeat = false;
+//                        timer2.triggered.connect(function(){
+//                                    colForSnap.grabToImage(function(result) {
+//                                        result.saveToFile(pathH); });
+                                    colForSnap.grabToImage(function(result) {
+                                        result.saveToFile(path); });
+//                                    customLegend.visible = false;
+//                                    graphs.legend.visible = false;
+//                                    barGraphs.legend.visible = false;
+//                                    app.showNormal();
+//                                });
+//                        timer2.start();
+
                         console.log(path)
                         imgNameTF.text = ""
                         tipsWithPath.showedText = qsTr("Image saved to: \n" +
@@ -406,6 +418,7 @@ Column {
                         for(var i = tableOfSeries.count-1; i>=0 ; i--) {
                             tableOfSeries.currentIndex = i;
                             if (tableOfSeries.currentItem.checked) {
+                                customLegend.removeSeries(tableOfSeries.currentItem.text)
                                 reciever.deleteSeries(
                                             graphs.series(
                                                tableOfSeries.currentItem.text));
@@ -463,8 +476,10 @@ Column {
         var series = graphs.createSeries(ChartView.SeriesTypeScatter,
                             seriesNameDotted,
                             axisX, axisY);
+//        graphs.legend.markers(series)[0].setVisible(false);
         series.color = graphs.series(seriesName).color;
         series.markerSize = 7;
+        customLegend.addSeries(seriesName,series.color)
 //dotted series end
         reciever.doMeasurements(graphs.series(seriesName), false, graphs.series(seriesNameDotted));
         tableModel.append({

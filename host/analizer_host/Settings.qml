@@ -87,7 +87,10 @@ Item {
                 id: connectBTN
                 contentItem: ButtonLabel {text: qsTr("Connect")}
                 width: deviceSetter.itemsWidth
-                onClicked: reciever.initDevice(portsComboList.currentText)
+                onClicked: {
+                    reciever.initDevice(portsComboList.currentText);
+//                    app.ctmLegendVisibility = false;
+                }
             }
             Label {
                 text: qsTr("Save images and data to: ")

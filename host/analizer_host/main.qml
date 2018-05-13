@@ -28,6 +28,7 @@ ApplicationWindow {
     property bool relativeMode: false   //compare with calibration data or with
                                         //previous sample
     property bool cumulativeMode: false
+//    property bool ctmLegendVisibility: true
 //    property string currentSeriesName: qsTr("")
     Material.theme: Material.Light
     Material.primary: Material.BlueGrey

@@ -18,5 +18,6 @@
         <file>HistogramView.qml</file>
         <file>images/runCalibration.png</file>
         <file>images/logo_icon_7.png</file>
+        <file>QMLs/CustomLegend.qml</file>
     </qresource>
 </RCC>
