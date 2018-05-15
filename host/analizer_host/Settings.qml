@@ -29,7 +29,7 @@ Item {
             relativeMeasurements.checked = true
             app.relativeMode = true
             reciever.setRelativeMode(true)
-//            selectEtalonPath.visible = true
+            selectEtalonPath.visible = true
         }
         onDeActivateRelativeMod: {
             relativeMeasurements.checked = false
@@ -154,12 +154,12 @@ Item {
             Button
             {
                 id: selectEtalonPath
-                contentItem:  ButtonLabel {text:qsTr("Reference data")}
+                contentItem:  ButtonLabel {text:qsTr("Etalon data")}
                 width: deviceSetter.itemsWidth
-                visible: true
+                visible: false
                 FileDialog {
                     id: fileDialogCalibr
-                    title: qsTr("Select file with reference data")
+                    title: qsTr("Select file with etalon data")
                     visible: false
                     folder: "file:///" + reciever.getDataPath()
                     selectExisting: true
