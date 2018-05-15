@@ -535,9 +535,12 @@ void analizerCDC::dataProcessingHandler(const QStringList &line)
     {
         if (point->y() == -1.0)
         {
-            emit sendDebugInfo("Bad data", 5000);
-            emit sendDebugInfo("Weak signal! Press Run button again and redo measurement!", 100);
-            break;
+//            emit sendDebugInfo("Bad data", 5000);
+            emit sendDebugInfo(QString("Weak signal! Click ") +
+                               QString(etalon ? "Calibrate" : "Measurement") +
+                               QString(" button again and redo measurement!"),
+                           3000);
+            return;
         }
     }
     //save series and data for future

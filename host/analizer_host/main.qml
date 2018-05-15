@@ -27,6 +27,7 @@ ApplicationWindow {
     property bool serviceMode: false //write raw data to file
     property bool relativeMode: false   //compare with calibration data or with
                                         //previous sample
+    property bool relativeModeCheckBoxEnabled: true
     property bool cumulativeMode: false
 //    property bool ctmLegendVisibility: true
 //    property string currentSeriesName: qsTr("")

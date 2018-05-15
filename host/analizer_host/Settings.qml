@@ -29,7 +29,7 @@ Item {
             relativeMeasurements.checked = true
             app.relativeMode = true
             reciever.setRelativeMode(true)
-            selectEtalonPath.visible = true
+//            selectEtalonPath.visible = true
         }
         onDeActivateRelativeMod: {
             relativeMeasurements.checked = false
@@ -134,7 +134,7 @@ Item {
             Button
             {
                 id: selectPath
-                contentItem:  ButtonLabel {text:qsTr("Change path")}
+                contentItem:  ButtonLabel {text:qsTr("Save data to…")}
                 width: deviceSetter.itemsWidth
                 FileDialog {
                     id: fileDialog
@@ -156,7 +156,7 @@ Item {
                 id: selectEtalonPath
                 contentItem:  ButtonLabel {text:qsTr("Reference data")}
                 width: deviceSetter.itemsWidth
-                visible: false
+                visible: true
                 FileDialog {
                     id: fileDialogCalibr
                     title: qsTr("Select file with reference data")
@@ -173,6 +173,7 @@ Item {
             }
             CheckBox {
                 id:relativeMeasurements
+                enabled: app.relativeModeCheckBoxEnabled
                 text: qsTr("Relative mode")
                 checked: app.relativeMode
                 onClicked: {

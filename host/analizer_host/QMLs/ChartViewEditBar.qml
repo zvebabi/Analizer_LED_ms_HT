@@ -100,6 +100,7 @@ Column {
                                    graphs.series(seriesName).color.toString() })
                         }
                     reciever.doMeasurements(graphs.series(seriesName),true);
+                    app.relativeModeCheckBoxEnabled = false;
                 }
             }
         }
@@ -182,7 +183,7 @@ Column {
                 height: 1.5*48*app.dp
                 width: height
                 ToolTip.visible: hovered
-                    ToolTip.text: qsTr("Save data to "+reciever.getDataPath())
+                ToolTip.text: qsTr("Save data to "+reciever.getDataPath())
                 Image {
                     anchors.centerIn: parent
                     width: parent.width
@@ -214,7 +215,7 @@ Column {
                 onClicked: fileNameDlg.open()
                 onHoveredChanged: {
                     if (hovered) {
-                        ToolTip.text = qsTr("Save image to "+reciever.getDataPath())
+                        ToolTip.text = qsTr("Save data to "+reciever.getDataPath())
                     }
                 }
             }
