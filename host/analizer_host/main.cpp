@@ -6,6 +6,7 @@
 
 #include "analizerCDC.h"
 #include "mydevice.h"
+#include "filevalidator.h"
 
 int main(int argc, char *argv[])
 {
@@ -14,6 +15,7 @@ int main(int argc, char *argv[])
     qApp->setQuitOnLastWindowClosed(true);
     QQuickStyle::setStyle("Material");
     qmlRegisterType<MyDevice>("mydevice", 1, 0, "MyDevice");
+    qmlRegisterType<FileValidator>("filevalidator", 1, 0, "FileValidator");
 
     QQmlApplicationEngine engine;
     engine.load(QUrl(QLatin1String("qrc:/main.qml")));

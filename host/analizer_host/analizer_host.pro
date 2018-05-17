@@ -12,11 +12,13 @@ QMAKE_CXXFLAGS += -O3 -g3
 
 SOURCES += main.cpp \
     analizerCDC.cpp \
-    mydevice.cpp
+    mydevice.cpp \
+    filevalidator.cpp
 
 HEADERS += \
     analizerCDC.h \
-    mydevice.h
+    mydevice.h \
+    filevalidator.h
 
 RESOURCES += qml.qrc
 

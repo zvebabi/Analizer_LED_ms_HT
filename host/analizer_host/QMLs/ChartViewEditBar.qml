@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.3
 import QtCharts 2.2
 import QtQuick.Dialogs 1.2
 import QtGraphicalEffects 1.0
+import filevalidator 1.0
 
 Column {
     id: ctrlPane
@@ -203,14 +204,28 @@ Column {
                     }
                     standardButtons: StandardButton.OK
                     onAccepted: {
-                        reciever.saveDataToCSV(fileNameTF.text + ".csv");
                         var path = reciever.getDataPath() +
                                 fileNameTF.text + ".csv"
-                        fileNameTF.text = ""
-                        tipsWithPath.showedText = qsTr("Data saved to: \n" +
-                                                       path)
-                        tipsWithPath.open()
+                        validatorCSV.url = "file:///" + path
+                        if (validatorCSV.fileValid === false) {
+                            reciever.saveDataToCSV(fileNameTF.text + ".csv");                            console.log(path)
+                            fileNameTF.text = ""
+                            delay(1, fileNameDlg.close);
+                            showPopupTips(qsTr("Data saved to: \n" + path),
+                                          1000);
+                        }
+                        else { //if file exist
+                            fileNameTF.text = ""
+                            delay(1, fileNameDlg.open);
+                            showPopupTips(qsTr("Error: File exists! Choose another name"),
+                                          1000);
+                        }
                     }
+                }
+                FileValidator {
+                    id: validatorCSV
+                    url: source1
+                    treatAsImage: true
                 }
                 onClicked: fileNameDlg.open()
                 onHoveredChanged: {
@@ -247,30 +262,29 @@ Column {
                                 imgNameTF.text + ".png";
                         var pathH = reciever.getDataPath() +
                                 imgNameTF.text + "_hist.png";
-
-//                        customLegend.visible = true;
-                        colForSnap.update();
-
-//                        timer2.interval = 100;
-//                        timer2.repeat = false;
-//                        timer2.triggered.connect(function(){
-//                                    colForSnap.grabToImage(function(result) {
-//                                        result.saveToFile(pathH); });
-                                    colForSnap.grabToImage(function(result) {
-                                        result.saveToFile(path); });
-//                                    customLegend.visible = false;
-//                                    graphs.legend.visible = false;
-//                                    barGraphs.legend.visible = false;
-//                                    app.showNormal();
-//                                });
-//                        timer2.start();
-
-                        console.log(path)
-                        imgNameTF.text = ""
-                        tipsWithPath.showedText = qsTr("Image saved to: \n" +
-                                                       path)
-                        tipsWithPath.open()
+                        validatorIMG.url = "file:///" + path
+                        if (validatorIMG.fileValid === false) {
+                            colForSnap.update();
+                            colForSnap.grabToImage(function(result) {
+                                            result.saveToFile(path); });
+                            console.log(path)
+                            imgNameTF.text = ""
+                            delay(1, imgNameDlg.close);
+                            showPopupTips(qsTr("Image saved to: \n" + path),
+                                          1000);
+                        }
+                        else { //if file exist
+                            imgNameTF.text = ""
+                            delay(1, imgNameDlg.open);
+                            showPopupTips(qsTr("Error: image exists! Choose another name"),
+                                          1000);
+                        }
                     }
+                }
+                FileValidator {
+                    id: validatorIMG
+//                    url: source1
+                    treatAsImage: true
                 }
                 onClicked: imgNameDlg.open()
                 onHoveredChanged: {
@@ -498,6 +512,8 @@ Column {
            "isChecked": true,
            "seriesColor": graphs.series(seriesName).color.toString() })
     }
+
+
     onRedrawHistogram: {
         //remove all existing sets of data
         mainBarSeries.clear()

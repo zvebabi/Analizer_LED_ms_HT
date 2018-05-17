@@ -45,9 +45,7 @@ Item {
 
         }
         onSendDebugInfo: {
-            tipsWithPath.showedText = qsTr(data)
-            tipsWithPath.open()
-            delay(time, tipsWithPath.close)
+            showPopupTips(qsTr(data), time)
         }
     }
 
@@ -206,6 +204,11 @@ Item {
                                    import QtCharts 2.7;
                                    ValueAxis { min: "
                                   + min + "; max: " + max + " }", graphs);
+    }
+    function showPopupTips(text, dTime) {
+        tipsWithPath.showedText = qsTr(text)
+        tipsWithPath.open()
+        delay(dTime !== undefined ? dTime : 300, tipsWithPath.close)
     }
 }
 
