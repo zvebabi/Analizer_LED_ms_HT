@@ -14,8 +14,8 @@ Item {
         target: reciever
         onAdjustAxis: {
 //            barGraphs.visible = barGraphs.visible ? false :true
-            graphs.minRngX = minRng.x - (maxRng.x-minRng.x)*0.02
-            graphs.maxRngX = maxRng.x + (maxRng.x-minRng.x)*0.02
+            graphs.minRngX = (Math.floor((minRng.x - (maxRng.x-minRng.x)*0.02)*10))/10
+            graphs.maxRngX = (Math.ceil((maxRng.x + (maxRng.x-minRng.x)*0.02)*10))/10
             graphs.minRngY = minRng.y - (maxRng.y-minRng.y)*0.1
             graphs.maxRngY = maxRng.y
             axisX.min = graphs.minRngX
@@ -82,8 +82,9 @@ Item {
                         titleText: qsTr("Wavelength(um)")
                         min: 0
                         max: 0
-                        tickCount: 12
-                        minorTickCount: 4
+                        tickCount: 13
+                        minorTickCount: 3
+                        labelFormat: "%.1f"
                     }
                     ValueAxis {
                         id: axisY
