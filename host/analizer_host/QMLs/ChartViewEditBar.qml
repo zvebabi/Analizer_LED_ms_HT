@@ -180,7 +180,7 @@ Column {
             spacing: 0
             ToolButton {
                 id: saveData
-                enabled: true
+                enabled: false
                 height: 1.5*48*app.dp
                 width: height
                 ToolTip.visible: hovered

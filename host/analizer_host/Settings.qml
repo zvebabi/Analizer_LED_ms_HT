@@ -37,6 +37,12 @@ Item {
             reciever.setRelativeMode(false)
 //            selectEtalonPath.background = "green"
         }
+        onSendSerialNumber: {
+            serNumLbl.text = serNumber;
+        }
+        onSendEtalonName: {
+            etalonNameLbl.text = etalonName;
+        }
     }
     Timer {
         id: timer
@@ -57,8 +63,7 @@ Item {
         Column {
             id: deviceSetter
             spacing: 5*app.dp
-//            anchors.right: chartStyle.left
-//            anchors.top: chartStyle.top
+            anchors.horizontalCenter: parent.horizontalCenter
             anchors.rightMargin: 50*app.dp
             property int itemsWidth: 250*app.dp
             Button {
@@ -72,7 +77,7 @@ Item {
 //                height: 150*app.dp
             }
 
-            ComboBox{
+            ComboBox {
                 id: portsComboList
                 objectName: "comboList"
                 model: availablePorts
@@ -131,8 +136,7 @@ Item {
                     }
                 }
             }
-            Button
-            {
+            Button {
                 id: selectPath
                 contentItem:  ButtonLabel {text:qsTr("Save data to…")}
                 width: deviceSetter.itemsWidth
@@ -147,12 +151,12 @@ Item {
                     onAccepted: {
                         reciever.selectPath(fileUrl.toString().substring(8) + "/")
                         filePathText.text = reciever.getDataPath()
+
                     }
                 }
                 onClicked: fileDialog.open()
             }
-            Button
-            {
+            Button {
                 id: selectEtalonPath
                 contentItem:  ButtonLabel {text:qsTr("Etalon data")}
                 width: deviceSetter.itemsWidth
@@ -166,7 +170,8 @@ Item {
 //                    selectFolder: false
                     selectMultiple: false
                     onAccepted: {
-                        reciever.readEtalonParameters(fileUrl.toString().substring(8))
+                        console.log(fileUrl);
+                        reciever.readEtalonParameters(fileUrl.toString().substring(8), true)
                     }
                 }
                 onClicked: fileDialogCalibr.open()
@@ -254,5 +259,33 @@ Item {
 //            }
 //        }
 
+    }
+    Column {
+        id: currentDeviceSetting
+//            anchors.top: parent.top
+        spacing: 5*app.dp
+//        anchors.left: 100*app.dp
+//        y: app.height - height -statusBar.height - 10*app.dp
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: statusBar.height + 10*app.dp
+        anchors.left: parent.left
+        anchors.leftMargin: anchors.bottomMargin
+//            property int itemsWidth: 250*app.dp
+        Grid {
+            columns: 2
+            Label { text: qsTr("Device serial number: ") }
+            Label { id:serNumLbl; text: "Not connected" }
+
+            Label { text: qsTr("Etalon : ") }
+            Label { id: etalonNameLbl; text: qsTr("Not found") }
+
+            Label { text: qsTr("Сalibration mode: ") }
+            Label { id: calModeLbl
+                    text: app.relativeMode ? qsTr("Relative") : qsTr("Absolute") }
+
+            Label { text: qsTr("Measurement data storage directory: ") }
+            Label { id: pathLbl; text: filePathText.text }
+        }
+        Label { text: qsTr("Click \"Save data to…\" to choose another location") }
     }
 }

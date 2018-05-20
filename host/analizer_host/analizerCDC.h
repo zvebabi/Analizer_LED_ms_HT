@@ -61,11 +61,13 @@ public slots:
     void saveDataToCSV(QString filename);
     void deleteSeries(QtCharts::QAbstractSeries *series);
 
-    void readEtalonParameters(const QString filename);
+    void readEtalonParameters(const QString filename, bool saveNew);
 
 signals:
     void sendPortName(QString port);
     void sendDebugInfo(QString data, int time=700);
+    void sendSerialNumber(QString serNumber);
+    void sendEtalonName(QString etalonName);
     void adjustAxis(QPointF minRng, QPointF maxRng);
     void updateBarSeries(QString _label, QVariantList _data, QColor _color,
                          QStringList _axis);
@@ -90,7 +92,7 @@ private:
 #else
     QSerialPort* device = NULL;
 #endif
-    int serNumber;
+    int m_serNumber;
     QSerialPort::BaudRate baudRate;
     QVector<QVector<QPointF> > m_data;
     bool etalon, drawLines, aaManual,axisNameFromMCU, axisValueFromMCU;

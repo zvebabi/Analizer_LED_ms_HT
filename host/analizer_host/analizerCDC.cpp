@@ -1,10 +1,13 @@
 #include "analizerCDC.h"
 #include <QtMath>
+#include <memory>
 //#define STL_STREAM
 
 analizerCDC::analizerCDC(QObject *parent) : QObject(parent),
     firstLine(true), aaManual(true), serviceMode(false), isPortOpen(false),
-    cumulativeMode(false), relativeMode(false), numberCumulativeLines(0)
+    cumulativeMode(false), relativeMode(false), numberCumulativeLines(0),
+    m_serNumber(-1)
+
 {
     qRegisterMetaType<QtCharts::QAbstractSeries*>();
     qRegisterMetaType<QtCharts::QAbstractAxis*>();
@@ -91,9 +94,10 @@ void analizerCDC::initDevice(QString port)
     if(device->open(QIODevice::ReadWrite)){
         qDebug() << "Connected to: " << device->portName();
         device->write("i");
-        emit sendDebugInfo("Connected to: " + device->portName());
         device->setDataTerminalReady(true);
         device->setRequestToSend(false);
+//        while( serNumber == -1 ) {};
+        emit sendDebugInfo("Connected to: " + device->portName());
     }
     else {
         qDebug() << "Can't open port" << port;
@@ -101,6 +105,8 @@ void analizerCDC::initDevice(QString port)
     }    
 #endif
     //read calibration file
+    readEtalonParameters(QDir::currentPath()+"/calibrator", false);
+#if 0
     float k;
 
 #ifdef STL_STREAM
@@ -138,6 +144,7 @@ void analizerCDC::initDevice(QString port)
 #endif
         calibratorData.push_back(k);
     }
+#endif
 }
 
 void analizerCDC::getListOfPort()
@@ -481,7 +488,11 @@ void analizerCDC::serviceModeHandler(const QStringList &line)
 void analizerCDC::identityHandler(const QStringList &line)
 {
     if (line.at(1).compare("SERIAL") == 0 )
+    {
         qDebug() << "Serial# " << line.at(2).toInt();
+        m_serNumber = line.at(2).toInt();
+        emit sendSerialNumber(QString("%1").arg(m_serNumber, 4, 16,QChar('0')));
+    }
     if(line.at(1).compare("TYPE") ==0 )
     {
         qDebug() << "Type: " << line.at(2).toInt();
@@ -687,7 +698,7 @@ void analizerCDC::buttonPressHandler(const QStringList &line)
     qDebug() << "signal from button";
 }
 
-void analizerCDC::readEtalonParameters(const QString filename)
+void analizerCDC::readEtalonParameters(const QString filename, bool saveNew=true)
 {
     //read calibration file
     float k;
@@ -721,18 +732,31 @@ void analizerCDC::readEtalonParameters(const QString filename)
     {
 #else
     QTextStream f(&calibfile);
-    QFile calibfileNew(QDir::currentPath()+"/calibrator");
-    if(!calibfileNew.open(QIODevice::WriteOnly | QIODevice::Text))
-        qDebug()<< "Cannot save new calibrator file";
-    QTextStream f_out(&calibfileNew);
+
+    QFile calibfileNew;
+    std::shared_ptr<QTextStream> f_out;
+    if ( saveNew)
+    {
+        calibfileNew.setFileName(QDir::currentPath()+"/calibrator");
+        if(!calibfileNew.open(QIODevice::WriteOnly | QIODevice::Text))
+            qDebug()<< "Cannot save new calibrator file";
+        f_out = std::make_shared<QTextStream>(&calibfileNew);
+    }
+
+    //read etalon name
+    auto etalonName = f.readLine();
+    emit sendEtalonName(etalonName);
+    if (saveNew)
+       *f_out << etalonName << "\n";
     while (!f.atEnd())
     {
         f >> k;
-        f_out << k;
+        if (saveNew)
+            *f_out << k << " ";
 #endif
         calibratorData.push_back(k);
     }
-
+        qDebug() << calibratorData;
     emit deActivateRelativeMod();
 }
 
