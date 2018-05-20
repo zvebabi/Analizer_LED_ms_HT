@@ -180,7 +180,7 @@ Column {
             spacing: 0
             ToolButton {
                 id: saveData
-                enabled: false
+                enabled: true
                 height: 1.5*48*app.dp
                 width: height
                 ToolTip.visible: hovered
@@ -207,8 +207,11 @@ Column {
                         var path = reciever.getDataPath() +
                                 fileNameTF.text + ".csv"
                         validatorCSV.url = "file:///" + path
+                        console.log("url: " + validatorCSV.url)
+//                        console.log("urlErr: " + validatorCSV.fileErrorMessage)
                         if (validatorCSV.fileValid === false) {
-                            reciever.saveDataToCSV(fileNameTF.text + ".csv");                            console.log(path)
+                            reciever.saveDataToCSV(fileNameTF.text + ".csv");
+                            //console.log(path)
                             fileNameTF.text = ""
                             delay(1, fileNameDlg.close);
                             showPopupTips(qsTr("Data saved to: \n" + path),
@@ -225,7 +228,7 @@ Column {
                 FileValidator {
                     id: validatorCSV
                     url: source1
-                    treatAsImage: true
+                    treatAsImage: false
                 }
                 onClicked: fileNameDlg.open()
                 onHoveredChanged: {
