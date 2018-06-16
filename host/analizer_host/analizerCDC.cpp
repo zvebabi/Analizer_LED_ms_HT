@@ -482,7 +482,7 @@ void analizerCDC::identityHandler(const QStringList &line)
             emit sendDebugInfo("Undefined device type. Check connection",
                                10000);
     }
-    emit sendDebugInfo(QString("Click “Calibrate” button to perform device calibration"));
+    emit sendDebugInfo(QString("Click calibration button to perform device calibration"));
 }
 
 void analizerCDC::dataAquisitionHandler(const QStringList &line)
@@ -677,7 +677,7 @@ void analizerCDC::readEtalonParameters(const QString filename, bool saveNew=true
     {
         std::string err = calibfile.errorString().toStdString();
 
-        emit sendDebugInfo("Can't read calibration parameters", 3000);
+        emit sendDebugInfo("Cannot read calibration parameters", 3000);
         emit activateRelativeMod();
         std::stringstream ss;
         ss << "Can not read file \'"
@@ -698,7 +698,7 @@ void analizerCDC::readEtalonParameters(const QString filename, bool saveNew=true
     {
         calibfileNew.setFileName(QDir::currentPath()+"/calibrator");
         if(!calibfileNew.open(QIODevice::WriteOnly | QIODevice::Text))
-            qDebug()<< "Cannot save new calibrator file";
+            qDebug()<< "Cannot save new calibration parameters";
         f_out = std::make_shared<QTextStream>(&calibfileNew);
     }
 
