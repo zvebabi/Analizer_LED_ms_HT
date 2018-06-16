@@ -148,6 +148,15 @@ Column {
                             duration: 1000 }
                     }
                 }
+                Timer {
+                    id: positionTimer
+                    interval: 200
+                    repeat: false
+                    onTriggered: tableOfSeries.positionViewAtEnd()
+                }
+                onCountChanged: {
+                        positionTimer.start()
+                }
             }
             Dialog {
                 id: renameDlg
