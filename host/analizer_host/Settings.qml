@@ -27,14 +27,19 @@ Item {
         }
         onActivateRelativeMod: {
             relativeMeasurements.checked = true
+            relativeMeasurements.enabled = false
+            etalonNameLbl.text = qsTr("Load etalon data file to switch"
+                                    + " to Absolute measuring mode")
             app.relativeMode = true
             reciever.setRelativeMode(true)
             selectEtalonPath.visible = true
         }
         onDeActivateRelativeMod: {
             relativeMeasurements.checked = false
+            relativeMeasurements.enabled = true
             app.relativeMode = false
             reciever.setRelativeMode(false)
+            selectEtalonPath.visible = false
 //            selectEtalonPath.background = "green"
         }
         onSendSerialNumber: {

@@ -1,7 +1,6 @@
 #include "analizerCDC.h"
 #include <QtMath>
 #include <memory>
-//#define STL_STREAM
 
 analizerCDC::analizerCDC(QObject *parent) : QObject(parent),
     firstLine(true), aaManual(true), serviceMode(false), isPortOpen(false),
@@ -109,18 +108,10 @@ void analizerCDC::initDevice(QString port)
 #if 0
     float k;
 
-#ifdef STL_STREAM
-    std::ifstream f(QDir::currentPath().toStdString()+"/calibrator");
-    if(!f.is_open())
-    {
-        std::string err = strerror(errno);
-#else
     QFile calibfile(QDir::currentPath()+"/calibrator");
     if(!calibfile.open(QIODevice::ReadOnly | QIODevice::Text))
     {
         std::string err = calibfile.errorString().toStdString();
-#endif
-
         emit sendDebugInfo("Can't read calibration parameters", 3000);
         emit activateRelativeMod();
         std::stringstream ss;
@@ -133,15 +124,10 @@ void analizerCDC::initDevice(QString port)
         emit sendDebugInfo(ss.str().c_str());
         return;
     }
-#ifdef STL_STREAM
-    while(f >> k)
-    {
-#else
     QTextStream f(&calibfile);
     while (!f.atEnd())
     {
         f >> k;
-#endif
         calibratorData.push_back(k);
     }
 #endif
@@ -300,36 +286,23 @@ void analizerCDC::saveDataToCSV(QString filename="data.csv")
     QDir dataDir(documentsPath);
     if (!dataDir.exists())
         dataDir.mkpath(".");
-#ifdef STL_STREAM //STL FSTREAM
-    std::ofstream f(QString(documentsPath+"/"+filename).toStdString(),
-                   std::fstream::out);
-    if (!f.is_open())
-    {
-        std::string err = strerror(errno);
-#else //QFILE
+
     QFile outfile(QString(documentsPath+"/"+filename));
     if(!outfile.open(QIODevice::WriteOnly | QIODevice::Text))
     {
         std::string err = outfile.errorString().toStdString();
-#endif
         qDebug() << "can't open file\n";
         std::stringstream ss;
         ss << "Error while writing data: " << err;
         emit sendDebugInfo(ss.str().c_str(), 3000);
         return;
     }
-#ifndef STL_STREAM
     QTextStream f(&outfile);
-#endif
     //header
     f << "um" ;
     for(auto series : lines.keys())
     {
-#ifdef STL_STREAM
-        f  << ";" << series->name().toStdString();
-#else
         f  << ";" << series->name();
-#endif
     }
     f << "\n";
     //main
@@ -349,11 +322,7 @@ void analizerCDC::saveDataToCSV(QString filename="data.csv")
         f << "\n";
     }
 
-#ifdef STL_STREAM
-    f.close();
-#else
     outfile.close();
-#endif
     qDebug() << ".done";
     std::stringstream ss;
     ss << "Saved to " << documentsPath.toStdString()
@@ -702,17 +671,11 @@ void analizerCDC::readEtalonParameters(const QString filename, bool saveNew=true
 {
     //read calibration file
     float k;
-#ifdef STL_STREAM
-    std::ifstream f(filename.toStdString());
-    if(!f.is_open())
-    {
-        std::string err = strerror(errno);
-#else
+    QString readedValue;
     QFile calibfile(filename);
     if(!calibfile.open(QIODevice::ReadOnly | QIODevice::Text))
     {
         std::string err = calibfile.errorString().toStdString();
-#endif
 
         emit sendDebugInfo("Can't read calibration parameters", 3000);
         emit activateRelativeMod();
@@ -727,10 +690,6 @@ void analizerCDC::readEtalonParameters(const QString filename, bool saveNew=true
         return;
     }
     calibratorData.clear();
-#ifdef STL_STREAM
-    while(f >> k)
-    {
-#else
     QTextStream f(&calibfile);
 
     QFile calibfileNew;
@@ -751,13 +710,22 @@ void analizerCDC::readEtalonParameters(const QString filename, bool saveNew=true
     while (!f.atEnd())
     {
         f >> k;
-        if (saveNew)
-            *f_out << k << " ";
-#endif
-        calibratorData.push_back(k);
+        if( k > 0.0f && k < 1.0f )
+        {
+            if (saveNew )
+                *f_out << k << " ";
+            calibratorData.push_back(k);
+        }
     }
-        qDebug() << calibratorData;
-    emit deActivateRelativeMod();
+    qDebug() << calibratorData;
+    qDebug() << "calibratorData size: " << calibratorData.size();
+    if( calibratorData.size() >= 5 )
+        emit deActivateRelativeMod();
+    else
+    {
+        emit activateRelativeMod();
+        emit sendDebugInfo("Wrong file with etalon data", 2000);
+    }
 }
 
 
