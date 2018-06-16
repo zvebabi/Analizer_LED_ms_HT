@@ -487,6 +487,11 @@ Column {
         }
     }
     function createSeries() {
+        var colorList = [
+                    "#F44336", "#673AB7", "#03A9F4", "#4CAF50", "#FFEB3B", "#FF5722",
+                    "#E91E63", "#3F51B5", "#00BCD4", "#8BC34A", "#FFC107",
+                    "#9C27B0", "#2196F3", "#009688", "#CDDC39", "#FF9800"
+                ]
         //in cumulative mode delete previous series, if not first
 //        if(graphs.numSeries !=0 && app.cumulativeMode)
 //        {
@@ -516,6 +521,8 @@ Column {
                             seriesNameDotted,
                             axisX, axisY);
 //        graphs.legend.markers(series)[0].setVisible(false);
+        graphs.series(seriesName).color = colorList[
+                    ( graphs.numSeries - 1) % colorList.length ]//"#B71C1C"
         series.color = graphs.series(seriesName).color;
         series.markerSize = 7;
         customLegend.addSeries(seriesName,series.color)
@@ -526,7 +533,6 @@ Column {
            "isChecked": true,
            "seriesColor": graphs.series(seriesName).color.toString() })
     }
-
 
     onRedrawHistogram: {
         //remove all existing sets of data
