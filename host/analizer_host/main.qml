@@ -2,7 +2,7 @@ import QtQuick 2.8
 import QtQuick.Controls 2.1
 import QtQuick.Layouts 1.3
 import QtQuick.Controls.Material 2.2
-import QtQuick.Window 2.0
+import QtQuick.Window 2.3
 import Qt.labs.platform 1.0
 //import QtCharts 2.2
 import "QMLs"
@@ -14,6 +14,7 @@ ApplicationWindow {
     property string appVersion: "1.22"
     property string chartType: "line"
 //    property int seriesType: ChartView.SeriesTypeSpline
+    property alias saveDataDialog_a: chV.editBar_a
     visible: true
 //    visibility: "FullScreen"
     width: 960
@@ -203,6 +204,7 @@ ApplicationWindow {
         anchors.fill: parent
         anchors.top: menuBar.Bottom
         ChartView {
+            id: chV
         }
         Settings {
         }
@@ -232,6 +234,9 @@ ApplicationWindow {
             text: tipsWithPath.showedText
         }
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+    }
+    onClosing: {
+        mainMenu.quitDialogCustom.setVisible(true)
     }
 
 }

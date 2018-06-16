@@ -9,7 +9,7 @@ import "QMLs"
 Item {
     //save names here
     property variant allSeriesName
-
+    property alias editBar_a: editBar
     Connections {
         target: reciever
         onAdjustAxis: {

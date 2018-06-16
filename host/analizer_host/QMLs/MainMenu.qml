@@ -8,6 +8,7 @@ Item {
 
     signal menuItemClicked( string item, string page )
     property alias currentItem: listViewMenu.currentIndex
+    property alias quitDialogCustom: exitDialog
 
     ListModel {
         id: modelMenu
@@ -170,16 +171,17 @@ Item {
             standardButtons: StandardButton.Ok | StandardButton.Cancel
             icon: StandardIcon.Question
             onAccepted: {
-                var path = reciever.getDataPath() + "dataset.csv"
-                tipsWithPath.showedText = qsTr("Data saved to:\n" + path)
-                tipsWithPath.open()
-                reciever.saveDataToCSV("dataset.csv")
+                app.saveDataDialog_a.fileNameDialog_a.open()
+//                var path = reciever.getDataPath() + "dataset.csv"
+//                tipsWithPath.showedText = qsTr("Data saved to:\n" + path)
+//                tipsWithPath.open()
+//                reciever.saveDataToCSV("dataset.csv")
                 waiter.running = true
             }
         }
         Timer {
             id:waiter
-            interval: 1000; running: false; repeat: false
+            interval: 60*1000; running: false; repeat: false
             onTriggered: Qt.quit()
         }
         MouseArea {

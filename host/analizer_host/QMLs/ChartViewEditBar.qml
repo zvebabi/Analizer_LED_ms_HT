@@ -10,6 +10,7 @@ Column {
     id: ctrlPane
     spacing: 3
     property int itemWidth: 400*app.dp
+    property alias fileNameDialog_a: fileNameDlg
     signal redrawHistogram()
     Connections {
         target: reciever
@@ -228,6 +229,7 @@ Column {
                         }
                         else { //if file exist
                             fileNameTF.text = ""
+                            fileNameDlg.title = qsTr("Enter UNIQUE file name")
                             delay(1, fileNameDlg.open);
                             showPopupTips(qsTr("Error: File exists! Choose another name"),
                                           1000);
