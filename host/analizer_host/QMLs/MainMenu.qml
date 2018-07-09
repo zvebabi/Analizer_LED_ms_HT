@@ -153,7 +153,8 @@ Item {
         anchors.bottom: parent.bottom
         width: parent.width
         height: 50*app.dp
-        color: "transparent"
+//        color: "transparent"
+        color: ma1.pressed ? palette.currentHighlightItem : "transparent"
         Label {
             id: quitBtnLbl
             anchors.verticalCenter: parent.verticalCenter
@@ -168,20 +169,24 @@ Item {
             id: exitDialog
             title: "Quit"
             text: "Save dataset before exit?"
-            standardButtons: StandardButton.Ok | StandardButton.Cancel
+            standardButtons: StandardButton.Ok | StandardButton.Close
             icon: StandardIcon.Question
             onAccepted: {
-                app.saveDataDialog_a.fileNameDialog_a.open()
-//                var path = reciever.getDataPath() + "dataset.csv"
-//                tipsWithPath.showedText = qsTr("Data saved to:\n" + path)
-//                tipsWithPath.open()
-//                reciever.saveDataToCSV("dataset.csv")
+//                app.saveDataDialog_a.fileNameDialog_a.open()
+                var backupFileName = new Date().toLocaleString(Qt.locale("en_US"), "yyyyMMdd_HHmmss'_dataset.csv'")
+//                console.log(curTime)
+
+                var path = reciever.getDataPath() + backupFileName
+                tipsWithPath.showedText = qsTr("Data saved to:\n" + path)
+                tipsWithPath.open()
+                reciever.saveDataToCSV(backupFileName)
                 waiter.running = true
             }
+            onRejected: Qt.quit()
         }
         Timer {
             id:waiter
-            interval: 60*1000; running: false; repeat: false
+            interval: 1000; running: false; repeat: false
             onTriggered: Qt.quit()
         }
         MouseArea {

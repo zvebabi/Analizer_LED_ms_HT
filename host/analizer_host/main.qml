@@ -17,6 +17,7 @@ ApplicationWindow {
     property alias saveDataDialog_a: chV.editBar_a
     visible: true
 //    visibility: "FullScreen"
+    flags: Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint | Qt.WindowSystemMenuHint | Qt.WindowMinMaxButtonsHint
     width: 960
     height: 540
     minimumHeight: 540

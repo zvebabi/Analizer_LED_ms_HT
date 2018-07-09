@@ -136,6 +136,7 @@ Column {
                     onDoubleClicked: {//rename sample
                         tableOfSeries.currentIndex = index
                         renameDlg.visible = true;
+                        newName.focus = true
                     }
                 }
                 focus: true
@@ -171,6 +172,7 @@ Column {
                 standardButtons: StandardButton.OK
                 onAccepted: {
                     console.log(newName.text)
+                    customLegend.renameSeries(qsTr(graphs.series(tableOfSeries.currentItem.text).name), newName.text)
                     //dotted series start
                     graphs.series(qsTr(graphs.series(
                                    tableOfSeries.currentItem.text).name+"_dotted")).name =
@@ -180,7 +182,6 @@ Column {
                             newName.text
                     tableOfSeries.currentItem.text = newName.text
                     newName.text = ""
-
                 }
             }
         }
@@ -214,26 +215,26 @@ Column {
                     }
                     standardButtons: StandardButton.OK
                     onAccepted: {
-                        var path = reciever.getDataPath() +
-                                fileNameTF.text + ".csv"
-                        validatorCSV.url = "file:///" + path
-                        console.log("url: " + validatorCSV.url)
+//                        var path = reciever.getDataPath() +
+//                                fileNameTF.text + ".csv"
+//                        validatorCSV.url = "file:///" + path
+//                        console.log("url: " + validatorCSV.url)
 //                        console.log("urlErr: " + validatorCSV.fileErrorMessage)
-                        if (validatorCSV.fileValid === false) {
+//                        if (validatorCSV.fileValid === false) {
                             reciever.saveDataToCSV(fileNameTF.text + ".csv");
                             //console.log(path)
                             fileNameTF.text = ""
                             delay(1, fileNameDlg.close);
                             showPopupTips(qsTr("Data saved to: \n" + path),
                                           1000);
-                        }
-                        else { //if file exist
-                            fileNameTF.text = ""
-                            fileNameDlg.title = qsTr("Enter UNIQUE file name")
-                            delay(1, fileNameDlg.open);
-                            showPopupTips(qsTr("Error: File exists! Choose another name"),
-                                          1000);
-                        }
+//                        }
+//                        else { //if file exist
+//                            fileNameTF.text = ""
+//                            fileNameDlg.title = qsTr("Enter UNIQUE file name")
+//                            delay(1, fileNameDlg.open);
+//                            showPopupTips(qsTr("Error: File exists! Choose another name"),
+//                                          1000);
+//                        }
                     }
                 }
                 FileValidator {

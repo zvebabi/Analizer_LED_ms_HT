@@ -68,6 +68,22 @@ Rectangle {
         seriesColors = colors;
         seriesCount--;
     }
+    function renameSeries(seriesName, newName) {
+        var names = [];
+        var colors = [];
+        var j=0;
+        for(var i = seriesCount; i>=0 ; i--) {
+            colors[j] = seriesColors[i];
+            if (seriesNames[i] === seriesName) {
+                names[j] = qsTr(newName)
+            } else {
+                names[j] = seriesNames[i];
+            }
+            j++;
+        }
+        seriesNames = names;
+        seriesColors = colors;
+    }
 
     //![2]
     Component {
