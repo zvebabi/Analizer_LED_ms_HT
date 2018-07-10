@@ -275,12 +275,18 @@ Column {
                     }
                     standardButtons: StandardButton.OK
                     onAccepted: {
-                        var path = reciever.getDataPath() +
-                                imgNameTF.text + ".png";
-                        var pathH = reciever.getDataPath() +
-                                imgNameTF.text + "_hist.png";
-                        validatorIMG.url = "file:///" + path
-                        if (validatorIMG.fileValid === false) {
+                        var stringWithTime = new Date().toLocaleString(Qt.locale("en_US"), "yyyyMMdd_HHmmss_")
+
+                        var path = reciever.getDataPath()
+                                 + stringWithTime
+                                 + imgNameTF.text
+                                 + ".png";
+                        var pathH = reciever.getDataPath()
+                                  + stringWithTime
+                                  + imgNameTF.text
+                                  + "_hist.png";
+//                        validatorIMG.url = "file:///" + path
+//                        if (validatorIMG.fileValid === false) {
                             colForSnap.update();
                             colForSnap.grabToImage(function(result) {
                                             result.saveToFile(path); });
@@ -289,13 +295,13 @@ Column {
                             delay(1, imgNameDlg.close);
                             showPopupTips(qsTr("Image saved to: \n" + path),
                                           1000);
-                        }
-                        else { //if file exist
-                            imgNameTF.text = ""
-                            delay(1, imgNameDlg.open);
-                            showPopupTips(qsTr("Error: image exists! Choose another name"),
-                                          1000);
-                        }
+//                        }
+//                        else { //if file exist
+//                            imgNameTF.text = ""
+//                            delay(1, imgNameDlg.open);
+//                            showPopupTips(qsTr("Error: image exists! Choose another name"),
+//                                          1000);
+//                        }
                     }
                 }
                 FileValidator {
