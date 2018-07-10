@@ -221,7 +221,9 @@ Column {
 //                        console.log("url: " + validatorCSV.url)
 //                        console.log("urlErr: " + validatorCSV.fileErrorMessage)
 //                        if (validatorCSV.fileValid === false) {
-                            reciever.saveDataToCSV(fileNameTF.text + ".csv");
+                        var fileNameWithTime = new Date().toLocaleString(Qt.locale("en_US"), "yyyyMMdd_HHmmss_")
+                        fileNameWithTime += (fileNameTF.text +qsTr(".csv"))
+                            reciever.saveDataToCSV(fileNameWithTime);
                             //console.log(path)
                             fileNameTF.text = ""
                             delay(1, fileNameDlg.close);
