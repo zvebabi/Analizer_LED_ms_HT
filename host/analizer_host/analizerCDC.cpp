@@ -460,7 +460,7 @@ void analizerCDC::identityHandler(const QStringList &line)
     {
         qDebug() << "Serial# " << line.at(2).toInt();
         m_serNumber = line.at(2).toInt();
-        emit sendSerialNumber(QString("%1").arg(m_serNumber, 4, 16,QChar('0')));
+        emit sendSerialNumber(QString("%1").arg(m_serNumber, 4, 10,QChar('0')));
     }
     if(line.at(1).compare("TYPE") ==0 )
     {

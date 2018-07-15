@@ -3,6 +3,7 @@ import QtQuick.Controls 2.1
 import QtQuick.Layouts 1.3
 import QtQuick.Controls.Material 2.2
 import QtQuick.Window 2.3
+import QtGraphicalEffects 1.0
 import Qt.labs.platform 1.0
 //import QtCharts 2.2
 import "QMLs"
@@ -17,11 +18,11 @@ ApplicationWindow {
     property alias saveDataDialog_a: chV.editBar_a
     visible: true
 //    visibility: "FullScreen"
-    flags: Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint | Qt.WindowSystemMenuHint | Qt.WindowMinMaxButtonsHint
-    width: 960
-    height: 540
-    minimumHeight: 540
-    minimumWidth: 960
+    flags: Qt.FramelessWindowHint | Qt.Window | Qt.WindowMinimizeButtonHint
+    width: 1280 * dp
+    height: 720 * dp
+    minimumWidth: 1280 * dp
+    minimumHeight: 720 * dp
     title: appTitle
     property bool drawEt: false //etalon draw or not
     property bool aaManual: false //Enable antialiasing
@@ -59,6 +60,8 @@ ApplicationWindow {
     property int menuWidth : 250*app.dp// width/4
     property int menuBarHeight: 50*app.dp
     property int widthOfSeizure: 15*app.dp
+    property bool windowMaximized: false
+    property bool dataWasChangedAfterSave: false
     property real menuProgressOpening
     property bool menuIsShown:
         Math.abs(menuView.x) < (menuWidth*0.5) ? true : false
@@ -92,13 +95,84 @@ ApplicationWindow {
         }
         clip: true
       }
-      Label {
-        id: titleText
-        anchors.left: menuButton.right
-        anchors.verticalCenter: parent.verticalCenter
-        text: app.title
-        font.pixelSize: 0.35*parent.height
-        color: "#FFFFFF"
+      Rectangle{
+          id: windowTitleCustom
+          anchors.left: menuButton.right
+          anchors.right: quitButton.left
+          anchors.verticalCenter: menuBar.verticalCenter
+          height: parent.height
+          color: "transparent"
+          Label {
+            id: titleText
+            anchors.left: menuButton.right
+            anchors.verticalCenter: parent.verticalCenter
+            text: app.title
+            font.pixelSize: 0.35*menuBar.height
+            color: "#FFFFFF"
+          }
+          MouseArea {
+              id: maWindowTitle
+              anchors.fill: parent
+              property variant clickPos: "1,1"
+              onPressed: {
+                  if ( ! app.windowMaximized )
+                    clickPos  = Qt.point(mouse.x,mouse.y)
+              }
+              onPositionChanged: {
+                  if ( ! app.windowMaximized )
+                  {
+                    var delta = Qt.point(mouse.x-clickPos.x, mouse.y-clickPos.y)
+                    app.x += delta.x;
+                    app.y += delta.y;
+                  }
+              }
+              onDoubleClicked: {
+                  console.log("doubleclicked")
+                  if(app.windowMaximized )
+                  {
+                      app.showNormal()
+                      app.width = app.minimumWidth
+                      app.height = app.minimumHeight
+                      app.windowMaximized =false
+                  }
+                  else
+                  {
+                      app.showMaximized()
+                      app.windowMaximized =true
+                  }
+              }
+          }
+      }
+      Rectangle {
+          id: quitButton
+          anchors.right: parent.right
+          anchors.verticalCenter: parent.verticalCenter
+          height: parent.height *0.8
+          width: height
+          scale: maMenuBarQuit.pressed ? 1.2 : 1
+          color: "transparent"
+          Image {
+              id: quitBtnImg
+              anchors.centerIn: parent
+              width: parent.width
+              height: width
+              source: "qrc:/images/quit_48dp.png"
+              antialiasing: true
+              smooth: true
+          }
+          ColorOverlay {
+              anchors.fill: quitBtnImg
+              source: quitBtnImg
+              color: "#ffffff"
+          }
+          MouseArea {
+            id: maMenuBarQuit
+            anchors.fill: parent
+            onClicked:{
+                app.dataWasChangedAfterSave ?
+                    mainMenu.quitDialogCustom.setVisible(true) : Qt.quit()
+            }
+          }
       }
     } //menuBar
 
