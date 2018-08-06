@@ -57,6 +57,7 @@ Item {
             id: colForSnap
             spacing:0
             anchors.fill: parent
+            width: parent.width - editBar.itemWidth
 //            anchors.margins: 10
             Rectangle {
                 width: parent.width - editBar.itemWidth
