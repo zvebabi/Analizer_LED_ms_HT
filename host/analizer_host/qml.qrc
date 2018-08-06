@@ -20,7 +20,6 @@
         <file>images/logo_icon_7.png</file>
         <file>QMLs/CustomLegend.qml</file>
         <file>About.qml</file>
-        <file>QMLs/MenuIconQuit.qml</file>
         <file>images/quit_48dp.png</file>
     </qresource>
 </RCC>

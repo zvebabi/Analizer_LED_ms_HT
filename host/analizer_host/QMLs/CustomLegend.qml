@@ -56,23 +56,23 @@ Rectangle {
         var names = [];
         var colors = [];
         var j=0;
-        for(var i = seriesCount; i>=0 ; i--) {
+        for(var i = seriesCount - 1; i>=0 ; i--) {
             if (seriesNames[i] === seriesName) {
+                seriesCount--;
                 continue;
             }
             names[j] = seriesNames[i];
             colors[j] = seriesColors[i];
             j++;
         }
-        seriesNames = names;
-        seriesColors = colors;
-        seriesCount--;
+        seriesNames = names.reverse();
+        seriesColors = colors.reverse();
     }
     function renameSeries(seriesName, newName) {
         var names = [];
         var colors = [];
         var j=0;
-        for(var i = seriesCount; i>=0 ; i--) {
+        for(var i = seriesCount-1; i>=0 ; i--) {
             colors[j] = seriesColors[i];
             if (seriesNames[i] === seriesName) {
                 names[j] = qsTr(newName)
@@ -81,8 +81,8 @@ Rectangle {
             }
             j++;
         }
-        seriesNames = names;
-        seriesColors = colors;
+        seriesNames = names.reverse();
+        seriesColors = colors.reverse();
     }
 
     //![2]
