@@ -53,19 +53,19 @@ Item {
         spacing: 1
         anchors.fill: parent
         anchors.margins: 10
-        Column {
+        Rectangle {
             id: colForSnap
-            spacing:0
-            anchors.fill: parent
-            width: parent.width - editBar.itemWidth
-//            anchors.margins: 10
+            anchors.left: app.left
+            anchors.top: parent.top
+            width: app.width - editBar.itemWidth
+            height: app.height - app.menuBarHeight
             Rectangle {
-                width: parent.width - editBar.itemWidth
-                height: app.height - 1.5*app.menuBarHeight
+                id: graphsRect
+                width: parent.width //- editBar.itemWidth
+                height: app.height - 2*app.menuBarHeight
                 anchors.right: editBar.left
                 anchors.left: parent.left
-                anchors.top: parent.top - app.menuBarHeight
-
+                anchors.top: parent.top
                 ChartView {
                     id: graphs
                     anchors.fill: parent
@@ -169,15 +169,12 @@ Item {
             CustomLegend {
                 id: customLegend
 //                visible: app.ctmLegendVisibility
-                width: parent.width - editBar.itemWidth
-                height: app.menuBarHeight
+                width: parent.width
+                height: 2*app.menuBarHeight
 //                anchors.horizontalCenter: parent.horizontalCenter
                 anchors.right: editBar.left
                 anchors.left: parent.left
-                anchors.top: graphs.bottom
-//                onEntered: chartViewSelector.highlightSeries(seriesName);
-//                onExited: chartViewSelector.highlightSeries("");
-//                onSelected: chartViewSelector.selectSeries(seriesName);
+                anchors.top: graphsRect.bottom
             }
         }
         ChartViewEditBar {

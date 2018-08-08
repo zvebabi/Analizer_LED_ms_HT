@@ -128,7 +128,7 @@ Rectangle {
         id: legendRow
         anchors.centerIn: parent
         spacing: 5*app.dp
-        columns: 7
+        columns: 6
         Repeater {
             id: legendRepeater
             model: seriesCount

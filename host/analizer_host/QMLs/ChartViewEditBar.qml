@@ -279,6 +279,7 @@ Column {
 //                        if (validatorIMG.fileValid === false) {
                             colForSnap.update();
                             colForSnap.grabToImage(function(result) {
+
                                             result.saveToFile(path); });
                             console.log(path)
                             imgNameTF.text = ""
