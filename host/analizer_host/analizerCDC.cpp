@@ -10,19 +10,14 @@ analizerCDC::analizerCDC(QObject *parent) : QObject(parent),
 {
     qRegisterMetaType<QtCharts::QAbstractSeries*>();
     qRegisterMetaType<QtCharts::QAbstractAxis*>();
-    documentsPath = QDir::homePath()+QString("/Documents/");
-    rangeVal.append(QPointF(0,0));
-    rangeVal.append(QPointF(0,0));
-//    isPortOpen=false;
-#ifdef _WIN322222
-    device = new WinSerialPort(this);
-    connect(device, &WinSerialPort::readyRead, this, &analizerCDC::readData);
-#else
+
     device = new QSerialPort(this);
     connect(device, &QSerialPort::readyRead, this, &analizerCDC::readData);
-#endif
 
+    documentsPath = QDir::homePath()+QString("/Documents/");
     etalonPoints = new QVector<QPointF>(43,QPointF(1,1));
+    rangeVal.append(QPointF(0,0));
+    rangeVal.append(QPointF(0,0));
     drawLines = false;
 }
 
@@ -31,59 +26,14 @@ analizerCDC::~analizerCDC()
     qDebug() << "analizer destructor";
     if (device != NULL)
     {
-#ifdef _WIN322222
-//        if (isPortOpen)
-        {
-            device->disconnectPort();
-            delete device;
-            qDebug() << "call disconnect port";
-        }
-#else
         device->disconnect();
         delete device;
         qDebug() << "call disconnect port";
-#endif
-
     }
-}
-
-void analizerCDC::cppSlot(const QString &msg)
-{
-    //Найдем строки ввода
-    QObject* field1 = this->parent()->findChild<QObject*>("field1");
-    QObject* field2 = this->parent()->findChild<QObject*>("field2");
-    //Найдем поле вывода
-    QObject* textArea = this->parent()->findChild<QObject*>("textArea");
-
-    //Считаем информацию со строк ввода через свойство text
-    QString str1=(field1->property("text")).toString();
-    QString str2=(field2->property("text")).toString();
-
-    int a = str1.toInt();//Переведем строку в число
-    int b = str2.toInt();//Переведем строку в число
-
-    int c = a + b; //Вычисления наши
-
-    QString strResult=QString::number(c);//Переведем результат в строку
-
-    //Ну и наконец выведем в поле вывода нашу информацию
-    textArea->setProperty("text", str1+" + "+str2+" = "+strResult+" "+msg);
 }
 
 void analizerCDC::initDevice(QString port)
 {
-#ifdef _WIN322222 //windows compatibility
-    device->setPortName(port);
-    isPortOpen = device->open();
-    if(isPortOpen){
-        qDebug() << "Connected to: " << device->portName();
-        emit sendDebugInfo("Connected to: " + device->portName());
-    }
-    else {
-        qDebug() << "Can't open port" << port;
-        emit sendDebugInfo("Can't open port" + port);
-    }    
-#else
     device->setPortName(port);
     device->setBaudRate(QSerialPort::Baud115200);
     device->setDataBits(QSerialPort::Data8);
@@ -95,42 +45,14 @@ void analizerCDC::initDevice(QString port)
         device->write("i");
         device->setDataTerminalReady(true);
         device->setRequestToSend(false);
-//        while( serNumber == -1 ) {};
         emit sendDebugInfo("Connected to: " + device->portName());
     }
     else {
         qDebug() << "Can't open port" << port;
         emit sendDebugInfo("Can't open port" + port, 2000);
     }    
-#endif
     //read calibration file
     readEtalonParameters(QDir::currentPath()+"/calibrator", false);
-#if 0
-    float k;
-
-    QFile calibfile(QDir::currentPath()+"/calibrator");
-    if(!calibfile.open(QIODevice::ReadOnly | QIODevice::Text))
-    {
-        std::string err = calibfile.errorString().toStdString();
-        emit sendDebugInfo("Can't read calibration parameters", 3000);
-        emit activateRelativeMod();
-        std::stringstream ss;
-        ss << "Can not read file \'"
-           << QDir::currentPath().toStdString()
-           << "/calibrator\'"
-           << " Run application in relative mode. "
-           << "Error #"
-           << err;
-        emit sendDebugInfo(ss.str().c_str());
-        return;
-    }
-    QTextStream f(&calibfile);
-    while (!f.atEnd())
-    {
-        f >> k;
-        calibratorData.push_back(k);
-    }
-#endif
 }
 
 void analizerCDC::getListOfPort()
@@ -144,9 +66,6 @@ void analizerCDC::getListOfPort()
     std::stringstream ss;
     ss << "Found " << ports.size() << " ports";
     emit sendDebugInfo(QString(ss.str().c_str()), 100);
-//    emit sendPortName(QString("teststr"));
-//    QObject* comboBox = this->parent()->findChild<QObject*>("availablePorts");
-    //    comboBox->setProperty("append", info.portName());
 }
 
 void analizerCDC::readData()
@@ -164,114 +83,17 @@ void analizerCDC::doMeasurements(QtCharts::QAbstractSeries *series,
     currentPoints = new QVector<QPointF> ;
     etalon = _etalon;
     qDebug() << etalon;
-#if 1
+
     if(serviceMode)
         device->write("d");
     else
         device->write("m");
     currentSeries.first = series;
     currentSeries.second = seriesDotted;
-#else
-    auto colCount =10;
-    // Append the new data depending on the type
-    currentPoints->reserve(colCount);
-//    srand(0);
-    for (int j(0); j < colCount; j++) {
-        qreal x(0);
-        qreal y(0), _y(0);
-      // data with sin + random component
-        y = qSin(3.14159265358979 / 30 * j) + 0.5 + (qreal) rand() / (qreal) RAND_MAX;
-//        y = _y < 1.5 ? _y : 0;
-        x = j;//micrometers[j];
-        //find borders
-        if (etalon && drawLines) {
-            if ( rangeVal[0].x() > x )
-                rangeVal[0].setX(x);
-            if ( rangeVal[1].x() < x )
-                rangeVal[1].setX(x);
-            if ( rangeVal[0].y() > y )
-                rangeVal[0].setY(y);
-            if ( rangeVal[1].y() < y )
-                rangeVal[1].setY(y);
-            }
-        //add data to graph
-        currentPoints->append(QPointF(x, y));
-    }
-
-    if (etalon)
-    {
-        etalonPoints = new QVector<QPointF>(*currentPoints);
-    }
-    else
-    {
-        QVector<QPointF> calibratedSeries;
-        ///calibrating
-        for (int i=0; i < currentPoints->size(); i++)
-        {
-            calibratedSeries.append(
-                        QPointF(currentPoints->at(i).x(),
-                      currentPoints->at(i).y() / etalonPoints->at(i).y()*100.0));
-        }
-        ///antialiasing
-        if(aaManual)
-            for(int i=0; i < calibratedSeries.size(); i++)
-            {
-                //koeffs
-                int k,l,m,n,o,p;
-                o = (i-3 >= 0) ? i-3: 0;
-                k = (i-2 >= 0) ? i-2: 0;
-                l = (i-1 >= 0) ? i-1: 0;
-                m = (i+1 < calibratedSeries.size()) ? (i+1) : (calibratedSeries.size()-1);
-                n = (i+2 < calibratedSeries.size()) ? (i+2) : (calibratedSeries.size()-1);
-                p = (i+3 < calibratedSeries.size()) ? (i+3) : (calibratedSeries.size()-1);
-
-                calibratedSeries[i] = (calibratedSeries[k] + calibratedSeries[l] +
-                                      calibratedSeries[m] + calibratedSeries[i] +
-                                      calibratedSeries[n] + calibratedSeries[o] +
-                                       calibratedSeries[p])/7;
-            }
-
-
-//        delete currentPoints;
-//        qDebug() << *currentPoints;
-        *currentPoints = calibratedSeries;
-//        qDebug() << *currentPoints;
-        qreal xMin = std::numeric_limits<qreal>::max(); // everything is <= this
-        qreal xMax = std::numeric_limits<qreal>::min(); // everything is >= this
-        qreal yMin = std::numeric_limits<qreal>::max();
-        qreal yMax = std::numeric_limits<qreal>::min();
-        foreach (QPointF p,  *currentPoints) {
-            xMin = qMin(xMin, p.x());
-            xMax = qMax(xMax, p.x());
-            yMin = qMin(yMin, p.y());
-            yMax = qMax(yMax, p.y());
-        }
-        //find borders
-        if ( rangeVal[0].x() > xMin )
-            rangeVal[0].setX(xMin);
-        if ( rangeVal[1].x() < xMax )
-            rangeVal[1].setX(xMax);
-        if ( rangeVal[0].y() > yMin )
-            rangeVal[0].setY(yMin);
-        if ( rangeVal[1].y() < yMax )
-            rangeVal[1].setY(yMax);
-
-    }
-    if (!etalon || (etalon && drawLines))
-    {
-        m_data.append(*currentPoints);
-        lines.insert(series, m_data.back()); //save series
-        emit adjustAxis(rangeVal[0], rangeVal[1]);
-        update(series);
-    }
-
-#endif
-
 }
 
 void analizerCDC::selectPath(QString pathForSave)
 {
-    qDebug() << documentsPath;
     documentsPath = pathForSave;
     qDebug() << pathForSave;
     qDebug() << documentsPath;

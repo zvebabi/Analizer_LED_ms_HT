@@ -23,10 +23,10 @@ HEADERS += \
 RESOURCES += qml.qrc
 
 win32: { #because qserial port not workin in win
-HEADERS += \
-    WinSerialPort.h
-SOURCES += \
-    WinSerialPort.cpp
+#HEADERS += \
+#    WinSerialPort.h
+#SOURCES += \
+#    WinSerialPort.cpp
 RC_FILE += LEDMinispectrometer.rc
 }
 

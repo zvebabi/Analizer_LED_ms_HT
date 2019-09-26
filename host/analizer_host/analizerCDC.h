@@ -27,11 +27,6 @@
 #include <sstream>
 #include <ctime>
 
-#ifdef _WIN322222 //winapi comport
-#include "WinSerialPort.h"
-#endif
-
-
 class analizerCDC : public QObject
 {
     Q_OBJECT
@@ -87,11 +82,7 @@ private:
     void buttonPressHandler(const QStringList& line);
 
     std::vector<QString> ports;
-#ifdef _WIN322222
-    WinSerialPort* device = NULL;
-#else
     QSerialPort* device = NULL;
-#endif
     int m_serNumber;
     QSerialPort::BaudRate baudRate;
     QVector<QVector<QPointF> > m_data;

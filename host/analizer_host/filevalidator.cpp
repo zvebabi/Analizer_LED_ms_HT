@@ -36,9 +36,6 @@ QUrl FileValidator::url() const
 
 void FileValidator::setUrl(const QUrl &url)
 {
-//    if (url == mUrl)
-//        return;
-
     mUrl = url;
 
     if (mUrl.isEmpty()) {
