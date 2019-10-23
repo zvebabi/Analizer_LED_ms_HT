@@ -1,7 +1,7 @@
-#include "mydevice.h"
+#include "screenproperties.h"
 
 
-MyDevice::MyDevice(QObject *parent) : QObject(parent)
+ScreenProperties::ScreenProperties(QObject *parent) : QObject(parent)
 {
     m_screen = qApp->primaryScreen();
     m_dpi = m_screen->physicalDotsPerInch() * m_screen->devicePixelRatio();
@@ -40,9 +40,9 @@ MyDevice::MyDevice(QObject *parent) : QObject(parent)
     qDebug() << "*** dp:"<<m_dp<<" dpi:"<<m_dpi;
 }
 
-MyDevice::~MyDevice()
+ScreenProperties::~ScreenProperties()
 {
-    qDebug() << "mydevice destructor";
+    qDebug() << "ScreenProperties destructor";
 }
 
 

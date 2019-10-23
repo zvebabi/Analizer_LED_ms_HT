@@ -9,7 +9,6 @@
 #include <QStringList>
 #include <QByteArray>
 #include <QPointF>
-#include <QAbstractSeries>
 #include <QtCharts/QAbstractSeries>
 #include <QtCharts/QXYSeries>
 #include <QColor>
@@ -27,14 +26,14 @@
 #include <sstream>
 #include <ctime>
 
-class analizerCDC : public QObject
+class AnalizerCDC : public QObject
 {
     Q_OBJECT
 public:
-    explicit analizerCDC(QObject *parent = 0);
-    ~analizerCDC();
+    explicit AnalizerCDC(QObject *parent = 0);
+    ~AnalizerCDC();
 public slots:
-    void cppSlot(const QString &msg);
+//    void cppSlot(const QString &msg);
 
     void initDevice(QString port);
     void getListOfPort();

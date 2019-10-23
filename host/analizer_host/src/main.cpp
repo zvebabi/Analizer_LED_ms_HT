@@ -3,18 +3,17 @@
 #include <QQuickStyle>
 #include <QQmlContext>
 #include <QIcon>
-
 #include "analizerCDC.h"
-#include "mydevice.h"
-#include "filevalidator.h"
+#include "plugins/ScreenProperties/screenproperties.h"
+#include "plugins/FileValidator/filevalidator.h"
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication app(argc, argv);
     qApp->setQuitOnLastWindowClosed(true);
     QQuickStyle::setStyle("Material");
-    qmlRegisterType<MyDevice>("mydevice", 1, 0, "MyDevice");
+    qmlRegisterType<ScreenProperties>("mydevice", 1, 0, "MyDevice");
     qmlRegisterType<FileValidator>("filevalidator", 1, 0, "FileValidator");
 
     QQmlApplicationEngine engine;
@@ -22,7 +21,7 @@ int main(int argc, char *argv[])
 
     QObject* root = engine.rootObjects()[0];
     app.setWindowIcon(QIcon(":/images/logo_icon_7.png"));
-    analizerCDC *analizer= new analizerCDC(root);
+    AnalizerCDC *analizer= new AnalizerCDC(root);
 
     engine.rootContext()->setContextProperty("reciever", analizer);
 

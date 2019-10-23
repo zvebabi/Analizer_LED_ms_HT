@@ -1,0 +1,2 @@
+add_subdirectory(FileValidator)
+add_subdirectory(ScreenProperties)

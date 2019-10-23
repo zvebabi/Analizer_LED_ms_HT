@@ -10,17 +10,17 @@ linux: {
 QMAKE_CXXFLAGS += -O3 -g3
 }
 
-SOURCES += main.cpp \
-    analizerCDC.cpp \
-    mydevice.cpp \
-    filevalidator.cpp
+SOURCES += src/main.cpp \
+    src/analizerCDC.cpp \
+    src/mydevice.cpp \
+    src/filevalidator.cpp
 
 HEADERS += \
-    analizerCDC.h \
-    mydevice.h \
-    filevalidator.h
+    src/analizerCDC.h \
+    src/mydevice.h \
+    src/filevalidator.h
 
-RESOURCES += qml.qrc
+RESOURCES += src/qml.qrc
 
 win32: { #because qserial port not workin in win
 #HEADERS += \

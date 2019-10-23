@@ -2,7 +2,7 @@
 #include <QtMath>
 #include <memory>
 
-analizerCDC::analizerCDC(QObject *parent) : QObject(parent),
+AnalizerCDC::AnalizerCDC(QObject *parent) : QObject(parent),
     firstLine(true), aaManual(true), serviceMode(false), isPortOpen(false),
     cumulativeMode(false), relativeMode(false), numberCumulativeLines(0),
     m_serNumber(-1)
@@ -12,7 +12,7 @@ analizerCDC::analizerCDC(QObject *parent) : QObject(parent),
     qRegisterMetaType<QtCharts::QAbstractAxis*>();
 
     device = new QSerialPort(this);
-    connect(device, &QSerialPort::readyRead, this, &analizerCDC::readData);
+    connect(device, &QSerialPort::readyRead, this, &AnalizerCDC::readData);
 
     documentsPath = QDir::homePath()+QString("/Documents/");
     etalonPoints = new QVector<QPointF>(43,QPointF(1,1));
@@ -21,7 +21,7 @@ analizerCDC::analizerCDC(QObject *parent) : QObject(parent),
     drawLines = false;
 }
 
-analizerCDC::~analizerCDC()
+AnalizerCDC::~AnalizerCDC()
 {
     qDebug() << "analizer destructor";
     if (device != NULL)
@@ -32,7 +32,7 @@ analizerCDC::~analizerCDC()
     }
 }
 
-void analizerCDC::initDevice(QString port)
+void AnalizerCDC::initDevice(QString port)
 {
     device->setPortName(port);
     device->setBaudRate(QSerialPort::Baud115200);
@@ -55,7 +55,7 @@ void analizerCDC::initDevice(QString port)
     readEtalonParameters(QDir::currentPath()+"/calibrator", false);
 }
 
-void analizerCDC::getListOfPort()
+void AnalizerCDC::getListOfPort()
 {
     ports.clear();
     foreach(const QSerialPortInfo &info, QSerialPortInfo::availablePorts()){
@@ -68,13 +68,13 @@ void analizerCDC::getListOfPort()
     emit sendDebugInfo(QString(ss.str().c_str()), 100);
 }
 
-void analizerCDC::readData()
+void AnalizerCDC::readData()
 {
     qDebug() << "in readdata";
     while (device->canReadLine()) processLine(device->readLine());
 }
 
-void analizerCDC::doMeasurements(QtCharts::QAbstractSeries *series,
+void AnalizerCDC::doMeasurements(QtCharts::QAbstractSeries *series,
                                  bool _etalon,
                                  QtCharts::QAbstractSeries *seriesDotted)
 {
@@ -92,14 +92,14 @@ void analizerCDC::doMeasurements(QtCharts::QAbstractSeries *series,
     currentSeries.second = seriesDotted;
 }
 
-void analizerCDC::selectPath(QString pathForSave)
+void AnalizerCDC::selectPath(QString pathForSave)
 {
     documentsPath = pathForSave;
     qDebug() << pathForSave;
     qDebug() << documentsPath;
 }
 
-void analizerCDC::saveDataToCSV(QString filename="data.csv")
+void AnalizerCDC::saveDataToCSV(QString filename="data.csv")
 {
     qDebug() << "save to csv..";
     qDebug() <<filename;
@@ -152,7 +152,7 @@ void analizerCDC::saveDataToCSV(QString filename="data.csv")
     emit sendDebugInfo(QString(ss.str().c_str()));
 }
 
-void analizerCDC::deleteSeries(QtCharts::QAbstractSeries *series)
+void AnalizerCDC::deleteSeries(QtCharts::QAbstractSeries *series)
 {
     if (lines.contains(series))
         lines.remove(series);
@@ -184,7 +184,7 @@ void analizerCDC::deleteSeries(QtCharts::QAbstractSeries *series)
     emit sendDebugInfo(QString(ss.str().c_str()));
 }
 
-void analizerCDC::update(QtCharts::QAbstractSeries *series,
+void AnalizerCDC::update(QtCharts::QAbstractSeries *series,
                          QtCharts::QAbstractSeries *seriesDotted)
 {
     if (series && lines.contains(series)) {
@@ -214,7 +214,7 @@ void analizerCDC::update(QtCharts::QAbstractSeries *series,
     emit sendDebugInfo("Done");
 }
 
-void analizerCDC::processLine(const QByteArray &_line)
+void AnalizerCDC::processLine(const QByteArray &_line)
 {
 //    QByteArray line = device->readAll();
     qDebug() << _line;
@@ -238,7 +238,7 @@ void analizerCDC::processLine(const QByteArray &_line)
         dataProcessingHandler(line);
 }
 
-void analizerCDC::serviceModeHandler(const QStringList &line)
+void AnalizerCDC::serviceModeHandler(const QStringList &line)
 {
 //    qDebug() << line.at(1);
 //    qDebug() << line.at(1).compare("START");
@@ -276,7 +276,7 @@ void analizerCDC::serviceModeHandler(const QStringList &line)
     }
 }
 
-void analizerCDC::identityHandler(const QStringList &line)
+void AnalizerCDC::identityHandler(const QStringList &line)
 {
     if (line.at(1).compare("SERIAL") == 0 )
     {
@@ -307,7 +307,7 @@ void analizerCDC::identityHandler(const QStringList &line)
     emit sendDebugInfo(QString("Click calibration button to perform device calibration"));
 }
 
-void analizerCDC::dataAquisitionHandler(const QStringList &line)
+void AnalizerCDC::dataAquisitionHandler(const QStringList &line)
 {
     if (line.size() == 4)
     {
@@ -331,7 +331,7 @@ void analizerCDC::dataAquisitionHandler(const QStringList &line)
     }
 }
 
-void analizerCDC::dataProcessingHandler(const QStringList &line)
+void AnalizerCDC::dataProcessingHandler(const QStringList &line)
 {
     for (auto point = currentPoints->begin(); point != currentPoints->end(); point++)
     {
@@ -483,13 +483,13 @@ void analizerCDC::dataProcessingHandler(const QStringList &line)
     }
 }
 
-void analizerCDC::buttonPressHandler(const QStringList &line)
+void AnalizerCDC::buttonPressHandler(const QStringList &line)
 {
     emit makeSeries();
     qDebug() << "signal from button";
 }
 
-void analizerCDC::readEtalonParameters(const QString filename, bool saveNew=true)
+void AnalizerCDC::readEtalonParameters(const QString filename, bool saveNew=true)
 {
     //read calibration file
     float k;

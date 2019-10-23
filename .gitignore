@@ -126,6 +126,8 @@ Thumbs.db
 *.rc
 /.qmake.cache
 /.qmake.stash
+build-*
+build
 
 # qtcreator generated files
 *.pro.user*
@@ -150,7 +152,7 @@ Thumbs.db
 *.opensdf
 *.vcxproj
 *vcxproj.*
-
+*.user
 # MinGW generated files
 *.Debug
 *.Release

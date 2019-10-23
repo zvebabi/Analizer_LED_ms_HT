@@ -11,7 +11,7 @@
 #endif
 
 
-class MyDevice : public QObject
+class ScreenProperties : public QObject
 {
     Q_OBJECT
 
@@ -19,8 +19,8 @@ class MyDevice : public QObject
     Q_PROPERTY(qreal dp READ dp NOTIFY dpChanged)
 
 public:
-    explicit MyDevice(QObject *parent = 0);
-    ~MyDevice();
+    explicit ScreenProperties(QObject *parent = 0);
+    ~ScreenProperties();
 
     Q_INVOKABLE qreal dp( int value ) { return m_dp*value; }
 
