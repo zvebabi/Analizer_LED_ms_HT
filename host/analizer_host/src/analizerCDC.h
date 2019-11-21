@@ -25,6 +25,7 @@
 #include <fstream>
 #include <sstream>
 #include <ctime>
+#include "datahandler.h"
 
 class AnalizerCDC : public QObject
 {
@@ -44,7 +45,10 @@ public slots:
 //    void legendsFromMCU(bool _legend) {axisNameFromMCU = _legend;}
     void valuesFromMCU(bool _values) {axisValueFromMCU = _values;}
     void setServiceMode(bool _values) {serviceMode = _values;}
-    void setRelativeMode(bool _values) {relativeMode = _values;}
+    void setRelativeMode(bool _values) {
+        relativeMode = _values;
+        dh.setMode(_values == true ? 1 : 0);
+    }
     void setCumulativeMode(bool _values) {cumulativeMode = _values;}
 
     void doMeasurements(QtCharts::QAbstractSeries *series,
@@ -76,9 +80,9 @@ private:
     void processLine(const QByteArray& line);
     void serviceModeHandler(const QStringList& line);
     void identityHandler(const QStringList& line);
-    void dataAquisitionHandler(const QStringList& line);
-    void dataProcessingHandler(const QStringList& line);
     void buttonPressHandler(const QStringList& line);
+
+    DataHandler dh;
 
     std::vector<QString> ports;
     QSerialPort* device = NULL;
@@ -91,7 +95,7 @@ private:
     QVector<QPointF> *etalonPoints;
     QVector<QPointF> cumulativePoints;
     int numberCumulativeLines;
-    QVector<float> calibratorData;
+    QVector<double> calibratorData;
     std::pair<QtCharts::QAbstractSeries*,QtCharts::QAbstractSeries*> currentSeries;
     QtCharts::QAbstractSeries* etalonSeries;
     QVector<QPair<QtCharts::QAbstractSeries*, QVector<QPointF> > > vectorLines;

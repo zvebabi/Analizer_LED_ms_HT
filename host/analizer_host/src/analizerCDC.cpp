@@ -80,6 +80,7 @@ void AnalizerCDC::doMeasurements(QtCharts::QAbstractSeries *series,
 {
     emit sendDebugInfo("Start measurement");
     qDebug() << "doMeasurements";
+    dh.PrepareToRecieveData(_etalon);
     currentPoints = new QVector<QPointF> ;
     etalon = _etalon;
     qDebug() << etalon;
@@ -223,19 +224,21 @@ void AnalizerCDC::processLine(const QByteArray &_line)
     {
         line.append(QString(w));
     }
+    bool oK = {true};
+    QString status;
 //identity
-    if( line.first().compare("x=i") ==0)
+    if ( line.first().compare("x=i") ==0 )
         identityHandler(line);
 //service mode parser
-    if( line.first().compare("x=s") == 0)
+    if ( line.first().compare("x=s") == 0 )
         serviceModeHandler(line);   //parse all comands here
 //measure mode
-    if( line.first().compare("x=m\n") == 0)
+    if ( line.first().compare("x=m\n") == 0 )
         buttonPressHandler(line);
-    if( line.first().compare("x=d") ==0)
-        dataAquisitionHandler(line);
-    if( line.first().compare("x=e\n") ==0)
-        dataProcessingHandler(line);
+    if ( line.first().compare("x=d") == 0 && line.first().compare("x=e\n") == 0 )
+        oK = dh.ProcessLineWithData(line, status);
+    if (!oK)
+        emit sendDebugInfo(status, 3000);
 }
 
 void AnalizerCDC::serviceModeHandler(const QStringList &line)
@@ -307,182 +310,6 @@ void AnalizerCDC::identityHandler(const QStringList &line)
     emit sendDebugInfo(QString("Click calibration button to perform device calibration"));
 }
 
-void AnalizerCDC::dataAquisitionHandler(const QStringList &line)
-{
-    if (line.size() == 4)
-    {
-        //        qDebug() << "data " << line.at(1).toFloat() <<" "
-        //                 <<line.at(3).toFloat();
-        auto x = line.at(1).toFloat();
-        auto y = line.at(3).toFloat();// < 6600 ? line.at(3).toFloat() :
-                                        //       line.at(3).toFloat()-6600;
-        currentPoints->append(QPointF(x, y));
-        if (etalon && drawLines)
-        {
-            if ( rangeVal[0].x() > x )
-                rangeVal[0].setX(x);
-            if ( rangeVal[1].x() < x )
-                rangeVal[1].setX(x);
-            if ( rangeVal[0].y() > y )
-                rangeVal[0].setY(y);
-            if ( rangeVal[1].y() < y )
-                rangeVal[1].setY(y);
-        }
-    }
-}
-
-void AnalizerCDC::dataProcessingHandler(const QStringList &line)
-{
-    for (auto point = currentPoints->begin(); point != currentPoints->end(); point++)
-    {
-        if (point->y() == -1.0)
-        {
-//            emit sendDebugInfo("Bad data", 5000);
-            emit sendDebugInfo(QString("Weak signal! Click ") +
-                               QString(etalon ? "Calibrate" : "Measurement") +
-                               QString(" button again and redo measurement!"),
-                           3000);
-            return;
-        }
-    }
-    //save series and data for future
-    if (etalon)
-    {
-        etalonPoints = new QVector<QPointF>;//(*currentPoints);
-        for (int i=0; i < currentPoints->size(); i++)
-        {
-//                auto xVal = axisValueFromMCU ?
-//                            currentPoints->at(i).x() : micrometers[i];
-            auto xVal = currentPoints->at(i).x();
-            auto yVal = relativeMode ?
-                            currentPoints->at(i).y() :
-                            currentPoints->at(i).y() / calibratorData[i];
-            etalonPoints->append(QPointF( xVal, yVal ) );
-        }
-        qDebug() << "set etalon";
-        emit activateEditBar();
-    }
-    else
-    {
-        ///calibrate and antialiasing
-        QVector<QPointF> calibratedSeries;
-        ///calibrate
-        for (int i=0; i < currentPoints->size(); i++)
-        {
-//                auto xVal = axisValueFromMCU ?
-//                            currentPoints->at(i).x() : micrometers[i];
-            calibratedSeries.append(
-                QPointF(currentPoints->at(i).x(),
-                 currentPoints->at(i).y() / etalonPoints->at(i).y()*100.0));
-        }
-        ///antialiasing
-        if(0)
-            for(int i=0; i < calibratedSeries.size(); i++)
-            {
-                //koeffs
-                int k,l,m,n,o,p;
-                o = (i-3 >= 0) ? i-3: 0;
-                k = (i-2 >= 0) ? i-2: 0;
-                l = (i-1 >= 0) ? i-1: 0;
-                m = (i+1 < calibratedSeries.size()) ? (i+1) : (calibratedSeries.size()-1);
-                n = (i+2 < calibratedSeries.size()) ? (i+2) : (calibratedSeries.size()-1);
-                p = (i+3 < calibratedSeries.size()) ? (i+3) : (calibratedSeries.size()-1);
-
-                calibratedSeries[i].ry() =
-                            (calibratedSeries[k].y() + calibratedSeries[l].y() +
-                             calibratedSeries[m].y() + calibratedSeries[i].y() +
-                             calibratedSeries[n].y() + calibratedSeries[o].y() +
-                             calibratedSeries[p].y())/7;
-            }
-
-
-//            delete currentPoints;
-        *currentPoints = calibratedSeries;
-        //adjust borders
-        qreal xMin = std::numeric_limits<qreal>::max(); // everything is <= this
-        qreal xMax = std::numeric_limits<qreal>::min(); // everything is >= this
-        qreal yMin = std::numeric_limits<qreal>::max();
-        qreal yMax = std::numeric_limits<qreal>::min();
-        foreach (QPointF p,  *currentPoints) {
-            xMin = qMin(xMin, p.x());
-            xMax = qMax(xMax, p.x());
-            yMin = qMin(yMin, p.y());
-            yMax = qMax(yMax, p.y());
-        }
-        if(firstLine)
-        {
-            firstLine = false;
-            rangeVal[0].setX(xMin);
-            rangeVal[1].setX(xMax);
-            rangeVal[0].setY(yMin);
-            rangeVal[1].setY(yMax);
-        }
-        //find borders
-        if ( rangeVal[0].x() > xMin )
-            rangeVal[0].setX(xMin);
-        if ( rangeVal[1].x() < xMax )
-            rangeVal[1].setX(xMax);
-        if ( rangeVal[0].y() > yMin )
-            rangeVal[0].setY(yMin);
-        if ( rangeVal[1].y() < yMax )
-            rangeVal[1].setY(yMax);
-    }
-//        qDebug() << rangeVal[0] << rangeVal[1];
-//        m_data.append(*currentPoints);
-//        lines.insert(currentSeries, m_data.back());
-//        emit adjustAxis(rangeVal[0], rangeVal[1]);
-//        update(currentSeries);
-//        qDebug() << "end";// << *currentPoints;
-
-
-    //cumulative process
-    if (cumulativeMode && numberCumulativeLines != 0 )
-    {
-        //calc incremental average
-        numberCumulativeLines++;
-        float val=0;
-        auto pair = vectorLines.rbegin();
-        auto prevSeries = (*pair).first;
-        auto prevData = (*pair).second;
-
-        for (int i=0; i< currentPoints->size(); i++ )
-        {
-            auto An = cumulativePoints.at(i).y();
-            auto xi = currentPoints->at(i).y();
-            val = An + ( ( xi - An) / numberCumulativeLines );
-            QPointF p(currentPoints->at(i).x(), val);
-            prevData[i] = (*currentPoints)[i];
-            cumulativePoints[i] = p;
-            (*currentPoints)[i] = p;
-        }
-        m_data.pop_back();
-        m_data.append(prevData);
-        if (prevSeries && lines.contains(prevSeries))
-            lines[prevSeries] = m_data.back();
-        update(prevSeries, NULL);
-    }
-    else if(!etalon)
-    {
-        numberCumulativeLines = 1;
-        cumulativePoints.clear();
-        for (auto& point : *currentPoints)
-        {
-            cumulativePoints.push_back(point);
-        }
-    }
-
-    if (!etalon || (etalon && drawLines))
-    {
-        m_data.append(*currentPoints);
-        vectorLines.push_back(
-             QPair<QtCharts::QAbstractSeries*, QVector<QPointF> >(
-                        currentSeries.first, m_data.back()));
-        lines.insert(currentSeries.first, m_data.back()); //save series
-        emit adjustAxis(rangeVal[0], rangeVal[1]);
-        update(currentSeries.first, currentSeries.second);
-    }
-}
-
 void AnalizerCDC::buttonPressHandler(const QStringList &line)
 {
     emit makeSeries();
@@ -492,7 +319,6 @@ void AnalizerCDC::buttonPressHandler(const QStringList &line)
 void AnalizerCDC::readEtalonParameters(const QString filename, bool saveNew=true)
 {
     //read calibration file
-    float k;
     QString readedValue;
     QFile calibfile(filename);
     if(!calibfile.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -516,8 +342,7 @@ void AnalizerCDC::readEtalonParameters(const QString filename, bool saveNew=true
 
     QFile calibfileNew;
     std::shared_ptr<QTextStream> f_out;
-    if ( saveNew)
-    {
+    if ( saveNew ) {
         calibfileNew.setFileName(QDir::currentPath()+"/calibrator");
         if(!calibfileNew.open(QIODevice::WriteOnly | QIODevice::Text))
             qDebug()<< "Cannot save new calibration parameters";
@@ -527,24 +352,23 @@ void AnalizerCDC::readEtalonParameters(const QString filename, bool saveNew=true
     //read etalon name
     auto etalonName = f.readLine();
     emit sendEtalonName(etalonName);
-    if (saveNew)
+    if ( saveNew )
        *f_out << etalonName << "\n";
-    while (!f.atEnd())
-    {
+    double k;
+    while ( !f.atEnd() ) {
         f >> k;
-        if( k > 0.0f && k < 1.0f )
-        {
-            if (saveNew )
+        if( k > 0.00 && k < 1.00 ) {
+            if ( saveNew )
                 *f_out << k << " ";
             calibratorData.push_back(k);
         }
     }
     qDebug() << calibratorData;
     qDebug() << "calibratorData size: " << calibratorData.size();
-    if( calibratorData.size() >= 5 )
+    if ( calibratorData.size() >= 5 ) {
+        dh.updateCalibrationParameters(calibratorData);
         emit deActivateRelativeMod();
-    else
-    {
+    } else {
         emit activateRelativeMod();
         emit sendDebugInfo("Wrong file with etalon data", 2000);
     }

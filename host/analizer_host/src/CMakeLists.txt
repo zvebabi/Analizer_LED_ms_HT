@@ -26,10 +26,12 @@ endif()
 
 set(SOURCE_NAMES
   main.cpp
+  datahandler.cpp
   analizerCDC.cpp)
 
 set(HEADER_NAMES
-  analizerCDC.h)
+  analizerCDC.h
+  datahandler.h)
 
 foreach(SOURCE ${SOURCE_NAMES})
   set(SOURCES ${SOURCES} ${SOURCE})
