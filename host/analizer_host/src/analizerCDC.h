@@ -40,9 +40,6 @@ public slots:
     void getListOfPort();
     QString getDataPath() {return documentsPath;}
     void readData();
-    void drawSeries(bool _draw) {drawLines = _draw;}
-    void enableAAManual(bool _aa) {aaManual = _aa;}
-//    void legendsFromMCU(bool _legend) {axisNameFromMCU = _legend;}
     void valuesFromMCU(bool _values) {axisValueFromMCU = _values;}
     void setServiceMode(bool _values) {serviceMode = _values;}
     void setRelativeMode(bool _values) {
@@ -51,13 +48,12 @@ public slots:
     }
     void setCumulativeMode(bool _values) {cumulativeMode = _values;}
 
-    void doMeasurements(QtCharts::QAbstractSeries *series,
-                        bool _etalon=false,
-                        QtCharts::QAbstractSeries *seriesDotted=NULL);
+    void doMeasurements(const QString seriesName);
+
 //    void doCalibration();
     void selectPath(QString pathForSave);
     void saveDataToCSV(QString filename);
-    void deleteSeries(QtCharts::QAbstractSeries *series);
+    void deleteSeries(const QString name);
 
     void readEtalonParameters(const QString filename, bool saveNew);
 
@@ -74,9 +70,13 @@ signals:
     void activateRelativeMod();
     void deActivateRelativeMod();
     void makeSeries();
+    void updateDrawer( QVector<QVector<QPointF>> data,
+                       QVector<QString> legend,
+                       QPointF minRng, QPointF maxRng
+                      /*data and field borders*/); 
     void sendAxisName(QString data);
 private:
-    void update(QtCharts::QAbstractSeries *series, QtCharts::QAbstractSeries *seriesDotted);
+    void update(); //call it after all changesin data
     void processLine(const QByteArray& line);
     void serviceModeHandler(const QStringList& line);
     void identityHandler(const QStringList& line);
@@ -88,18 +88,10 @@ private:
     QSerialPort* device = NULL;
     int m_serNumber;
     QSerialPort::BaudRate baudRate;
-    QVector<QVector<QPointF> > m_data;
-    bool etalon, drawLines, aaManual,axisNameFromMCU, axisValueFromMCU;
-    bool isPortOpen, firstLine, serviceMode , relativeMode, cumulativeMode;
-    QVector<QPointF> *currentPoints;
-    QVector<QPointF> *etalonPoints;
-    QVector<QPointF> cumulativePoints;
-    int numberCumulativeLines;
-    QVector<double> calibratorData;
+    bool etalon, axisNameFromMCU, axisValueFromMCU;
+    bool isPortOpen, serviceMode , relativeMode, cumulativeMode;
     std::pair<QtCharts::QAbstractSeries*,QtCharts::QAbstractSeries*> currentSeries;
     QtCharts::QAbstractSeries* etalonSeries;
-    QVector<QPair<QtCharts::QAbstractSeries*, QVector<QPointF> > > vectorLines;
-    QMap< QtCharts::QAbstractSeries*, QVector<QPointF> > lines;
     QString documentsPath;
 //    float micrometers[42] = {2.3600, 2.3225, 2.2850, 2.2475,
 //                             2.2100, 2.1975, 2.1850, 2.1725,

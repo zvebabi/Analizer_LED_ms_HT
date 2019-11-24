@@ -9,7 +9,7 @@ set(PLUGIN_HEADERS
   screenproperties.h)
 
 add_library(${TARGET_NAME}
-  SHARED
+  STATIC
     ${PLUGIN_SOURCES}
     ${PLUGIN_HEADERS}
 )
@@ -21,12 +21,12 @@ target_compile_features(${TARGET_NAME}
     cxx_generic_lambdas
 )
 
-target_compile_options(${TARGET_NAME}
-  PRIVATE
-    -Wall
-    -Wextra
-    -Wpedantic
-)
+#target_compile_options(${TARGET_NAME}
+#  PRIVATE
+#    -Wall
+#    -Wextra
+#    -Wpedantic
+#)
 
 target_link_libraries(${TARGET_NAME}
   PRIVATE

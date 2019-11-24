@@ -11,7 +11,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "" FORCE)
 set(CMAKE_DEBUG_POSTFIX "d")
 set(CMAKE_POSITION_INDEPENDENT_CODE True)
-set(CMAKE_CXX_FLAGS "-O3 -g3")
+#set(CMAKE_CXX_FLAGS "-O3 -g3")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
@@ -61,12 +61,12 @@ target_compile_definitions(${PROJECT_NAME}
   PRIVATE
   $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
 
-target_compile_options(${PROJECT_NAME}
-  PRIVATE
-    -Wall
-    -Wextra
-    -Wpedantic
-)
+#target_compile_options(${PROJECT_NAME}
+#  PRIVATE
+#    -Wall
+#    -Wextra
+#    -Wpedantic
+#)
 set(PRIVATE_LIBS
   Qt5::Gui
   Qt5::Quick

@@ -63,7 +63,10 @@ Column {
                 }
                 onClicked: {
                     app.dataWasChangedAfterSave = true
-                    createSeries()
+                    // createSeries()
+                    var seriesName = qsTr( ( graphs.numSeries + 1 ) + "_"
+                            + lineLabel.text)
+                    reciever.doMeasurements();
                 }
             }
             ToolButton {
@@ -82,28 +85,14 @@ Column {
                     antialiasing: true
                     smooth: true
                 }
-
                 ColorOverlay {
                     anchors.fill: rAe
                     source: rAe
                     color: "#80ff0000"
                 }
                 onClicked: {
-                    if (drawEt === true) {
-                        graphs.numSeries++;
-                        var seriesName = qsTr("calibration_"
-                                              + graphs.numSeries)
-                        graphs.createSeries(ChartView.SeriesTypeLine,
-                                            seriesName,
-                                            axisX, axisY);
-                        tableModel.append({
-                           "name": seriesName,
-                           "isChecked": true,
-                           "seriesColor":
-                                   graphs.series(seriesName).color.toString() })
-                        }
-                    reciever.doMeasurements(graphs.series(seriesName),true);
-                    app.relativeModeCheckBoxEnabled = false;
+                    reciever.doMeasurements("etalon");
+                    // app.relativeModeCheckBoxEnabled = false;
                 }
             }
         }
@@ -111,7 +100,7 @@ Column {
     }
     TextField {
         id: lineLabel
-//        text: qsTr("sample")
+       //text: qsTr("sample")
         placeholderText: qsTr("Sample name")
         selectByMouse: true
         width: ctrlPane.itemWidth

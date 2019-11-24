@@ -2,9 +2,9 @@
 #include <QtMath>
 #include <memory>
 
-AnalizerCDC::AnalizerCDC(QObject *parent) : QObject(parent),
-    firstLine(true), aaManual(true), serviceMode(false), isPortOpen(false),
-    cumulativeMode(false), relativeMode(false), numberCumulativeLines(0),
+AnalizerCDC::AnalizerCDC(QObject *parent) :  QObject(parent),
+    serviceMode(false), isPortOpen(false),
+    cumulativeMode(false), relativeMode(false),
     m_serNumber(-1)
 
 {
@@ -15,10 +15,8 @@ AnalizerCDC::AnalizerCDC(QObject *parent) : QObject(parent),
     connect(device, &QSerialPort::readyRead, this, &AnalizerCDC::readData);
 
     documentsPath = QDir::homePath()+QString("/Documents/");
-    etalonPoints = new QVector<QPointF>(43,QPointF(1,1));
     rangeVal.append(QPointF(0,0));
     rangeVal.append(QPointF(0,0));
-    drawLines = false;
 }
 
 AnalizerCDC::~AnalizerCDC()
@@ -74,37 +72,42 @@ void AnalizerCDC::readData()
     while (device->canReadLine()) processLine(device->readLine());
 }
 
-void AnalizerCDC::doMeasurements(QtCharts::QAbstractSeries *series,
-                                 bool _etalon,
-                                 QtCharts::QAbstractSeries *seriesDotted)
+/*!
+ * @param seriesName Names of series, if eq. "etalon" data will be interpret as etalon data
+ */
+void AnalizerCDC::doMeasurements(const QString seriesName)
 {
     emit sendDebugInfo("Start measurement");
     qDebug() << "doMeasurements";
-    dh.PrepareToRecieveData(_etalon);
-    currentPoints = new QVector<QPointF> ;
-    etalon = _etalon;
-    qDebug() << etalon;
+    dh.PrepareToRecieveData(seriesName, seriesName == "etalon");
+    qDebug() << "etalon" << (seriesName == "etalon");
 
     if(serviceMode)
         device->write("d");
     else
         device->write("m");
-    currentSeries.first = series;
-    currentSeries.second = seriesDotted;
 }
 
 void AnalizerCDC::selectPath(QString pathForSave)
 {
     documentsPath = pathForSave;
-    qDebug() << pathForSave;
-    qDebug() << documentsPath;
+    // qDebug() << pathForSave;
+    qDebug() << "Path to save: " << documentsPath;
 }
 
 void AnalizerCDC::saveDataToCSV(QString filename="data.csv")
 {
-    qDebug() << "save to csv..";
+    qDebug() << "save to csv...";
     qDebug() <<filename;
     qDebug() << documentsPath;
+    
+    QVector<DataSlot> dataToSave;
+    auto n = dh.GetAllData(dataToSave);
+    if ( n <= 0 ) {
+        qDebug() << "Nothing to save!";
+        emit sendDebugInfo("Nothing to save!");
+        return;
+    }
 
     QDir dataDir(documentsPath);
     if (!dataDir.exists())
@@ -121,136 +124,132 @@ void AnalizerCDC::saveDataToCSV(QString filename="data.csv")
         return;
     }
     QTextStream f(&outfile);
-    //header
+    //header (line with um)
     f << "um" ;
-    for(auto series : lines.keys())
+    for(const auto&  pt : dataToSave.at(0).line)
     {
-        f  << ";" << series->name();
+        f  << ";" << QLocale().toString(pt.x());
     }
     f << "\n";
     //main
-    for(int i = 0; i < 12; i++ )
+    //each line is one sample
+    for(const auto& series : dataToSave)
     {
-        for(auto series : lines.keys())
+        //first column is a name
+        f  << series.name  << ";";
+        bool firstElmnt = true;
+        for(const auto& pt : series.line)
         {
-            f << QLocale().toString(lines.value(series)[i].x()) << ";";
-            break;
-        }
-        for(auto series : lines.keys())
-        {
-            f << QLocale().toString(lines.value(series)[i].y());
-            if ( series != *lines.keys().rbegin())
+            if ( !firstElmnt ) {
                 f << ";";
+                firstElmnt = false;
+            } 
+            f << QLocale().toString(pt.y());
         }
         f << "\n";
     }
 
     outfile.close();
-    qDebug() << ".done";
+    qDebug() << "done";
     std::stringstream ss;
     ss << "Saved to " << documentsPath.toStdString()
        << "/" << filename.toStdString();
     emit sendDebugInfo(QString(ss.str().c_str()));
 }
 
-void AnalizerCDC::deleteSeries(QtCharts::QAbstractSeries *series)
+void AnalizerCDC::deleteSeries(const QString name)
 {
-    if (lines.contains(series))
-        lines.remove(series);
-    //recalc axis
-    std::vector<float> xVals;
-    std::vector<float> yVals;
-    if (lines.size() <= 0)
-        return;
-
-    for (auto series : lines.keys())
-    {
-        for ( auto& points : lines.value(series))
-        {
-            xVals.push_back(points.x());
-            yVals.push_back(points.y());
-        }
-    }
-    std::sort(xVals.begin(),xVals.end());
-    std::sort(yVals.begin(),yVals.end());
-//    qDebug() << "start " << *(xVals.begin()) << " stop " << *(xVals.rbegin());
-//    qDebug() << "start " << *(yVals.begin()) << " stop " << *(yVals.rbegin());
-    rangeVal[0].setX( *(xVals.begin() ) );
-    rangeVal[1].setX( *(xVals.rbegin()) );
-    rangeVal[0].setY( *(yVals.begin() ) );
-    rangeVal[1].setY( *(yVals.rbegin()) );
-    emit adjustAxis(rangeVal[0], rangeVal[1]);
     std::stringstream ss;
-    ss << "Measurement " << series->name().toStdString() << " deleted";
+    ss << "Measurement " << name.toStdString();
+
+    auto ok = dh.DeleteLine(name);
+    if (ok) {
+        ss << " deleted!";
+    } else {
+        ss << " does not exist!";
+    }
     emit sendDebugInfo(QString(ss.str().c_str()));
+    update();
 }
 
-void AnalizerCDC::update(QtCharts::QAbstractSeries *series,
-                         QtCharts::QAbstractSeries *seriesDotted)
+/*!
+ * @brief Acquire data from storage. wrap and send to gui
+ */
+void AnalizerCDC::update()
 {
-    if (series && lines.contains(series)) {
-        QtCharts::QXYSeries *xySeries =
-                static_cast<QtCharts::QXYSeries *>(series);
-//        QVector<QPointF> points = lines.value(series);
-        // Use replace instead of clear + append, it's optimized for performance
-        xySeries->replace(lines.value(series));
-//dotted series start
-        if (seriesDotted) {
-            QtCharts::QXYSeries *xySeriesDotted =
-                static_cast<QtCharts::QXYSeries *>(seriesDotted);
-            xySeriesDotted->replace(lines.value(series));
-        }
-//dotted series end
-    //fill barSeries
-        QVariantList barData;
-        QStringList barAxis;
-        for (auto p = lines.value(series).rbegin();
-             p !=lines.value(series).rend(); p++)
-        {
-            barData.append(p->y());
-            barAxis.append(QString::number(p->x()));
-        }
-        updateBarSeries(xySeries->name(),barData, xySeries->color(), barAxis);
-    }
-    emit sendDebugInfo("Done");
+    QVector<QVector<QPointF>> data;
+    QVector<QString> legend;
+    QPointF bl, tr; //bottom left and top right
+
+//     if (series && lines.contains(series)) {
+//         QtCharts::QXYSeries *xySeries =
+//                 static_cast<QtCharts::QXYSeries *>(series);
+// //        QVector<QPointF> points = lines.value(series);
+//         // Use replace instead of clear + append, it's optimized for performance
+//         xySeries->replace(lines.value(series));
+// //dotted series start
+//         if (seriesDotted) {
+//             QtCharts::QXYSeries *xySeriesDotted =
+//                 static_cast<QtCharts::QXYSeries *>(seriesDotted);
+//             xySeriesDotted->replace(lines.value(series));
+//         }
+// //dotted series end
+//     //fill barSeries
+//         QVariantList barData;
+//         QStringList barAxis;
+//         for (auto p = lines.value(series).rbegin();
+//              p !=lines.value(series).rend(); p++)
+//         {
+//             barData.append(p->y());
+//             barAxis.append(QString::number(p->x()));
+//         }
+//         updateBarSeries(xySeries->name(),barData, xySeries->color(), barAxis);
+//     }
+    emit updateDrawer(data, legend, bl, tr);
+    emit sendDebugInfo("Update done");
 }
 
 void AnalizerCDC::processLine(const QByteArray &_line)
 {
-//    QByteArray line = device->readAll();
     qDebug() << _line;
-    QStringList line;//(_line);
+    QStringList line;
     for (auto w : _line.split(','))
     {
         line.append(QString(w));
     }
     bool oK = {true};
-    QString status;
-//identity
+    QString status = "";
+    //identity
     if ( line.first().compare("x=i") ==0 )
         identityHandler(line);
-//service mode parser
+    //service mode parser
     if ( line.first().compare("x=s") == 0 )
         serviceModeHandler(line);   //parse all comands here
-//measure mode
+    //measure mode
     if ( line.first().compare("x=m\n") == 0 )
         buttonPressHandler(line);
-    if ( line.first().compare("x=d") == 0 && line.first().compare("x=e\n") == 0 )
+    if ( line.first().compare("x=d") == 0 || line.first().compare("x=e\n") == 0 )
         oK = dh.ProcessLineWithData(line, status);
-    if (!oK)
+    if (!oK) {
         emit sendDebugInfo(status, 3000);
+    } else {
+        if ( status == "activateEditBar" ) {
+            emit activateEditBar();
+        } else if ( status == "updateDrawer" ) {
+            update();
+        }
+    }
 }
 
 void AnalizerCDC::serviceModeHandler(const QStringList &line)
 {
-//    qDebug() << line.at(1);
-//    qDebug() << line.at(1).compare("START");
     if(line.at(1).compare("START") == 0)    //create file
     {
-        std::time_t  t = time(0);
-        struct std::tm * now = localtime( & t );
+        const std::time_t t = time(NULL);
+        struct std::tm now;
+        localtime_s(&now, &t);
         char buf[200];
-        std::strftime(buf, sizeof(buf), "%Y%m%d_%H%M%S_raw.csv", now);
+        std::strftime(buf, sizeof(buf), "%Y%m%d_%H%M%S_raw.csv", &now);
         QString filename(buf);
         diagnosticLog.open(QString(documentsPath+"/"+filename).toStdString(),
                        std::fstream::out);
@@ -321,11 +320,8 @@ void AnalizerCDC::readEtalonParameters(const QString filename, bool saveNew=true
     //read calibration file
     QString readedValue;
     QFile calibfile(filename);
-    if(!calibfile.open(QIODevice::ReadOnly | QIODevice::Text))
-    {
+    if ( !calibfile.open( QIODevice::ReadOnly | QIODevice::Text ) ) {
         std::string err = calibfile.errorString().toStdString();
-
-        emit sendDebugInfo("Cannot read calibration parameters", 3000);
         emit activateRelativeMod();
         std::stringstream ss;
         ss << "Can not read file \'"
@@ -337,7 +333,7 @@ void AnalizerCDC::readEtalonParameters(const QString filename, bool saveNew=true
         emit sendDebugInfo(ss.str().c_str());
         return;
     }
-    calibratorData.clear();
+
     QTextStream f(&calibfile);
 
     QFile calibfileNew;
@@ -354,6 +350,7 @@ void AnalizerCDC::readEtalonParameters(const QString filename, bool saveNew=true
     emit sendEtalonName(etalonName);
     if ( saveNew )
        *f_out << etalonName << "\n";
+    QVector<double> calibratorData;
     double k;
     while ( !f.atEnd() ) {
         f >> k;

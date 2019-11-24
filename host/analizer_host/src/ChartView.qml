@@ -10,32 +10,28 @@ Item {
     //save names here
     property variant allSeriesName
     property alias editBar_a: editBar
+    property colorList = [
+            "#F44336", "#673AB7", "#03A9F4", "#4CAF50", "#FFEB3B", "#FF5722",
+            "#E91E63", "#3F51B5", "#00BCD4", "#8BC34A", "#FFC107",
+            "#9C27B0", "#2196F3", "#009688", "#CDDC39", "#FF9800"
+        ];
     Connections {
         target: reciever
-        onAdjustAxis: {
-//            barGraphs.visible = barGraphs.visible ? false :true
-            graphs.minRngX = (Math.floor((minRng.x - (maxRng.x-minRng.x)*0.02)*10))/10
-            graphs.maxRngX = (Math.ceil((maxRng.x + (maxRng.x-minRng.x)*0.02)*10))/10
-            graphs.minRngY = minRng.y - (maxRng.y-minRng.y)*0.1
-            graphs.maxRngY = maxRng.y
-            axisX.min = graphs.minRngX
-            axisX.max = graphs.maxRngX
-            axisY.min = 0
-            axisY.max = graphs.maxRngY*1.1
-
-            barAxisY.min = 0
-            barAxisY.max = graphs.maxRngY*1.1
-//            console.log("adjust axis")
-//            var srcSeries = graphs.series(graphs.numSeries-1)
-//            var serName = qsTr(srcSeries.name + "_dot")
-//            var scatter = graphs.createSeries(ChartView.SeriesTypeScatter,
-//                                   srcSeries.name,
-//                                   axisX, axisY);
-//            scatter.color = srcSeries.color
-////            scatter.name = srcSeries.name
-//            for (var p =0; p <  srcSeries.count; p++) {
-//                scatter.append(srcSeries.at(p).x, srcSeries.at(p).y)
-//            }
+        onUpdateDrawer: {
+            //TODO fill chart steps
+            //    clean chart and legend
+            //    fill with updated data
+            adjustAxis(minRng, maxRng);
+            //graphs.numSeries = 0;
+            //for each series
+            var line_idx =0;
+            for (line_idx=0; i < data.lenght; i++) {
+                graphs.numSeries++;
+                graphs.createSeries(ChartView.SeriesTypeSpline,
+                          legend[line_idx],
+                          axisX, axisY);
+                //fill series with data
+            }
         }
         onUpdateBarSeries: {
             mainBarSeries.append(_label, _data)
@@ -208,6 +204,19 @@ Item {
         tipsWithPath.showedText = qsTr(text)
         tipsWithPath.open()
         delay(dTime !== undefined ? dTime : 300, tipsWithPath.close)
+    }
+    function adjustAxis(minRng, maxRng) {
+        graphs.minRngX = (Math.floor((minRng.x - (maxRng.x-minRng.x)*0.02)*10))/10
+        graphs.maxRngX = (Math.ceil((maxRng.x + (maxRng.x-minRng.x)*0.02)*10))/10
+        graphs.minRngY = minRng.y - (maxRng.y-minRng.y)*0.1
+        graphs.maxRngY = maxRng.y
+        axisX.min = graphs.minRngX
+        axisX.max = graphs.maxRngX
+        axisY.min = 0
+        axisY.max = graphs.maxRngY*1.1
+
+        barAxisY.min = 0
+        barAxisY.max = graphs.maxRngY*1.1
     }
 }
 
