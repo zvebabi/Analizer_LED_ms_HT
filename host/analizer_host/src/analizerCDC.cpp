@@ -3,10 +3,8 @@
 #include <memory>
 
 AnalizerCDC::AnalizerCDC(QObject *parent) :  QObject(parent),
-    serviceMode(false), isPortOpen(false),
-    cumulativeMode(false), relativeMode(false),
-    m_serNumber(-1)
-
+    m_serNumber(-1), isPortOpen(false), serviceMode(false),
+    relativeMode(false), cumulativeMode(false)
 {
     qRegisterMetaType<QtCharts::QAbstractSeries*>();
     qRegisterMetaType<QtCharts::QAbstractAxis*>();
@@ -22,7 +20,7 @@ AnalizerCDC::AnalizerCDC(QObject *parent) :  QObject(parent),
 AnalizerCDC::~AnalizerCDC()
 {
     qDebug() << "analizer destructor";
-    if (device != NULL)
+    if (device != nullptr)
     {
         device->disconnect();
         delete device;
@@ -48,7 +46,7 @@ void AnalizerCDC::initDevice(QString port)
     else {
         qDebug() << "Can't open port" << port;
         emit sendDebugInfo("Can't open port" + port, 2000);
-    }    
+    }
     //read calibration file
     readEtalonParameters(QDir::currentPath()+"/calibrator", false);
 }
@@ -88,6 +86,17 @@ void AnalizerCDC::doMeasurements(const QString seriesName)
         device->write("m");
 }
 
+void AnalizerCDC::updateSeries(QtCharts::QAbstractSeries* line_, QString name_)
+{
+    if ( line_ ) {
+        qDebug() << "update series " << name_;
+        QtCharts::QXYSeries *xySeries =
+                    static_cast<QtCharts::QXYSeries *>(line_);
+        // Use replace instead of clear + append, it's optimized for performance
+        xySeries->replace(dh.GetLineByName(name_));
+    }
+}
+
 void AnalizerCDC::selectPath(QString pathForSave)
 {
     documentsPath = pathForSave;
@@ -100,7 +109,7 @@ void AnalizerCDC::saveDataToCSV(QString filename="data.csv")
     qDebug() << "save to csv...";
     qDebug() <<filename;
     qDebug() << documentsPath;
-    
+
     QVector<DataSlot> dataToSave;
     auto n = dh.GetAllData(dataToSave);
     if ( n <= 0 ) {
@@ -126,25 +135,17 @@ void AnalizerCDC::saveDataToCSV(QString filename="data.csv")
     QTextStream f(&outfile);
     //header (line with um)
     f << "um" ;
-    for(const auto&  pt : dataToSave.at(0).line)
-    {
-        f  << ";" << QLocale().toString(pt.x());
+    for (auto it = dataToSave.at(0).line.rbegin(); it != dataToSave.at(0).line.rend(); ++it) {
+        f  << ";" << QLocale().toString(it->x());
     }
     f << "\n";
     //main
     //each line is one sample
-    for(const auto& series : dataToSave)
-    {
+    for ( const auto& series : dataToSave ) {
         //first column is a name
-        f  << series.name  << ";";
-        bool firstElmnt = true;
-        for(const auto& pt : series.line)
-        {
-            if ( !firstElmnt ) {
-                f << ";";
-                firstElmnt = false;
-            } 
-            f << QLocale().toString(pt.y());
+        f  << series.name;
+        for ( auto it = series.line.rbegin(); it != series.line.rend(); ++it ) {
+            f << ";" << QLocale().toString(it->y());
         }
         f << "\n";
     }
@@ -177,36 +178,11 @@ void AnalizerCDC::deleteSeries(const QString name)
  */
 void AnalizerCDC::update()
 {
-    QVector<QVector<QPointF>> data;
-    QVector<QString> legend;
-    QPointF bl, tr; //bottom left and top right
+    qDebug() << "in update";
+    auto [legend, min_range, max_range] = dh.GetSeriesNamesToShow();
 
-//     if (series && lines.contains(series)) {
-//         QtCharts::QXYSeries *xySeries =
-//                 static_cast<QtCharts::QXYSeries *>(series);
-// //        QVector<QPointF> points = lines.value(series);
-//         // Use replace instead of clear + append, it's optimized for performance
-//         xySeries->replace(lines.value(series));
-// //dotted series start
-//         if (seriesDotted) {
-//             QtCharts::QXYSeries *xySeriesDotted =
-//                 static_cast<QtCharts::QXYSeries *>(seriesDotted);
-//             xySeriesDotted->replace(lines.value(series));
-//         }
-// //dotted series end
-//     //fill barSeries
-//         QVariantList barData;
-//         QStringList barAxis;
-//         for (auto p = lines.value(series).rbegin();
-//              p !=lines.value(series).rend(); p++)
-//         {
-//             barData.append(p->y());
-//             barAxis.append(QString::number(p->x()));
-//         }
-//         updateBarSeries(xySeries->name(),barData, xySeries->color(), barAxis);
-//     }
-    emit updateDrawer(data, legend, bl, tr);
-    emit sendDebugInfo("Update done");
+    emit updateDrawer(legend.size(), legend, min_range, max_range);
+//    emit sendDebugInfo("Update done");
 }
 
 void AnalizerCDC::processLine(const QByteArray &_line)
@@ -227,7 +203,7 @@ void AnalizerCDC::processLine(const QByteArray &_line)
         serviceModeHandler(line);   //parse all comands here
     //measure mode
     if ( line.first().compare("x=m\n") == 0 )
-        buttonPressHandler(line);
+        buttonPressHandler(/*line*/);
     if ( line.first().compare("x=d") == 0 || line.first().compare("x=e\n") == 0 )
         oK = dh.ProcessLineWithData(line, status);
     if (!oK) {
@@ -245,7 +221,7 @@ void AnalizerCDC::serviceModeHandler(const QStringList &line)
 {
     if(line.at(1).compare("START") == 0)    //create file
     {
-        const std::time_t t = time(NULL);
+        const std::time_t t = time(nullptr);
         struct std::tm now;
         localtime_s(&now, &t);
         char buf[200];
@@ -309,7 +285,7 @@ void AnalizerCDC::identityHandler(const QStringList &line)
     emit sendDebugInfo(QString("Click calibration button to perform device calibration"));
 }
 
-void AnalizerCDC::buttonPressHandler(const QStringList &line)
+void AnalizerCDC::buttonPressHandler(/*const QStringList &line*/)
 {
     emit makeSeries();
     qDebug() << "signal from button";
@@ -370,6 +346,7 @@ void AnalizerCDC::readEtalonParameters(const QString filename, bool saveNew=true
         emit sendDebugInfo("Wrong file with etalon data", 2000);
     }
 }
+
 
 
 

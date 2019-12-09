@@ -31,7 +31,7 @@ class AnalizerCDC : public QObject
 {
     Q_OBJECT
 public:
-    explicit AnalizerCDC(QObject *parent = 0);
+    explicit AnalizerCDC(QObject *parent = nullptr);
     ~AnalizerCDC();
 public slots:
 //    void cppSlot(const QString &msg);
@@ -50,13 +50,12 @@ public slots:
 
     void doMeasurements(const QString seriesName);
 
-//    void doCalibration();
+    void updateSeries(QtCharts::QAbstractSeries* line_, QString name_);
+
     void selectPath(QString pathForSave);
     void saveDataToCSV(QString filename);
     void deleteSeries(const QString name);
-
     void readEtalonParameters(const QString filename, bool saveNew);
-
 signals:
     void sendPortName(QString port);
     void sendDebugInfo(QString data, int time=700);
@@ -70,8 +69,8 @@ signals:
     void activateRelativeMod();
     void deActivateRelativeMod();
     void makeSeries();
-    void updateDrawer( QVector<QVector<QPointF>> data,
-                       QVector<QString> legend,
+    void updateDrawer( int seriesQty,
+                       QStringList legend,
                        QPointF minRng, QPointF maxRng
                       /*data and field borders*/); 
     void sendAxisName(QString data);
@@ -80,12 +79,12 @@ private:
     void processLine(const QByteArray& line);
     void serviceModeHandler(const QStringList& line);
     void identityHandler(const QStringList& line);
-    void buttonPressHandler(const QStringList& line);
+    void buttonPressHandler(/*const QStringList& line*/);
 
     DataHandler dh;
 
     std::vector<QString> ports;
-    QSerialPort* device = NULL;
+    QSerialPort* device = nullptr;
     int m_serNumber;
     QSerialPort::BaudRate baudRate;
     bool etalon, axisNameFromMCU, axisValueFromMCU;

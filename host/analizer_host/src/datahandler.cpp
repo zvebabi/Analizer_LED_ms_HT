@@ -17,13 +17,13 @@ void DataHandler::PrepareToRecieveData(QString line_name, bool etalon_)
 {
     current_slot_is_etalon = etalon_;
     temp_slot_name = line_name;
-    m_names_to_show.push_back(line_name);
-    m_names_refs.push_back(line_name); 
     
     temp_slot.line.clear();
     if ( !current_slot_is_etalon ) {
         m_data[line_name] = DataSlot();
         m_data[line_name].name = line_name;
+        m_names_to_show.push_back(line_name);
+        m_names_refs.push_back(line_name);
     }
 }
 
@@ -36,6 +36,20 @@ bool DataHandler::ProcessLineWithData(const QStringList &line, QString& ret)
     }
     ret = "broken data";
     return false;
+}
+
+void DataHandler::HideLine(const QString& name_)
+{
+    if( m_data.count(name_) != 0 && m_names_to_show.count(name_) != 0 )
+        m_names_to_show.removeAll(name_);
+    recalculateDataRange();
+}
+
+void DataHandler::UnHideLine(const QString& name_)
+{
+    if( m_data.count(name_) != 0 && m_names_to_show.count(name_) == 0 )
+        m_names_to_show.push_back(name_);
+    recalculateDataRange();
 }
 
 bool DataHandler::dataAquisitionHandler(const QStringList &line, QString& ret)
@@ -95,13 +109,15 @@ bool DataHandler::dataProcessingHandler(const QStringList &line, QString& ret)
         qreal xMin = std::numeric_limits<qreal>::max(); // everything is <= this
         qreal xMax = std::numeric_limits<qreal>::min(); // everything is >= this
         qreal yMin = std::numeric_limits<qreal>::max();
-        qreal yMax = std::numeric_limits<qreal>::min();
-        foreach (QPointF p, m_data[temp_slot_name].line) {
-            xMin = qMin(xMin, p.x());
-            xMax = qMax(xMax, p.x());
-            yMin = qMin(yMin, p.y());
-            yMax = qMax(yMax, p.y());
+        qreal yMax = std::numeric_limits<qreal>::min();*/
+        for(const auto& p : m_data[temp_slot_name].line) {
+            bl.setX( qMin(bl.x(), p.x()) );
+            bl.setY( qMin(bl.y(), p.y()) );
+            tr.setX( qMax(tr.x(), p.x()) );
+            tr.setY( qMax(tr.y(), p.y()) );
         }
+        qDebug() << "bl: " << bl << " tr: " << tr;
+        /*
         if(firstLine)
         {
             firstLine = false;
@@ -126,7 +142,23 @@ bool DataHandler::dataProcessingHandler(const QStringList &line, QString& ret)
     return true;
 }
 
-bool DataHandler::DeleteLine(const QString name_) {
+void DataHandler::recalculateDataRange()
+{
+    QPointF new_bl = {std::numeric_limits<qreal>::max(),std::numeric_limits<qreal>::max()}; //range of 2D data
+    QPointF new_tr = {std::numeric_limits<qreal>::min(),std::numeric_limits<qreal>::min()}; //
+    for (auto& name_ : m_names_to_show) {
+        for(const auto& p : m_data[name_].line) {
+            new_bl.setX( qMin(bl.x(), p.x()) );
+            new_bl.setY( qMin(bl.y(), p.y()) );
+            new_tr.setX( qMax(tr.x(), p.x()) );
+            new_tr.setY( qMax(tr.y(), p.y()) );
+        }
+    }
+    bl = new_bl;
+    tr = new_tr;
+}
+
+bool DataHandler::DeleteLine(const QString &name_) {
     HideLine(name_);
     if( m_data.count(name_) != 0 ) {
         m_names_refs.removeAll(name_);
@@ -139,7 +171,7 @@ bool DataHandler::DeleteLine(const QString name_) {
 
 bool DataHandler::RenameLine(const QString& oldName, const QString& newName) {
     //re-add data in Map
-    auto& dataToRename = m_data.find(oldName);
+    auto dataToRename = m_data.find(oldName);
     if(  dataToRename == m_data.end() ) {
         qDebug() << "Line with name " << oldName << " not found!";
         return false;
@@ -164,13 +196,14 @@ bool DataHandler::RenameLine(const QString& oldName, const QString& newName) {
     return true;
 }
     
-uint DataHandler::GetDataToShow(QVector<DataSlot>& data)
+std::tuple<QStringList, QPointF, QPointF> DataHandler::GetSeriesNamesToShow()
 {
-    data.clear();
-    for(auto& name : m_names_to_show)
-        data.append(m_data[name]);
+    QStringList legends;
 
-    return data.size();
+    for(const auto& name : m_names_to_show) {
+        legends.push_back(m_data[name].name);
+    }
+    return {legends, bl, tr} ;
 }
 
 uint DataHandler::GetAllData(QVector<DataSlot>& data)
@@ -179,5 +212,14 @@ uint DataHandler::GetAllData(QVector<DataSlot>& data)
     for(auto& name : m_names_refs)
         data.append(m_data[name]);
 
-    return data.size();
+    return uint(data.size());
+}
+
+QVector<QPointF> DataHandler::GetLineByName(const QString &name_)
+{
+    if ( m_names_to_show.count(name_) ) {
+        return m_data[name_].line;
+    } else {
+        return {};
+    }
 }

@@ -11,6 +11,8 @@ Column {
     spacing: 3
     property int itemWidth: 400*app.dp
     property alias fileNameDialog_a: fileNameDlg
+    property alias tableModel_a : tableModel
+    property int globalSeriesCounter:0
     signal redrawHistogram()
     Connections {
         target: reciever
@@ -64,9 +66,9 @@ Column {
                 onClicked: {
                     app.dataWasChangedAfterSave = true
                     // createSeries()
-                    var seriesName = qsTr( ( graphs.numSeries + 1 ) + "_"
-                            + lineLabel.text)
-                    reciever.doMeasurements();
+                    var seriesName = qsTr("%1%2").arg(lineLabel.text).arg(globalSeriesCounter + 1);
+                    ++globalSeriesCounter;
+                    reciever.doMeasurements(seriesName);
                 }
             }
             ToolButton {

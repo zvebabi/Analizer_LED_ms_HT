@@ -9,17 +9,18 @@
 #include <QVector>
 #include <QMap>
 
+#include <tuple>
 typedef struct DataSlot
 {
     QString name;
     QVector<QPointF> line;
 } DataSlot;
 
-typedef enum MEASURE_MODE
+enum class MEASURE_MODE
 {
     ABSOLUTE = 0,
-    RELATIVE
-} MEASURE_MODE;
+    RELATIVE = 1
+};
 
 //Moveall data methods from AnalizerCDC
 class DataHandler
@@ -37,24 +38,20 @@ public:
         calibrator_data = calibratorData; 
     }
     //data editors
-    void HideLine(const QString name_) {
-        if( m_data.count(name_) != 0 && m_names_to_show.count(name_) != 0 )
-            m_names_to_show.removeAll(name_);
-    }
-    void UnHideLine(const QString name_) {
-        if( m_data.count(name_) != 0 && m_names_to_show.count(name_) == 0 )
-            m_names_to_show.push_back(name_);
-    }
+    void HideLine(const QString& name_);
+    void UnHideLine(const QString& name_);
     //data modifiers
-    bool DeleteLine(const QString name_);
+    bool DeleteLine(const QString& name_);
     bool RenameLine(const QString& oldName, const QString& newName);
 
-    uint GetDataToShow(QVector<DataSlot>& data);
+    std::tuple<QStringList, QPointF, QPointF> GetSeriesNamesToShow();
     uint GetAllData(QVector<DataSlot>& data);
+    QVector<QPointF> GetLineByName(const QString& name_);
 
 private:
     bool dataAquisitionHandler(const QStringList& line, QString& ret);
     bool dataProcessingHandler(const QStringList& line, QString& ret);
+    void recalculateDataRange();
 
     QMap<QString, DataSlot> m_data;
     QVector<QString> m_names_refs; //use to preserve order
@@ -62,6 +59,8 @@ private:
     QString temp_slot_name;
     DataSlot temp_slot;
     DataSlot etalon_slot;
+    QPointF bl = {std::numeric_limits<qreal>::max(),std::numeric_limits<qreal>::max()}; //range of 2D data
+    QPointF tr = {std::numeric_limits<qreal>::min(),std::numeric_limits<qreal>::min()}; //
     QVector<double> calibrator_data; //readed from file
     bool current_slot_is_etalon;
     MEASURE_MODE m_mode; //or absolute

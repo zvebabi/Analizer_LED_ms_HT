@@ -19,7 +19,7 @@ class ScreenProperties : public QObject
     Q_PROPERTY(qreal dp READ dp NOTIFY dpChanged)
 
 public:
-    explicit ScreenProperties(QObject *parent = 0);
+    explicit ScreenProperties(QObject *parent = nullptr);
     ~ScreenProperties();
 
     Q_INVOKABLE qreal dp( int value ) { return m_dp*value; }

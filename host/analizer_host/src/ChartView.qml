@@ -10,7 +10,7 @@ Item {
     //save names here
     property variant allSeriesName
     property alias editBar_a: editBar
-    property colorList = [
+    property var colorList : [
             "#F44336", "#673AB7", "#03A9F4", "#4CAF50", "#FFEB3B", "#FF5722",
             "#E91E63", "#3F51B5", "#00BCD4", "#8BC34A", "#FFC107",
             "#9C27B0", "#2196F3", "#009688", "#CDDC39", "#FF9800"
@@ -18,19 +18,24 @@ Item {
     Connections {
         target: reciever
         onUpdateDrawer: {
-            //TODO fill chart steps
-            //    clean chart and legend
-            //    fill with updated data
+//            graphs.removeAllSeries();
+            console.log("updateDrawer received")
             adjustAxis(minRng, maxRng);
-            //graphs.numSeries = 0;
-            //for each series
-            var line_idx =0;
-            for (line_idx=0; i < data.lenght; i++) {
-                graphs.numSeries++;
-                graphs.createSeries(ChartView.SeriesTypeSpline,
-                          legend[line_idx],
-                          axisX, axisY);
-                //fill series with data
+            console.log("seriesQty: " + seriesQty)
+            for (var lineIdx in legend) {
+                console.log("Update series #", lineIdx, " with name ", legend[lineIdx])
+                if ( graphs.series(legend[lineIdx]) ) //skip if series already added
+                    continue;
+                var seriesToFill = graphs.createSeries(ChartView.SeriesTypeLine,
+                                          legend[lineIdx],
+                                          axisX, axisY);
+                var line_color = colorList[ lineIdx % colorList.length ];
+                seriesToFill.color = line_color;
+                reciever.updateSeries(seriesToFill, legend[lineIdx]);
+                editBar.tableModel_a.append({
+                   "name": legend[lineIdx],
+                   "isChecked": true,
+                   "seriesColor": line_color })
             }
         }
         onUpdateBarSeries: {
