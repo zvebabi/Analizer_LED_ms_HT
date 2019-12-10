@@ -26,7 +26,7 @@ Column {
             zoomIn.enabled           = true
             zoomOut.enabled          = true
             setSeriesVisible.enabled = true
-            deleteSeries.enabled     = true
+//            deleteSeries.enabled     = true
         }
     }
     Rectangle
@@ -64,11 +64,13 @@ Column {
                     color: "#d000ff00"
                 }
                 onClicked: {
-                    app.dataWasChangedAfterSave = true
+                    app.dataWasChangedAfterSave = true ;
                     // createSeries()
                     var seriesName = qsTr("%1%2").arg(lineLabel.text).arg(globalSeriesCounter + 1);
+                    if ( globalSeriesCounter < 25) {
+                        reciever.doMeasurements(seriesName);
+                    }
                     ++globalSeriesCounter;
-                    reciever.doMeasurements(seriesName);
                 }
             }
             ToolButton {
@@ -125,11 +127,12 @@ Column {
                     background: Rectangle {color: seriesColor}
                     width: ctrlPane.itemWidth - runAnalizer.width
                     height: 45*app.dp
-                    onDoubleClicked: {//rename sample
-                        tableOfSeries.currentIndex = index
-                        renameDlg.visible = true;
-                        newName.focus = true
-                    }
+                    //disable rename dialog
+//                    onDoubleClicked: {//rename sample
+//                        tableOfSeries.currentIndex = index
+//                        renameDlg.visible = true;
+//                        newName.focus = true
+//                    }
                 }
                 focus: true
                 keyNavigationEnabled: true
@@ -314,39 +317,18 @@ Column {
                 }
                 onClicked: {
 //                    graphs.zoomIn()
-//                    graphs.zoomIn(Qt.rect(0, 0, graphs.plotArea.width, graphs.plotArea.height/2))
+                    var newHeight  = graphs.plotArea.height/2;
+                    graphs.zoomIn(Qt.rect(graphs.plotArea.x, graphs.plotArea.y + newHeight/2, graphs.plotArea.width, newHeight))
 //                    console.log(graphs.minRngY)
 //                    console.log(graphs.maxRngY)
-                    var minRngYY =0;
-                    var maxRngYY =0;
-                    for(var i = tableOfSeries.count-1; i >= 0; i--) {
-                      tableOfSeries.currentIndex = i;
-                      if (tableOfSeries.currentItem.checked) {
-                        graphs.series(tableOfSeries.currentItem.text
-                                      ).visible = true;
-                        console.log("Series: " +
-                                  tableOfSeries.currentItem.text + " is off.");
-                      //recalc range
-                        for(var j = 0; j < graphs.series(tableOfSeries.currentItem.text
-                                                         ).count; j ++ ){
-                          if (graphs.series(tableOfSeries.currentItem.text).at(j).y < minRngYY || minRngYY ==0){
-                            minRngYY = graphs.series(tableOfSeries.currentItem.text).at(j).y;
-                          }
-                          if (graphs.series(tableOfSeries.currentItem.text).at(j).y > maxRngYY || maxRngYY ==0){
-                            maxRngYY = graphs.series(tableOfSeries.currentItem.text).at(j).y;
-                          }
-                        }
-                      } else {
-                        graphs.series(tableOfSeries.currentItem.text).visible =
-                                                                          false;}
-                    }
-                    redrawHistogram()
-                    graphs.minRngY = minRngYY
-                    graphs.maxRngY = maxRngYY
-                    axisX.min = graphs.minRngX
-                    axisX.max = graphs.maxRngX
-                    axisY.min = graphs.minRngY*0.97
-                    axisY.max = graphs.maxRngY*1.03
+
+//                    redrawHistogram()
+//                    graphs.minRngY = minRngYY
+//                    graphs.maxRngY = maxRngYY
+//                    axisX.min = graphs.minRngX
+//                    axisX.max = graphs.maxRngX
+//                    axisY.min = graphs.minRngY*0.97
+//                    axisY.max = graphs.maxRngY*1.03
                 }
             }
             ToolButton {
@@ -364,11 +346,11 @@ Column {
                 }
                 onClicked: {
 //                    graphs.zoomOut()
-                    graphs.zoomReset()
-                    axisY.min = 0;
-                    axisX.min = graphs.minRngX
-                    axisX.max = graphs.maxRngX
-                    axisY.max = graphs.maxRngY*1.03
+                    graphs.zoomReset();
+                    axisY.min = graphs.minRngY;
+                    axisX.min = graphs.minRngX;
+                    axisX.max = graphs.maxRngX;
+                    axisY.max = graphs.maxRngY;
                 }
             }
             ToolButton {
@@ -402,10 +384,10 @@ Column {
                     //recalc range
                       for(var j = 0; j < graphs.series(tableOfSeries.currentItem.text
                                                        ).count; j ++ ){
-                        if (graphs.series(tableOfSeries.currentItem.text).at(j).y < minRngYY || minRngYY ==0){
+                        if (graphs.series(tableOfSeries.currentItem.text).at(j).y < minRngYY || minRngYY === 0){
                           minRngYY = graphs.series(tableOfSeries.currentItem.text).at(j).y;
                         }
-                        if (graphs.series(tableOfSeries.currentItem.text).at(j).y > maxRngYY || maxRngYY ==0){
+                        if (graphs.series(tableOfSeries.currentItem.text).at(j).y > maxRngYY || maxRngYY === 0){
                           maxRngYY = graphs.series(tableOfSeries.currentItem.text).at(j).y;
                         }
                       }
@@ -418,10 +400,12 @@ Column {
                     }
                   }
                   redrawHistogram()
-                  graphs.minRngY = minRngYY
-                  graphs.maxRngY = maxRngYY//*1.1
-                  axisY.min = minRngYY*0.97
-                  axisY.max = maxRngYY*1.03
+                  graphs.minRngY = minRngYY  - ( maxRngYY - minRngYY ) * 0.1
+                  graphs.maxRngY = maxRngYY*1.03//*1.1
+                  axisY.min = graphs.minRngY
+                  axisY.max = graphs.maxRngY
+                  axisX.min = graphs.minRngX;
+                  axisX.max = graphs.maxRngX;
                 }
             }
             ToolButton {
@@ -445,32 +429,34 @@ Column {
                     standardButtons: StandardButton.Ok | StandardButton.Cancel
                     icon: StandardIcon.Warning
                     onAccepted: {
+                        console.log("in deleting 1");
                         for(var i = tableOfSeries.count-1; i>=0 ; i--) {
+                            console.log("in deleting 1 cur index" + i );
                             tableOfSeries.currentIndex = i;
+                            console.log("tableOfSeries.currentItem.checked: " + tableOfSeries.currentItem.checked)
                             if (tableOfSeries.currentItem.checked) {
-                                customLegend.removeSeries(tableOfSeries.currentItem.text)
-                                reciever.deleteSeries(
-                                            graphs.series(
-                                               tableOfSeries.currentItem.text));
-                                //dotted series start
+//                                customLegend.removeSeries(tableOfSeries.currentItem.text);
+                                reciever.deleteSeries( tableOfSeries.currentItem.text );
+                                //remove dotted series
                                 graphs.removeSeries(graphs.series(qsTr(graphs.series(
                                                tableOfSeries.currentItem.text).name+"_dotted")));
-                                //dotted series end
-                                graphs.removeSeries(
-                                            graphs.series(
-                                               tableOfSeries.currentItem.text));
+                                //remove lineseries
+                                graphs.removeSeries(graphs.series(tableOfSeries.currentItem.text));
+                                //remove in table
                                 tableModel.remove(i);
+
                                 console.log("Series: " +
                                             tableOfSeries.currentItem.text +
                                             " deleted.");
                             }
                         }
+                        console.log("recover checks")
                         //check-on all non-deleted lines
                         for(i = tableOfSeries.count-1; i>=0 ; i--) {
                             tableOfSeries.currentIndex = i;
                             tableOfSeries.currentItem.checked = true
                         }
-                        redrawHistogram()
+//                        redrawHistogram()
                     }
                 }
                 onClicked: { messageDialog.setVisible(true) }

@@ -36,6 +36,13 @@ Item {
                    "name": legend[lineIdx],
                    "isChecked": true,
                    "seriesColor": line_color })
+                //update dotted series
+                var seriesToFill_dotted = graphs.createSeries(ChartView.SeriesTypeScatter,
+                                          legend[lineIdx] + "_dotted",
+                                          axisX, axisY);
+                seriesToFill_dotted.color = line_color;
+                seriesToFill_dotted.markerSize = 7;
+                reciever.updateSeries(seriesToFill_dotted, legend[lineIdx]);
             }
         }
         onUpdateBarSeries: {
@@ -214,11 +221,11 @@ Item {
         graphs.minRngX = (Math.floor((minRng.x - (maxRng.x-minRng.x)*0.02)*10))/10
         graphs.maxRngX = (Math.ceil((maxRng.x + (maxRng.x-minRng.x)*0.02)*10))/10
         graphs.minRngY = minRng.y - (maxRng.y-minRng.y)*0.1
-        graphs.maxRngY = maxRng.y
+        graphs.maxRngY = maxRng.y * 1.03
         axisX.min = graphs.minRngX
         axisX.max = graphs.maxRngX
-        axisY.min = 0
-        axisY.max = graphs.maxRngY*1.1
+        axisY.min = graphs.minRngY
+        axisY.max = graphs.maxRngY
 
         barAxisY.min = 0
         barAxisY.max = graphs.maxRngY*1.1

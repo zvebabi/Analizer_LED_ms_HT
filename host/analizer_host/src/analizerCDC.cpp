@@ -170,7 +170,7 @@ void AnalizerCDC::deleteSeries(const QString name)
         ss << " does not exist!";
     }
     emit sendDebugInfo(QString(ss.str().c_str()));
-    update();
+//    update();
 }
 
 /*!
