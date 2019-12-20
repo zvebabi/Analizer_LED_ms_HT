@@ -112,7 +112,7 @@ const float wavelenght[NUM_OF_LED] PROGMEM = {
 		2.06,
 		1.94,
 		1.84,
-		1.76,
+		1.20,
 		1.66,
 		1.55,
 		1.51,
