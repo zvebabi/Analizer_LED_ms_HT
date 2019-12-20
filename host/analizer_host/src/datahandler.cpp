@@ -72,6 +72,10 @@ bool DataHandler::dataAquisitionHandler(const QStringList &line, QString& ret)
  */
 bool DataHandler::dataProcessingHandler(const QStringList &line, QString& ret)
 {
+    std::sort(temp_slot.line.begin(), temp_slot.line.end(),[](const auto& a, const auto& b){
+        return a.x() < b.x();
+    });
+
     for (auto point = temp_slot.line.begin(); point != temp_slot.line.end(); point++)
     {
         if (nearlyEqual(point->y(), -1.0))

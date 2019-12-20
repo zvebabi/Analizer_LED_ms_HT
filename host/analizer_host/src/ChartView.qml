@@ -26,7 +26,7 @@ Item {
                 console.log("Update series #", lineIdx, " with name ", legend[lineIdx])
                 if ( graphs.series(legend[lineIdx]) ) //skip if series already added
                     continue;
-                var seriesToFill = graphs.createSeries(ChartView.SeriesTypeLine,
+                var seriesToFill = graphs.createSeries(ChartView.SeriesTypeSpline,
                                           legend[lineIdx],
                                           axisX, axisY);
                 var line_color = colorList[ lineIdx % colorList.length ];

@@ -12,7 +12,7 @@ import mydevice 1.0
 ApplicationWindow {
     id:app
     property string appTitle: "LED Minispectrometer"
-    property string appVersion: "1.23"
+    property string appVersion: "1.24"
     property string chartType: "line"
 //    property int seriesType: ChartView.SeriesTypeSpline
     property alias saveDataDialog_a: chV.editBar_a

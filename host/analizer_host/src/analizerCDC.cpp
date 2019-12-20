@@ -135,7 +135,7 @@ void AnalizerCDC::saveDataToCSV(QString filename="data.csv")
     QTextStream f(&outfile);
     //header (line with um)
     f << "um" ;
-    for (auto it = dataToSave.at(0).line.rbegin(); it != dataToSave.at(0).line.rend(); ++it) {
+    for (auto it = dataToSave.at(0).line.begin(); it != dataToSave.at(0).line.end(); ++it) {
         f  << ";" << QLocale().toString(it->x());
     }
     f << "\n";
@@ -144,7 +144,7 @@ void AnalizerCDC::saveDataToCSV(QString filename="data.csv")
     for ( const auto& series : dataToSave ) {
         //first column is a name
         f  << series.name;
-        for ( auto it = series.line.rbegin(); it != series.line.rend(); ++it ) {
+        for ( auto it = series.line.begin(); it != series.line.end(); ++it ) {
             f << ";" << QLocale().toString(it->y());
         }
         f << "\n";
