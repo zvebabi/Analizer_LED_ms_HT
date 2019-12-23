@@ -13,7 +13,6 @@ Column {
     property alias fileNameDialog_a: fileNameDlg
     property alias tableModel_a : tableModel
     property int globalSeriesCounter:0
-    signal redrawHistogram()
     Connections {
         target: reciever
         onMakeSeries: {
@@ -509,30 +508,5 @@ Column {
            "name": seriesName,
            "isChecked": true,
            "seriesColor": graphs.series(seriesName).color.toString() })
-    }
-
-    onRedrawHistogram: {
-        //remove all existing sets of data
-        mainBarSeries.clear()
-        //fill histogram again. and set visible all
-        for ( var i = 0; i < tableOfSeries.count ; i++ ) {
-            tableOfSeries.currentIndex = i;
-            //set visible only checked
-            if (tableOfSeries.currentItem.checked) {
-                var lineS = graphs.series(tableOfSeries.currentItem.text);
-                var label = lineS.name; // name for barset
-                var colorS = lineS.color; //color for barset
-                //fill data values
-                var dataS = [];
-                for (var ind = 0; ind < lineS.count; ind++) { //go through all points
-                    dataS.push(lineS.at(ind).y);
-                }
-//                console.log(dataS);
-//                console.log(label);
-//                console.log(colorS);
-                var newBarSet = mainBarSeries.append(label, dataS);
-                newBarSet.color = colorS;
-            }
-        }
     }
 }

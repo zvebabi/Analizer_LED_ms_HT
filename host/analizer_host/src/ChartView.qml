@@ -44,6 +44,10 @@ Item {
                 seriesToFill_dotted.markerSize = 7;
                 reciever.updateSeries(seriesToFill_dotted, legend[lineIdx]);
             }
+
+            console.log("redrawHistogram begin");
+            redrawHistogram();
+            console.log("redrawHistogram end");
         }
         onUpdateBarSeries: {
             mainBarSeries.append(_label, _data)
@@ -229,6 +233,40 @@ Item {
 
         barAxisY.min = 0
         barAxisY.max = graphs.maxRngY*1.1
+    }
+
+    function redrawHistogram() {
+        //remove all existing sets of data
+        mainBarSeries.clear()
+        var _axis = [];
+        //fill axisX
+        if ( graphs.count > 0 ) {
+            var line__ = graphs.series(0);
+            for (var _ind = 0; _ind < line__.count; _ind++) { //go through all points
+                _axis.push(qsTr("%1").arg(line__.at(_ind).x));
+            }
+        }
+        barAxisX.categories = _axis
+        barAxisX.visible = true
+        //fill histogram again. and set visible all
+        //+=2 because we have 2 kind of series(spline and dotted) with same data
+        for ( var i = 0; i < graphs.count ; i+=2 ) {
+            //set visible only checked
+
+            if (graphs.series(i).visible) {
+                var lineS = graphs.series(i);
+                var label = lineS.name; // name for barset
+                var colorS = lineS.color; //color for barset
+                //fill data values
+                var dataS = [];
+                for (var ind = 0; ind < lineS.count; ind++) { //go through all points
+                    dataS.push(lineS.at(ind).y);
+                }
+                var newBarSet = mainBarSeries.append(label, dataS);
+                newBarSet.color = colorS;
+            }
+        }
+
     }
 }
 
