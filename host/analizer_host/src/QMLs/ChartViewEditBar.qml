@@ -67,9 +67,9 @@ Column {
                     app.dataWasChangedAfterSave = true ;
                     // createSeries()
                     var seriesName = qsTr("%1%2").arg(lineLabel.text).arg(globalSeriesCounter + 1);
-                    if ( globalSeriesCounter < 25) {
+//                    if ( globalSeriesCounter < 25) {
                         reciever.doMeasurements(seriesName);
-                    }
+//                    }
                     ++globalSeriesCounter;
                 }
             }
@@ -95,8 +95,8 @@ Column {
                     color: "#80ff0000"
                 }
                 onClicked: {
+                    app.relativeModeChBox_a.enabled = false
                     reciever.doMeasurements("etalon");
-                    // app.relativeModeCheckBoxEnabled = false;
                 }
             }
         }

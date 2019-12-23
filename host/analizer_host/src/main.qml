@@ -16,6 +16,7 @@ ApplicationWindow {
     property string chartType: "line"
 //    property int seriesType: ChartView.SeriesTypeSpline
     property alias saveDataDialog_a: chV.editBar_a
+    property alias relativeModeChBox_a: setV.check_box_relativeMeasurements_a
     visible: true
 //    visibility: "FullScreen"
     flags: Qt.FramelessWindowHint | Qt.Window | Qt.WindowMinimizeButtonHint
@@ -31,10 +32,8 @@ ApplicationWindow {
     property bool serviceMode: false //write raw data to file
     property bool relativeMode: false   //compare with calibration data or with
                                         //previous sample
-    property bool relativeModeCheckBoxEnabled: true
     property bool cumulativeMode: false
 //    property bool ctmLegendVisibility: true
-//    property string currentSeriesName: qsTr("")
     Material.theme: Material.Light
     Material.primary: Material.BlueGrey
     Material.accent: Material.Teal
@@ -282,6 +281,7 @@ ApplicationWindow {
             id: chV
         }
         Settings {
+            id: setV
         }
         About {
         }

@@ -6,6 +6,7 @@ import QtQuick.Dialogs 1.2
 import "QMLs"
 
 Item {
+    property alias check_box_relativeMeasurements_a : relativeMeasurements
     Connections {
         target: reciever
         onSendPortName: {
@@ -183,7 +184,7 @@ Item {
             }
             CheckBox {
                 id:relativeMeasurements
-                enabled: app.relativeModeCheckBoxEnabled
+                enabled: true
                 text: qsTr("Relative mode")
                 checked: app.relativeMode
                 onClicked: {
