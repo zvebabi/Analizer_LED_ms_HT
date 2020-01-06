@@ -124,11 +124,10 @@ Rectangle {
     }
 
     //![1]
-    Grid {
+    Flow {
         id: legendRow
-        anchors.centerIn: parent
+        anchors.fill: parent
         spacing: 5*app.dp
-        columns: 6
         Repeater {
             id: legendRepeater
             model: seriesCount
