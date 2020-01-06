@@ -126,12 +126,12 @@ Column {
                     background: Rectangle {color: seriesColor}
                     width: ctrlPane.itemWidth - runAnalizer.width
                     height: 45*app.dp
-                    //disable rename dialog
-//                    onDoubleClicked: {//rename sample
-//                        tableOfSeries.currentIndex = index
-//                        renameDlg.visible = true;
-//                        newName.focus = true
-//                    }
+                    
+                    onDoubleClicked: {//rename sample
+                        tableOfSeries.currentIndex = index
+                        renameDlg.visible = true;
+                        newName.focus = true
+                    }
                 }
                 focus: true
                 keyNavigationEnabled: true
@@ -166,16 +166,20 @@ Column {
                 standardButtons: StandardButton.OK
                 onAccepted: {
                     console.log(newName.text)
+                    //legend rename
                     customLegend.renameSeries(qsTr(graphs.series(tableOfSeries.currentItem.text).name), newName.text)
-                    //dotted series start
+                    //dotted series rename
                     graphs.series(qsTr(graphs.series(
                                    tableOfSeries.currentItem.text).name+"_dotted")).name =
                             qsTr(newName.text + "_dotted");
-                    //dotted series end
+                    //line series rename
                     graphs.series(tableOfSeries.currentItem.text).name =
-                            newName.text
-                    tableOfSeries.currentItem.text = newName.text
-                    newName.text = ""
+                            newName.text;
+                    //rename in datahandler
+                    reciever.renameSeries(tableOfSeries.currentItem.text, newName.text)
+                    //control panel rename
+                    tableOfSeries.currentItem.text = newName.text;
+                    newName.text = "";
                 }
             }
         }
@@ -202,7 +206,7 @@ Column {
                     id: fileNameDlg
                     title: qsTr("Enter file name")
                     visible: false
-    //                width: newName.width
+                    //width: newName.width
                     TextField {
                         id:fileNameTF
                         placeholderText: qsTr("File name")
@@ -251,7 +255,7 @@ Column {
                     id: imgNameDlg
                     title: qsTr("Enter image name")
                     visible: false
-    //                width: newName.width
+                    //width: newName.width
                     TextField {
                         id:imgNameTF
                         placeholderText: qsTr("Image name")
@@ -259,7 +263,6 @@ Column {
                     standardButtons: StandardButton.OK
                     onAccepted: {
                         var stringWithTime = new Date().toLocaleString(Qt.locale("en_US"), "yyyyMMdd_HHmmss_")
-
                         var path = reciever.getDataPath()
                                  + stringWithTime
                                  + imgNameTF.text
@@ -268,29 +271,29 @@ Column {
                                   + stringWithTime
                                   + imgNameTF.text
                                   + "_hist.png";
-//                        validatorIMG.url = "file:///" + path
-//                        if (validatorIMG.fileValid === false) {
+                        //validatorIMG.url = "file:///" + path
+                        //if (validatorIMG.fileValid === false) {
                             colForSnap.update();
                             colForSnap.grabToImage(function(result) {
-
-                                            result.saveToFile(path); });
+                                    result.saveToFile(path); 
+                                });
                             console.log(path)
                             imgNameTF.text = ""
                             delay(1, imgNameDlg.close);
                             showPopupTips(qsTr("Image saved to: \n" + path),
                                           1000);
-//                        }
-//                        else { //if file exist
-//                            imgNameTF.text = ""
-//                            delay(1, imgNameDlg.open);
-//                            showPopupTips(qsTr("Error: image exists! Choose another name"),
-//                                          1000);
-//                        }
+                        //}
+                        //else { //if file exist
+                        //    imgNameTF.text = ""
+                        //    delay(1, imgNameDlg.open);
+                        //    showPopupTips(qsTr("Error: image exists! Choose another name"),
+                        //                  1000);
+                        //}
                     }
                 }
                 FileValidator {
                     id: validatorIMG
-//                    url: source1
+                    //url: source1
                     treatAsImage: true
                 }
                 onClicked: imgNameDlg.open()
@@ -315,19 +318,18 @@ Column {
                     smooth: true
                 }
                 onClicked: {
-//                    graphs.zoomIn()
+                    //graphs.zoomIn()
                     var newHeight  = graphs.plotArea.height/2;
                     graphs.zoomIn(Qt.rect(graphs.plotArea.x, graphs.plotArea.y + newHeight/2, graphs.plotArea.width, newHeight))
-//                    console.log(graphs.minRngY)
-//                    console.log(graphs.maxRngY)
-
-//                    redrawHistogram()
-//                    graphs.minRngY = minRngYY
-//                    graphs.maxRngY = maxRngYY
-//                    axisX.min = graphs.minRngX
-//                    axisX.max = graphs.maxRngX
-//                    axisY.min = graphs.minRngY*0.97
-//                    axisY.max = graphs.maxRngY*1.03
+                    //console.log(graphs.minRngY)
+                    //console.log(graphs.maxRngY)
+                    //redrawHistogram()
+                    //graphs.minRngY = minRngYY
+                    //graphs.maxRngY = maxRngYY
+                    //axisX.min = graphs.minRngX
+                    //axisX.max = graphs.maxRngX
+                    //axisY.min = graphs.minRngY*0.97
+                    //axisY.max = graphs.maxRngY*1.03
                 }
             }
             ToolButton {
@@ -344,7 +346,7 @@ Column {
                     smooth: true
                 }
                 onClicked: {
-//                    graphs.zoomOut()
+                    //graphs.zoomOut()
                     graphs.zoomReset();
                     axisY.min = graphs.minRngY;
                     axisX.min = graphs.minRngX;
@@ -412,7 +414,7 @@ Column {
                 enabled: false
                 height: 1.5*48*app.dp
                 width: height
-    //                anchors.left: titleText.right
+                //anchors.left: titleText.right
                 ToolTip.visible: hovered
                     ToolTip.text: qsTr("Delete selected series")
                 Image {
@@ -434,14 +436,16 @@ Column {
                             tableOfSeries.currentIndex = i;
                             console.log("tableOfSeries.currentItem.checked: " + tableOfSeries.currentItem.checked)
                             if (tableOfSeries.currentItem.checked) {
-//                                customLegend.removeSeries(tableOfSeries.currentItem.text);
+                                //remove from legend
+                                customLegend.removeSeries(tableOfSeries.currentItem.text);
+                                //remove from datahandler
                                 reciever.deleteSeries( tableOfSeries.currentItem.text );
                                 //remove dotted series
                                 graphs.removeSeries(graphs.series(qsTr(graphs.series(
                                                tableOfSeries.currentItem.text).name+"_dotted")));
                                 //remove lineseries
                                 graphs.removeSeries(graphs.series(tableOfSeries.currentItem.text));
-                                //remove in table
+                                //remove from control legend
                                 tableModel.remove(i);
 
                                 console.log("Series: " +
@@ -455,7 +459,7 @@ Column {
                             tableOfSeries.currentIndex = i;
                             tableOfSeries.currentItem.checked = true
                         }
-//                        redrawHistogram()
+                        //redrawHistogram()
                     }
                 }
                 onClicked: { messageDialog.setVisible(true) }

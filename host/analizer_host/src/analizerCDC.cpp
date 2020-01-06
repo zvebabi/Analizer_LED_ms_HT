@@ -158,7 +158,7 @@ void AnalizerCDC::saveDataToCSV(QString filename="data.csv")
     emit sendDebugInfo(QString(ss.str().c_str()));
 }
 
-void AnalizerCDC::deleteSeries(const QString name)
+void AnalizerCDC::deleteSeries(const QString& name)
 {
     std::stringstream ss;
     ss << "Measurement " << name.toStdString();
@@ -168,6 +168,22 @@ void AnalizerCDC::deleteSeries(const QString name)
         ss << " deleted!";
     } else {
         ss << " does not exist!";
+    }
+    emit sendDebugInfo(QString(ss.str().c_str()));
+//    update();
+}
+
+void AnalizerCDC::renameSeries(const QString& oldName, const QString& newName)
+{
+    std::stringstream ss;
+    ss << "Rename " << oldName.toStdString()
+       << " to " << newName.toStdString();
+
+    auto ok = dh.RenameLine(oldName, newName);
+    if (ok) {
+        ss << " done!";
+    } else {
+        ss << " failed! Line does not exist!";
     }
     emit sendDebugInfo(QString(ss.str().c_str()));
 //    update();

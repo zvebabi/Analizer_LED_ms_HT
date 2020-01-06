@@ -54,7 +54,8 @@ public slots:
 
     void selectPath(QString pathForSave);
     void saveDataToCSV(QString filename);
-    void deleteSeries(const QString name);
+    void deleteSeries(const QString& name);
+    void renameSeries(const QString& oldName, const QString& newName);
     void readEtalonParameters(const QString filename, bool saveNew);
 signals:
     void sendPortName(QString port);

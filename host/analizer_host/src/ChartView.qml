@@ -32,6 +32,9 @@ Item {
                 var line_color = colorList[ lineIdx % colorList.length ];
                 seriesToFill.color = line_color;
                 reciever.updateSeries(seriesToFill, legend[lineIdx]);
+                //update image legend
+                customLegend.addSeries(legend[lineIdx], line_color)
+                //updateControllegend
                 editBar.tableModel_a.append({
                    "name": legend[lineIdx],
                    "isChecked": true,
@@ -117,7 +120,7 @@ Item {
                             lastY = mouse.y
                         }
                         onReleased: {
-        //                    view.interactive : true
+                            //view.interactive : true
                         }
                         onPositionChanged: {
                             if (lastX !== mouse.x) {
@@ -139,7 +142,7 @@ Item {
                 ChartView {
                     id: barGraphs
                     anchors.fill: parent
-        //            title: "Result"
+                    //title: "Result"
                     antialiasing: true
                     legend.visible: false
                     visible: mainMenu.currentItem == 1 ? true : false //1-histogram
@@ -180,10 +183,10 @@ Item {
             }
             CustomLegend {
                 id: customLegend
-//                visible: app.ctmLegendVisibility
+                visible: app.ctmLegendVisibility
                 width: parent.width
                 height: 2*app.menuBarHeight
-//                anchors.horizontalCenter: parent.horizontalCenter
+                //anchors.horizontalCenter: parent.horizontalCenter
                 anchors.right: editBar.left
                 anchors.left: parent.left
                 anchors.top: graphsRect.bottom

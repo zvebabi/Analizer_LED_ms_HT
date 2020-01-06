@@ -33,7 +33,7 @@ ApplicationWindow {
     property bool relativeMode: false   //compare with calibration data or with
                                         //previous sample
     property bool cumulativeMode: false
-//    property bool ctmLegendVisibility: true
+    property bool ctmLegendVisibility: true
     Material.theme: Material.Light
     Material.primary: Material.BlueGrey
     Material.accent: Material.Teal
