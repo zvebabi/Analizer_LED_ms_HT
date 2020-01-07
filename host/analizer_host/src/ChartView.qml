@@ -24,12 +24,28 @@ Item {
             console.log("seriesQty: " + seriesQty)
             for (var lineIdx in legend) {
                 console.log("Update series #", lineIdx, " with name ", legend[lineIdx])
-                if ( graphs.series(legend[lineIdx]) ) //skip if series already added
+                var line_color = colorList[ lineIdx % colorList.length ];
+
+                //skip if series already added
+                var seriesToRecolor = graphs.series(legend[lineIdx]);
+                if ( seriesToRecolor ) {
+                    //recolorize of series after line deleting
+                    if ( seriesToRecolor.color !== line_color) {
+                        //line series repainting
+                        seriesToRecolor.color = line_color;
+                        //dotted series repainting
+                        var seriesToRecolor_dotted = graphs.series(legend[lineIdx] + "_dotted");
+                        seriesToRecolor_dotted.color = line_color;
+                        //image legend repainting
+                        customLegend.paintSeries(legend[lineIdx], line_color)
+                        //control legend repainting
+                        editBar.tableModel_a.get(lineIdx).seriesColor = line_color;
+                    }
                     continue;
+                }
                 var seriesToFill = graphs.createSeries(ChartView.SeriesTypeSpline,
                                           legend[lineIdx],
                                           axisX, axisY);
-                var line_color = colorList[ lineIdx % colorList.length ];
                 seriesToFill.color = line_color;
                 reciever.updateSeries(seriesToFill, legend[lineIdx]);
                 //update image legend

@@ -84,6 +84,22 @@ Rectangle {
         seriesNames = names.reverse();
         seriesColors = colors.reverse();
     }
+    function paintSeries(seriesName, color) {
+        var names = [];
+        var colors = [];
+        var j=0;
+        for(var i = seriesCount-1; i>=0 ; i--) {
+            names[j] = seriesNames[i];
+            if (seriesNames[i] === seriesName) {
+                colors[j] = qsTr(color);
+            } else {
+                colors[j] = seriesColors[i];
+            }
+            j++;
+        }
+        seriesNames = names.reverse();
+        seriesColors = colors.reverse();
+    }
 
     //![2]
     Component {
