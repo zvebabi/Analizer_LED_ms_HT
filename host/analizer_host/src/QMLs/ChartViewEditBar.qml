@@ -411,7 +411,7 @@ Column {
             }
             ToolButton {
                 id: deleteSeries
-                enabled: false
+                enabled: true
                 height: 1.5*48*app.dp
                 width: height
                 //anchors.left: titleText.right
@@ -429,36 +429,44 @@ Column {
                     text: "Are you really sure?"
                     standardButtons: StandardButton.Ok | StandardButton.Cancel
                     icon: StandardIcon.Warning
+                    property var deleteDone : false;
                     onAccepted: {
-                        console.log("in deleting 1");
-                        for(var i = tableOfSeries.count-1; i>=0 ; i--) {
-                            console.log("in deleting 1 cur index" + i );
-                            tableOfSeries.currentIndex = i;
-                            console.log("tableOfSeries.currentItem.checked: " + tableOfSeries.currentItem.checked)
-                            if (tableOfSeries.currentItem.checked) {
-                                //remove from legend
-                                customLegend.removeSeries(tableOfSeries.currentItem.text);
-                                //remove from datahandler
-                                reciever.deleteSeries( tableOfSeries.currentItem.text );
-                                //remove dotted series
-                                graphs.removeSeries(graphs.series(qsTr(graphs.series(
-                                               tableOfSeries.currentItem.text).name+"_dotted")));
-                                //remove lineseries
-                                graphs.removeSeries(graphs.series(tableOfSeries.currentItem.text));
-                                //remove from control legend
-                                tableModel.remove(i);
+                        if ( !deleteDone ) {
+                            console.log("in deleting 1");
+                            for(var i = tableOfSeries.count-1; i>=0 ; i--) {
+                                console.log("in deleting 1 cur index" + i );
+                                tableOfSeries.currentIndex = i;
+                                console.log("tableOfSeries.currentItem.checked: " + tableOfSeries.currentItem.checked)
+                                if (tableOfSeries.currentItem.checked) {
+                                    //remove from legend
+                                    customLegend.removeSeries(tableOfSeries.currentItem.text);
+                                    //remove from datahandler
+                                    reciever.deleteSeries( tableOfSeries.currentItem.text );
+                                    //remove dotted series
+                                    graphs.removeSeries(graphs.series(qsTr(graphs.series(
+                                                   tableOfSeries.currentItem.text).name+"_dotted")));
+                                    //remove lineseries
+                                    graphs.removeSeries(graphs.series(tableOfSeries.currentItem.text));
+                                    //remove from control legend
+                                    tableModel.remove(i);
 
-                                console.log("Series: " +
-                                            tableOfSeries.currentItem.text +
-                                            " deleted.");
+                                    console.log("Series: " +
+                                                tableOfSeries.currentItem.text +
+                                                " deleted.");
+                                }
                             }
+                            console.log("recover checks")
+                            //check-on all non-deleted lines
+                            for(i = tableOfSeries.count-1; i>=0 ; i--) {
+                                tableOfSeries.currentIndex = i;
+                                tableOfSeries.currentItem.checked = true
+                            }
+                            deleteDone = true;
+                        } else {
+                            console.log("skip doubled call");
+                            deleteDone = false
                         }
-                        console.log("recover checks")
-                        //check-on all non-deleted lines
-                        for(i = tableOfSeries.count-1; i>=0 ; i--) {
-                            tableOfSeries.currentIndex = i;
-                            tableOfSeries.currentItem.checked = true
-                        }
+
                         //redrawHistogram()
                     }
                 }
