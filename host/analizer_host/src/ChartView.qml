@@ -244,7 +244,7 @@ Item {
         graphs.minRngX = (Math.floor((minRng.x - (maxRng.x-minRng.x)*0.02)*10))/10
         graphs.maxRngX = (Math.ceil((maxRng.x + (maxRng.x-minRng.x)*0.02)*10))/10
         graphs.minRngY = minRng.y - (maxRng.y-minRng.y)*0.1
-        graphs.maxRngY = maxRng.y * 1.03
+        graphs.maxRngY = maxRng.y + (maxRng.y-minRng.y)*0.1
         axisX.min = graphs.minRngX
         axisX.max = graphs.maxRngX
         axisY.min = graphs.minRngY
@@ -286,6 +286,20 @@ Item {
             }
         }
 
+    }
+
+    function redrawLegend() {
+      for ( var i = 0; i < graphs.count ; i+=2 ) {
+        //
+        var lineS = graphs.series(i);
+        var label = lineS.name; // name for barset
+        var colorS = lineS.color; //color for barset
+
+        customLegend.removeSeries(label) //remove series
+        if ( lineS.visible ) {
+          customLegend.addSeries(label, colorS);
+        }
+      }
     }
 }
 

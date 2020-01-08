@@ -383,8 +383,8 @@ Column {
                         //dotted series end
 
                     //recalc range
-                      for(var j = 0; j < graphs.series(tableOfSeries.currentItem.text
-                                                       ).count; j ++ ){
+                      for (var j = 0; j < graphs.series(tableOfSeries.currentItem.text
+                                                       ).count; j++ ) {
                         if (graphs.series(tableOfSeries.currentItem.text).at(j).y < minRngYY || minRngYY === 0){
                           minRngYY = graphs.series(tableOfSeries.currentItem.text).at(j).y;
                         }
@@ -393,14 +393,15 @@ Column {
                         }
                       }
                     } else {
-                      graphs.series(tableOfSeries.currentItem.text).visible =
-                                                                        false;
-                      //dotted series start
+                      //hide line from graph
+                      graphs.series(tableOfSeries.currentItem.text).visible = false;
+                      //hide dotted from graph
                       graphs.series(qsTr(graphs.series(tableOfSeries.currentItem.text).name+"_dotted")).visible = false;
-                      //dotted series end
                     }
                   }
-                  redrawHistogram()
+                  //
+                  redrawLegend();
+                  redrawHistogram();
                   graphs.minRngY = minRngYY  - ( maxRngYY - minRngYY ) * 0.1
                   graphs.maxRngY = maxRngYY*1.03//*1.1
                   axisY.min = graphs.minRngY
