@@ -31,7 +31,7 @@ Item {
         Label { text: qsTr("Copyright © "
                          + "LED Microsensor NT & "
                          + "Microsensor Technology, "
-                         + "2018 ")
+                         + "2020 ")
         }
     }
 //    LED Minispectrometer
