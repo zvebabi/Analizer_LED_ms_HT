@@ -169,9 +169,9 @@ Item {
             id: exitDialog
             title: "Quit"
             text: "Save dataset before exit?"
-            standardButtons: StandardButton.Ok | StandardButton.Close
+            standardButtons: StandardButton.Yes | StandardButton.No | StandardButton.Cancel
             icon: StandardIcon.Question
-            onAccepted: {
+            onYes: {
 //                app.saveDataDialog_a.fileNameDialog_a.open()
                 var backupFileName = new Date().toLocaleString(Qt.locale("en_US"), "yyyyMMdd_HHmmss'_dataset.csv'")
 //                console.log(curTime)
@@ -182,7 +182,8 @@ Item {
                 reciever.saveDataToCSV(backupFileName)
                 waiter.running = true
             }
-            onRejected: Qt.quit()
+            onRejected: console.log("cancel");
+            onNo: Qt.quit();
         }
         Timer {
             id:waiter
