@@ -1,4 +1,4 @@
-import QtQuick 2.7
+import QtQuick 2.12
 
 //based on https://gist.github.com/cyberbobs/8d62ab257d332914a72c
 
