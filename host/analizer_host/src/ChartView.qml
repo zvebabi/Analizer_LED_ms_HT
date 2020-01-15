@@ -1,7 +1,7 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
-import QtCharts 2.2
+import QtCharts 2.3
 import QtQuick.Dialogs 1.2
 import QtGraphicalEffects 1.0
 import "QMLs"
@@ -116,6 +116,9 @@ Item {
                         max: 0
                         tickCount: 13
                         minorTickCount: 3
+                        tickAnchor: 0
+                        tickInterval: 0.1
+                        tickType: ValueAxis.TicksDynamic
                         labelFormat: "%.1f"
                     }
                     ValueAxis {
@@ -126,6 +129,7 @@ Item {
                         max:0
                         tickCount: 5
                         minorTickCount: 4
+                        tickType: ValueAxis.TicksFixed
                     }
                     MouseArea {
                         anchors.fill: parent
