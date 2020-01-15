@@ -471,7 +471,30 @@ Column {
                         //redrawHistogram()
                     }
                 }
-                onClicked: { messageDialog.setVisible(true) }
+                MessageDialog {
+                    id: messageDialogLittleInfo
+                    title: "There are no lines to delete"
+                    text: "You need to mark at least one line!"
+                    icon: StandardIcon.Warning
+                    standardButtons: StandardButton.Ok
+                }
+
+                onClicked: {
+                    //check checked lines
+                    var someLinesIsChecked = false
+                    for(var i = tableOfSeries.count-1; i>=0 ; i--) {
+                        tableOfSeries.currentIndex = i;
+                        if (tableOfSeries.currentItem.checked) {
+                            someLinesIsChecked = true;
+                            break;
+                        }
+                    }
+                    if (someLinesIsChecked) {
+                        messageDialog.setVisible(true);
+                    } else {
+                        messageDialogLittleInfo.setVisible(true);
+                    }
+                }
             }
         }
     }
