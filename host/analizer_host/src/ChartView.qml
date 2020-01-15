@@ -243,8 +243,8 @@ Item {
     function adjustAxis(minRng, maxRng) {
         graphs.minRngX = (Math.floor((minRng.x - (maxRng.x-minRng.x)*0.02)*10))/10
         graphs.maxRngX = (Math.ceil((maxRng.x + (maxRng.x-minRng.x)*0.02)*10))/10
-        graphs.minRngY = minRng.y - (maxRng.y-minRng.y)*0.1
-        graphs.maxRngY = maxRng.y + (maxRng.y-minRng.y)*0.1
+        graphs.minRngY = Math.floor(minRng.y - (maxRng.y-minRng.y)*0.1)
+        graphs.maxRngY = Math.ceil(maxRng.y + (maxRng.y-minRng.y)*0.1)
         axisX.min = graphs.minRngX
         axisX.max = graphs.maxRngX
         axisY.min = graphs.minRngY
