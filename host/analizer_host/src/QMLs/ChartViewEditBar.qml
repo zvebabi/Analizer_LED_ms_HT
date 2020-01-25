@@ -16,7 +16,8 @@ Column {
     Connections {
         target: reciever
         onMakeSeries: {
-            createSeries()
+            console.log("onMakeSeries in edit bar")
+//            createSeries()
         }
         onActivateEditBar: {
             runAnalizer.enabled      = true
@@ -116,21 +117,31 @@ Column {
             height: 400*app.dp
             anchors.topMargin: 50
             color: "transparent"
+
             ListView {
                 id: tableOfSeries
                 anchors.fill: parent
                 model: ListModel { id: tableModel }
                 delegate: CheckDelegate {
                     text: name
-                    checked: isChecked
+                    checked: check_value
                     background: Rectangle {color: seriesColor}
                     width: ctrlPane.itemWidth - runAnalizer.width
                     height: 45*app.dp
                     
                     onDoubleClicked: {//rename sample
-                        tableOfSeries.currentIndex = index
+                        renameDlg.line_index = index;
                         renameDlg.visible = true;
-                        newName.focus = true
+                        newName.focus = true;
+                        tableModel.setProperty(index ,"check_value", !checked);                         //restore tick after double click
+                    }
+                    //save values to another field
+                    onClicked: {
+                        tableModel.setProperty(index ,"check_value", checked)
+                    }
+                    //restore value after scroll
+                    onCheckStateChanged: {
+                        tableModel.setProperty(index ,"check_value", checked)
                     }
                 }
                 focus: true
@@ -156,9 +167,9 @@ Column {
             }
             Dialog {
                 id: renameDlg
+                property var line_index: 0
                 title: qsTr("Enter new name")
                 visible: false
-//                width: newName.width
                 TextField {
                     id:newName
                     placeholderText: qsTr("Enter new name")
@@ -166,19 +177,37 @@ Column {
                 standardButtons: StandardButton.OK
                 onAccepted: {
                     console.log(newName.text)
-                    //legend rename
-                    customLegend.renameSeries(qsTr(graphs.series(tableOfSeries.currentItem.text).name), newName.text)
-                    //dotted series rename
-                    graphs.series(qsTr(graphs.series(
-                                   tableOfSeries.currentItem.text).name+"_dotted")).name =
-                            qsTr(newName.text + "_dotted");
-                    //line series rename
-                    graphs.series(tableOfSeries.currentItem.text).name =
-                            newName.text;
-                    //rename in datahandler
-                    reciever.renameSeries(tableOfSeries.currentItem.text, newName.text)
-                    //control panel rename
-                    tableOfSeries.currentItem.text = newName.text;
+                    var isNameCorrect = true;
+
+                    if ( newName.text.length == 0) {
+                        isNameCorrect = false;
+                        showPopupTips(qsTr("Wrong name!"), 1000)
+                    }
+
+                    for (var j=0; j < tableModel.count; j++) {
+                        if ( tableModel.get(j).name === newName.text){
+                            isNameCorrect = false;
+                            showPopupTips(qsTr("Name " + newName.text + " exists, enter unique name!"), 1000)
+                            break;
+                        }
+                    }
+
+                    if(isNameCorrect) {
+                        //legend rename
+                        tableOfSeries.currentIndex = line_index;
+                        customLegend.renameSeries(qsTr(graphs.series(tableOfSeries.currentItem.text).name), newName.text)
+                        //dotted series rename
+                        graphs.series(qsTr(graphs.series(
+                                       tableOfSeries.currentItem.text).name+"_dotted")).name =
+                                qsTr(newName.text + "_dotted");
+                        //line series rename
+                        graphs.series(tableOfSeries.currentItem.text).name =
+                                newName.text;
+                        //rename in datahandler
+                        reciever.renameSeries(tableOfSeries.currentItem.text, newName.text)
+                        //control panel rename
+                        tableModel.setProperty(tableOfSeries.currentIndex, "name", newName.text);
+                    }
                     newName.text = "";
                 }
             }
@@ -468,7 +497,7 @@ Column {
                             deleteDone = false
                         }
 
-                        //redrawHistogram()
+                        redrawHistogram()
                     }
                 }
                 MessageDialog {

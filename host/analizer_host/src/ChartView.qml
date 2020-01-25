@@ -53,7 +53,7 @@ Item {
                 //updateControllegend
                 editBar.tableModel_a.append({
                    "name": legend[lineIdx],
-                   "isChecked": true,
+                   "check_value": true,
                    "seriesColor": line_color })
                 //update dotted series
                 var seriesToFill_dotted = graphs.createSeries(ChartView.SeriesTypeScatter,
