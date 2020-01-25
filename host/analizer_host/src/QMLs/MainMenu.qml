@@ -168,7 +168,7 @@ Item {
         MessageDialog {
             id: exitDialog
             title: "Quit?"
-            text: qsTr("Do you want to save dataset and quit?")
+            text: qsTr("Do you want to save dataset before quit?")
             standardButtons: StandardButton.Yes | StandardButton.No | StandardButton.Cancel
             icon: StandardIcon.Question
             onYes: {
