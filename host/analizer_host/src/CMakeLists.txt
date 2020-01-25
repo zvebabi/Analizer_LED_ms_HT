@@ -33,6 +33,9 @@ set(HEADER_NAMES
   analizerCDC.h
   datahandler.h)
 
+set(RC_FILE ${RC_FILE}
+  ${PROJECT_SOURCE_DIR}/LEDMinispectrometer.rc)
+
 foreach(SOURCE ${SOURCE_NAMES})
   set(SOURCES ${SOURCES} ${SOURCE})
 endforeach(SOURCE)
@@ -49,7 +52,8 @@ add_executable(${PROJECT_NAME}
   ${WINMAIN_ENTRYPOINT_FLAG}
   ${SOURCES}
   ${HEADERS}
-  ${QT_RESOURCES})
+  ${QT_RESOURCES}
+  ${RC_FILE})
 set_target_properties(${PROJECT_NAME} PROPERTIES AUTOMOC TRUE)
 
 target_compile_features(${PROJECT_NAME}
