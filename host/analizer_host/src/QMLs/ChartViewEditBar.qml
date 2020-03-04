@@ -17,7 +17,7 @@ Column {
         target: reciever
         onMakeSeries: {
             console.log("onMakeSeries in edit bar")
-//            createSeries()
+            doSeries();
         }
         onActivateEditBar: {
             runAnalizer.enabled      = true
@@ -64,13 +64,7 @@ Column {
                     color: "#d000ff00"
                 }
                 onClicked: {
-                    app.dataWasChangedAfterSave = true ;
-                    // createSeries()
-                    var seriesName = qsTr("%1%2").arg(lineLabel.text).arg(globalSeriesCounter + 1);
-//                    if ( globalSeriesCounter < 25) {
-                        reciever.doMeasurements(seriesName);
-//                    }
-                    ++globalSeriesCounter;
+                    doSeries();
                 }
             }
             ToolButton {
@@ -527,6 +521,14 @@ Column {
             }
         }
     }
+
+    function doSeries() {
+        ++globalSeriesCounter;
+        app.dataWasChangedAfterSave = true ;
+        var seriesName = qsTr("%1%2").arg(lineLabel.text).arg(globalSeriesCounter);
+        reciever.doMeasurements(seriesName);
+    }
+
     function createSeries() {
         var colorList = [
                     "#F44336", "#673AB7", "#03A9F4", "#4CAF50", "#FFEB3B", "#FF5722",
